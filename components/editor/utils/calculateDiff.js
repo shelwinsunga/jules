@@ -13,53 +13,43 @@ export const calculateDiff = (oldText, newText, monaco, selection) => {
 
     while (oldIndex < oldLines.length || newIndex < newLines.length) {
         if (oldIndex < oldLines.length && newIndex < newLines.length && oldLines[oldIndex] === newLines[newIndex]) {
-            diff.push({ value: oldLines[oldIndex] + '\n' });
+            diff.push({ value: oldLines[oldIndex] });
             oldIndex++;
             newIndex++;
         } else if (oldIndex < oldLines.length) {
-            diff.push({ removed: true, value: oldLines[oldIndex] + '\n' });
+            diff.push({ removed: true, value: oldLines[oldIndex] });
             oldIndex++;
         } else if (newIndex < newLines.length) {
-            diff.push({ added: true, value: newLines[newIndex] + '\n' });
+            diff.push({ added: true, value: newLines[newIndex] });
             newIndex++;
         }
     }
 
     diff.forEach(part => {
         if (part.removed) {
-            part.value.split('\n').forEach(line => {
-                if (line) {
-                    diffText += line + '\n';
-                    decorations.push({
-                        range: new monaco.Range(currentLine, 1, currentLine, 1),
-                        options: { isWholeLine: true, className: 'diff-old-content' }
-                    });
-                    currentLine++;
-                }
+            diffText += part.value + '\n';
+            decorations.push({
+                range: new monaco.Range(currentLine, 1, currentLine, 1),
+                options: { isWholeLine: true, className: 'diff-old-content' }
             });
+            currentLine++;
         } else if (part.added) {
-            part.value.split('\n').forEach(line => {
-                if (line) {
-                    diffText += line + '\n';
-                    decorations.push({
-                        range: new monaco.Range(currentLine, 1, currentLine, 1),
-                        options: { isWholeLine: true, className: 'diff-new-content' }
-                    });
-                    currentLine++;
-                }
+            diffText += part.value + '\n';
+            decorations.push({
+                range: new monaco.Range(currentLine, 1, currentLine, 1),
+                options: { isWholeLine: true, className: 'diff-new-content' }
             });
+            currentLine++;
         } else {
-            part.value.split('\n').forEach(line => {
-                if (line) {
-                    diffText += line + '\n';
-                    currentLine++;
-                }
-            });
+            diffText += part.value + '\n';
+            currentLine++;
         }
     });
 
-    // Remove trailing newline
-    diffText = diffText.slice(0, -1);
+    // Remove trailing newline if it wasn't in the original text
+    if (!oldText.endsWith('\n') && !newText.endsWith('\n')) {
+        diffText = diffText.slice(0, -1);
+    }
 
     return { diffText, decorations, currentLine };
 };
