@@ -7,7 +7,7 @@ import { useFrontend } from '@/contexts/FrontendContext'
 const EditorContainer = () => {
     const { latex, setLatex } = useFrontend()
 
-    const handleCodeChange = (newCode) => {
+    const handleCodeChange = (newCode: string) => {
         setLatex(newCode)
     }
 
