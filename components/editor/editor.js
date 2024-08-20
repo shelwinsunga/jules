@@ -113,25 +113,26 @@ export const CodeEditor = ({ onChange, value }) => {
                 const inputContainer = document.createElement('div');
                 inputContainer.style.position = 'absolute';
                 inputContainer.style.zIndex = '1000';
-                inputContainer.style.left = '0';
-                inputContainer.style.top = '0';
                 inputContainer.style.background = 'white';
-                inputContainer.style.padding = '5px';
+                inputContainer.style.padding = '10px';
                 inputContainer.style.boxShadow = '0 0 5px rgba(0,0,0,0.3)';
 
-                const input = document.createElement('input');
-                input.type = 'text';
-                input.placeholder = 'Enter your text here';
-                input.style.marginRight = '5px';
+                const textarea = document.createElement('textarea');
+                textarea.placeholder = 'Enter your text here';
+                textarea.style.width = '300px';
+                textarea.style.height = '100px';
+                textarea.style.marginBottom = '10px';
+                textarea.style.resize = 'vertical';
                 
                 const button = document.createElement('button');
                 button.textContent = 'Submit';
+                button.style.display = 'block';
                 button.onclick = () => {
-                    resolve(input.value);
+                    resolve(textarea.value);
                     document.body.removeChild(inputContainer);
                 };
 
-                inputContainer.appendChild(input);
+                inputContainer.appendChild(textarea);
                 inputContainer.appendChild(button);
 
                 const editorDomNode = editor.getDomNode();
@@ -139,12 +140,29 @@ export const CodeEditor = ({ onChange, value }) => {
                     const rect = editorDomNode.getBoundingClientRect();
                     const lineHeight = editor.getOption(monaco.editor.EditorOption.lineHeight);
                     const lineTop = editor.getTopForLineNumber(selection.startLineNumber);
-                    inputContainer.style.top = `${rect.top + lineTop - lineHeight}px`;
-                    inputContainer.style.left = `${rect.left}px`;
+                    
+                    // Calculate position to ensure it's within screen bounds
+                    let top = rect.top + lineTop - lineHeight;
+                    let left = rect.left;
+                    
+                    // Adjust if it would render off-screen
+                    if (top + inputContainer.offsetHeight > window.innerHeight) {
+                        top = window.innerHeight - inputContainer.offsetHeight;
+                    }
+                    if (left + inputContainer.offsetWidth > window.innerWidth) {
+                        left = window.innerWidth - inputContainer.offsetWidth;
+                    }
+                    
+                    // Ensure it's not positioned off the top or left of the screen
+                    top = Math.max(0, top);
+                    left = Math.max(0, left);
+                    
+                    inputContainer.style.top = `${top}px`;
+                    inputContainer.style.left = `${left}px`;
                 }
 
                 document.body.appendChild(inputContainer);
-                input.focus();
+                textarea.focus();
             });
 
             // Generate text using the user input
