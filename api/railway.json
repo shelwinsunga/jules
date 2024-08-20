@@ -5,9 +5,9 @@
     "nixpacksPlan": {
       "phases": {
         "setup": {
-          "aptPkgs": ["curl"],
+          "nixPkgs": ["wget"],
           "cmds": [
-            "curl -sL https://yihui.org/tinytex/install-bin-unix.sh | sh",
+            "wget -qO- https://yihui.org/tinytex/install-unx.sh | sh",
             "echo $PATH",
             "which pdflatex"            ]
         }
