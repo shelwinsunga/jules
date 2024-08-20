@@ -5,10 +5,11 @@
     "nixpacksPlan": {
       "phases": {
         "setup": {
-          "nixPkgs": ["wget"],
+          "nixPkgs": ["curl"],
           "cmds": [
-            "wget -qO- https://yihui.org/tinytex/install-unx.sh | sh",
-            "echo 'export PATH=\"/root/.TinyTeX/bin/x86_64-linux:${PATH}\"' >> $HOME/.bashrc"
+            "curl -sL https://yihui.org/tinytex/install-bin-unix.sh | sh",
+            "echo 'export PATH=$PATH:$HOME/.TinyTeX/bin/x86_64-linux' >> ~/.bashrc",
+            "source ~/.bashrc"
           ]
         }
       }
