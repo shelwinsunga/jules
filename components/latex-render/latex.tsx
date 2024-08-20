@@ -42,7 +42,11 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
         }
     }
 
-
+    useEffect(() => {
+        if (latex && latex.trim() !== '') {
+            fetchPdf();
+        }
+    }, [latex]);
 
     function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
         setNumPages(numPages);
