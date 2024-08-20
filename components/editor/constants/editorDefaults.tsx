@@ -6,13 +6,14 @@ export const editorDefaultOptions: editor.IStandaloneEditorConstructionOptions =
     folding: false,
     lineNumbersMinChars: 3,
     fontSize: 16,
-    scrollBeyondLastLine: false,
+    scrollBeyondLastLine: true,
+    scrollBeyondLastColumn: 5,
     automaticLayout: true,
     minimap: { enabled: false },
     overviewRulerLanes: 0,
     hideCursorInOverviewRuler: true,
     scrollbar: {
-        vertical: 'hidden'
+        vertical: 'visible'
     },
     overviewRulerBorder: false,
 };
