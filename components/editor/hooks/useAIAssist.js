@@ -7,6 +7,7 @@ import { createContentWidget } from '../utils/widgetCreator';
 export const useAIAssist = (editorRef) => {
     const [generation, setGeneration] = useState('');
 
+
     const handleAIAssist = (editor, monaco) => {
         editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyK, async () => {
             const selection = editor.getSelection();
@@ -16,27 +17,39 @@ export const useAIAssist = (editorRef) => {
                 selection.endLineNumber,
                 selection.endColumn
             );
+            const initialText = editor.getModel().getValue();
             const oldText = editor.getModel().getValueInRange(range);
-
             const userInput = await promptUserForInput(editor, monaco, selection);
-
             const context = `Replace lines ${selection.startLineNumber}-${selection.endLineNumber}:\n${oldText}`;
             const { output } = await generate(userInput + '\n\n' + context);
             let newText = '';
 
             for await (const delta of readStreamableValue(output)) {
+                editor.executeEdits('reset-to-initial', [{
+                    range: editor.getModel().getFullModelRange(),
+                    text: initialText,
+                    forceMoveMarkers: true
+                }]);
+
                 newText += delta;
                 setGeneration(currentGeneration => `${currentGeneration}${delta}`);
-            }
+                const { diffText, decorations, currentLine } = calculateDiff(oldText, newText, monaco, selection);
 
+                editor.executeEdits('insert-diff-text', [{
+                    range: range,
+                    text: diffText,
+                    forceMoveMarkers: true
+                }]);
+
+                const oldDecorations = editor.deltaDecorations([], decorations);
+
+                const contentWidget = createContentWidget(editor, monaco, selection, oldText, newText, currentLine, oldDecorations);
+
+
+            }
             const { diffText, decorations, currentLine } = calculateDiff(oldText, newText, monaco, selection);
 
-            editor.executeEdits('insert-diff-text', [{
-                range: range,
-                text: diffText,
-                forceMoveMarkers: true
-            }]);
-
+            
             const oldDecorations = editor.deltaDecorations([], decorations);
 
             const contentWidget = createContentWidget(editor, monaco, selection, oldText, newText, currentLine, oldDecorations);
