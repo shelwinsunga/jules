@@ -7,9 +7,9 @@
         "setup": {
           "nixPkgs": ["curl", "bash"],
           "cmds": [
-            "bash -c 'curl -sL https://yihui.org/tinytex/install-bin-unix.sh | sh'",
-            "echo 'export PATH=$PATH:$HOME/.TinyTeX/bin/x86_64-linux' >> ~/.bashrc",
-            "source ~/.bashrc"
+            "sh -c 'curl -sL https://yihui.org/tinytex/install-bin-unix.sh | sh'",
+            "echo 'export PATH=$PATH:$HOME/.TinyTeX/bin/x86_64-linux' >> $HOME/.bashrc",
+            "bash -c 'source $HOME/.bashrc'"
           ]
         }
       }
