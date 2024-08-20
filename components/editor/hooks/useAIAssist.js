@@ -41,11 +41,6 @@ export const useAIAssist = (editorRef) => {
                     forceMoveMarkers: true
                 }]);
 
-                const oldDecorations = editor.deltaDecorations([], decorations);
-
-                const contentWidget = createContentWidget(editor, monaco, selection, oldText, newText, currentLine, oldDecorations);
-
-
             }
             const { diffText, decorations, currentLine } = calculateDiff(oldText, newText, monaco, selection);
 
