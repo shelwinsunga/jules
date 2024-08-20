@@ -16,7 +16,7 @@ interface LatexRendererProps {
 export default function LatexRenderer({ latex }: LatexRendererProps) {
     const [numPages, setNumPages] = useState<number | null>(null);
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-
+    
     useEffect(() => {
         const fetchPdf = async () => {
             const response = await fetch('http://127.0.0.1:8000');

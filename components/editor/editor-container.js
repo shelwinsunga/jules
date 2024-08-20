@@ -2,18 +2,19 @@
 
 import React, { useState } from 'react'
 import { CodeEditor } from './editor'
+import { useFrontend } from '@/contexts/FrontendContext'
 
 const EditorContainer = () => {
-    const [code, setCode] = useState('')
+    const { latex, setLatex } = useFrontend()
 
     const handleCodeChange = (newCode) => {
-        setCode(newCode)
+        setLatex(newCode)
     }
 
     return (
             <CodeEditor
                 onChange={handleCodeChange}
-                value={code}
+                value={latex}
             />
     )
 }
