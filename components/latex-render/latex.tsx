@@ -52,7 +52,7 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
                 if (latex && latex.trim() !== '') {
                     fetchPdf();
                 }
-            }, 500);
+            }, 10);
         };
 
         resetTimer();

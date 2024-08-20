@@ -66,4 +66,8 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  .monaco-editor .scroll-decoration{
+    box-shadow: none !important;
+  }
 }
