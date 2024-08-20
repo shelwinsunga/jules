@@ -22,7 +22,8 @@ export const useAIAssist = (editorRef) => {
             const oldText = editor.getModel().getValueInRange(range);
             const userInput = await promptUserForInput(editor, monaco, selection);
             const context = `Replace lines ${selection.startLineNumber}-${selection.endLineNumber}:\n${oldText}`;
-            const { output } = await generate(userInput + '\n\n' + context);
+            const fileContent = editor.getModel().getValue();
+            const { output } = await generate(`File content:\n${fileContent}\n\nContext: ${context}\n\nUser input: ${userInput}`);
             let newText = '';
             let oldDecorations = [];
             let currentLine = selection.startLineNumber; // Initialize currentLine here
