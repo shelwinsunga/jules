@@ -103,7 +103,7 @@ export const CodeEditor = ({ onChange, value }) => {
                 selection.endColumn
             );
             const oldText = editor.getModel().getValueInRange(range);
-            const newText = 'replace'; // This should be replaced with actual new text generation
+            const newText = 'This is a subsection with some math: $E = mc^2$'; // This should be replaced with actual new text generation
 
             const oldLines = oldText.split('\n');
             const newLines = newText.split('\n');
@@ -112,25 +112,41 @@ export const CodeEditor = ({ onChange, value }) => {
             let decorations = [];
             let currentLine = selection.startLineNumber;
 
-            for (let i = 0; i < Math.max(oldLines.length, newLines.length); i++) {
-                if (i < oldLines.length) {
-                    diffText += oldLines[i] + '\n';
-                    decorations.push({
-                        range: new monaco.Range(currentLine, 1, currentLine, 1),
-                        options: { isWholeLine: true, className: 'diff-old-content' }
+            // Calculate the actual diff
+            const diff = calculateDiff(oldLines, newLines);
+
+            diff.forEach(part => {
+                if (part.added) {
+                    part.value.split('\n').forEach(line => {
+                        if (line) {
+                            diffText += line + '\n';
+                            decorations.push({
+                                range: new monaco.Range(currentLine, 1, currentLine, 1),
+                                options: { isWholeLine: true, className: 'diff-new-content' }
+                            });
+                            currentLine++;
+                        }
                     });
-                    currentLine++;
-                }
-                
-                if (i < newLines.length && (i >= oldLines.length || oldLines[i] !== newLines[i])) {
-                    diffText += newLines[i] + '\n';
-                    decorations.push({
-                        range: new monaco.Range(currentLine, 1, currentLine, 1),
-                        options: { isWholeLine: true, className: 'diff-new-content' }
+                } else if (part.removed) {
+                    part.value.split('\n').forEach(line => {
+                        if (line) {
+                            diffText += line + '\n';
+                            decorations.push({
+                                range: new monaco.Range(currentLine, 1, currentLine, 1),
+                                options: { isWholeLine: true, className: 'diff-old-content' }
+                            });
+                            currentLine++;
+                        }
                     });
-                    currentLine++;
+                } else {
+                    part.value.split('\n').forEach(line => {
+                        if (line) {
+                            diffText += line + '\n';
+                            currentLine++;
+                        }
+                    });
                 }
-            }
+            });
 
             // Remove trailing newline
             diffText = diffText.slice(0, -1);
@@ -208,6 +224,29 @@ export const CodeEditor = ({ onChange, value }) => {
             .diff-new-content { background-color: #eeffee; }
         `;
         document.head.appendChild(style);
+
+        // Function to calculate the diff
+        function calculateDiff(oldLines, newLines) {
+            const diff = [];
+            let oldIndex = 0;
+            let newIndex = 0;
+
+            while (oldIndex < oldLines.length || newIndex < newLines.length) {
+                if (oldIndex < oldLines.length && newIndex < newLines.length && oldLines[oldIndex] === newLines[newIndex]) {
+                    diff.push({ value: oldLines[oldIndex] + '\n' });
+                    oldIndex++;
+                    newIndex++;
+                } else if (newIndex < newLines.length && (oldIndex >= oldLines.length || oldLines[oldIndex] !== newLines[newIndex])) {
+                    diff.push({ added: true, value: newLines[newIndex] + '\n' });
+                    newIndex++;
+                } else if (oldIndex < oldLines.length) {
+                    diff.push({ removed: true, value: oldLines[oldIndex] + '\n' });
+                    oldIndex++;
+                }
+            }
+
+            return diff;
+        }
     }
 
     // Render the Editor component
