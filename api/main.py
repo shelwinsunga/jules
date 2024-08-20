@@ -19,7 +19,7 @@ This is a subsection with some math: $E = mc^2$
 \end{document}
 """
 
-@app.route('/latex-to-pdf', methods=['GET'])
+@app.route('/', methods=['GET'])
 def latex_to_pdf():
     with tempfile.TemporaryDirectory() as temp_dir:
         input_file = os.path.join(temp_dir, 'input.tex')
