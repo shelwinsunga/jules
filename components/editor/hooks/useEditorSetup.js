@@ -3,7 +3,16 @@ import { useFrontend } from '@/contexts/FrontendContext';
 import { useEditorTheme } from './useEditorTheme';
 import { useLatexSyntaxHighlighting } from './useLatexSyntaxHighlighting';
 
-const initialContent = `...`; // Move this to a separate file if it's large
+const initialContent = `\\documentclass{article}
+\\begin{document}
+Hello, world! This is a simple LaTeX document.
+
+\\section{A Section}
+This is a section in our document.
+
+\\subsection{A Subsection}
+This is a subsection with some math: $E = mc^2$
+\\end{document}`
 
 export const useEditorSetup = (onChange) => {
     const editorRef = useRef();
