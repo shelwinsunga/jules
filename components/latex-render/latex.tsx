@@ -67,11 +67,11 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
     return (
         <div className="w-full h-full flex flex-col">
             <div className="flex justify-center items-center border-b shadow-sm py-2">
-                <Button variant="outline" onClick={fetchPdf} disabled={isLoading}>
-                    {isLoading ? 'Generating...' : 'Generate PDF'}
+                <Button variant="outline" onClick={fetchPdf}>
+                    Generate PDF
                 </Button>
             </div>
-            <ScrollArea className="flex-grow w-full h-full bg-foreground/20">
+            <ScrollArea className="flex-grow w-full h-full bg-foreground/5">
                 {isLoading ? (
                     <div className="flex justify-center items-center w-full h-full">
                         <Skeleton className="w-full h-full max-w-4xl" />

@@ -1,16 +1,15 @@
 'use client';
 
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Button } from '@/components/ui/button';
+
 export const createContentWidget = (editor, monaco, selection, oldText, newText, currentLine, oldDecorations) => {
     return {
         getDomNode: function() {
             const container = document.createElement('div');
-            container.innerHTML = `
-                <div style="background: white; padding: 5px; border: 1px solid black;">
-                    <button id="reject">Reject</button>
-                    <button id="approve">Approve</button>
-                </div>
-            `;
-            container.querySelector('#reject').onclick = () => {
+
+            const handleReject = () => {
                 editor.executeEdits('reject-changes', [{
                     range: new monaco.Range(
                         selection.startLineNumber,
@@ -24,7 +23,8 @@ export const createContentWidget = (editor, monaco, selection, oldText, newText,
                 editor.deltaDecorations(oldDecorations, []);
                 editor.removeContentWidget(this);
             };
-            container.querySelector('#approve').onclick = () => {
+
+            const handleApprove = () => {
                 editor.executeEdits('approve-changes', [{
                     range: new monaco.Range(
                         selection.startLineNumber,
@@ -35,9 +35,23 @@ export const createContentWidget = (editor, monaco, selection, oldText, newText,
                     text: newText,
                     forceMoveMarkers: true
                 }]);
-                editor.deltaDecorations(oldDecorations, []); // funct signature is (,)
+                editor.deltaDecorations(oldDecorations, []);
                 editor.removeContentWidget(this);
             };
+
+            const WidgetContent = () => (
+                <div className="bg-background border border-border rounded-md p-2 shadow-sm flex gap-2">
+                    <Button variant="outline" className="bg-green-500" size="sm" onClick={handleApprove}>
+                        Approve
+                    </Button>
+                    <Button variant="destructive" size="sm" className="mr-2" onClick={handleReject}>
+                        Reject
+                    </Button>
+   
+                </div>
+            );
+
+            ReactDOM.render(<WidgetContent />, container);
             return container;
         },
         getId: function() {
