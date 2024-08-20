@@ -9,7 +9,7 @@
         }
       }
     },
-    "buildCommand": "curl -sL https://yihui.org/tinytex/install-bin-unix.sh | sh"
+    "buildCommand": "curl -sL https://yihui.org/tinytex/install-bin-unix.sh | sh && echo 'export PATH=$PATH:$HOME/.TinyTeX/bin/x86_64-linux' >> ~/.bashrc && source ~/.bashrc"
   },
   "deploy": {
     "startCommand": "hypercorn main:app --bind \"[::]:$PORT\""
