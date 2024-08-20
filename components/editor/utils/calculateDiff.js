@@ -1,3 +1,4 @@
+'use client';
 export const calculateDiff = (oldText, newText, monaco, selection) => {
     const oldLines = oldText.split('\n');
     const newLines = newText.split('\n');

@@ -1,3 +1,5 @@
+'use client';
+
 import { loader } from '@monaco-editor/react';
 
 export const useLatexSyntaxHighlighting = () => {

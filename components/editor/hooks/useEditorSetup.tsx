@@ -1,3 +1,4 @@
+'use client';
 import { useRef } from 'react';
 import { useFrontend } from '@/contexts/FrontendContext';
 import { useEditorTheme } from './useEditorTheme';

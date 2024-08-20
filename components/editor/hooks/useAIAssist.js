@@ -1,8 +1,9 @@
+'use client';
 import { useState } from 'react';
 import { generate } from '@/app/actions';
 import { readStreamableValue } from 'ai/rsc';
 import { calculateDiff } from '../utils/calculateDiff';
-import { createContentWidget } from '../utils/widgetCreator';
+import { createContentWidget } from '../utils/WidgetCreator';
 
 export const useAIAssist = (editorRef) => {
     const [generation, setGeneration] = useState('');
@@ -40,16 +41,20 @@ export const useAIAssist = (editorRef) => {
                     text: diffText,
                     forceMoveMarkers: true
                 }]);
+                const oldDecorations = editor.deltaDecorations([], decorations);
 
             }
+
             const { diffText, decorations, currentLine } = calculateDiff(oldText, newText, monaco, selection);
 
-            
             const oldDecorations = editor.deltaDecorations([], decorations);
 
+
+            console.log('Before creating content widget');
             const contentWidget = createContentWidget(editor, monaco, selection, oldText, newText, currentLine, oldDecorations);
-            
+            console.log('After creating content widget');
             editor.addContentWidget(contentWidget);
+            
         });
 
         // Add CSS for diff highlighting
@@ -103,11 +108,13 @@ const promptUserForInput = async (editor, monaco, selection) => {
             let left = rect.left;
             
             // Adjust if it would render off-screen
-            if (top + inputContainer.offsetHeight > window.innerHeight) {
-                top = window.innerHeight - inputContainer.offsetHeight;
-            }
-            if (left + inputContainer.offsetWidth > window.innerWidth) {
-                left = window.innerWidth - inputContainer.offsetWidth;
+            if (window) {
+                if (top + inputContainer.offsetHeight > window.innerHeight) {
+                    top = window.innerHeight - inputContainer.offsetHeight;
+                }
+                if (left + inputContainer.offsetWidth > window.innerWidth) {
+                    left = window.innerWidth - inputContainer.offsetWidth;
+                }
             }
             
             // Ensure it's not positioned off the top or left of the screen

@@ -1,3 +1,4 @@
+'use client';
 export const useEditorTheme = () => {
     const setTheme = (monaco) => {
         monaco.editor.defineTheme('myTheme', {

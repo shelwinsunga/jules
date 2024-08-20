@@ -1,3 +1,5 @@
+'use client';
+
 export const createContentWidget = (editor, monaco, selection, oldText, newText, currentLine, oldDecorations) => {
     return {
         getDomNode: function() {
@@ -23,6 +25,7 @@ export const createContentWidget = (editor, monaco, selection, oldText, newText,
                 editor.removeContentWidget(this);
             };
             container.querySelector('#approve').onclick = () => {
+                console.log('Approved changes. Decorations:', oldDecorations);
                 editor.executeEdits('approve-changes', [{
                     range: new monaco.Range(
                         selection.startLineNumber,
