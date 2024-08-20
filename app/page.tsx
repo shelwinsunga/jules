@@ -8,7 +8,7 @@ export default function Home() {
         <EditorContainer />
       </div>
       <div className="w-1/2">
-        <LatexRenderer />
+        <LatexRenderer latex={""} />
       </div>
     </main>
   );
