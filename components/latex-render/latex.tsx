@@ -9,9 +9,13 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   import.meta.url,
 ).toString();
 
-export default function LatexRenderer() {
-    const [numPages, setNumPages] = useState(null);
-    const [pdfUrl, setPdfUrl] = useState(null);
+interface LatexRendererProps {
+    latex: string;
+}
+
+export default function LatexRenderer({ latex }: LatexRendererProps) {
+    const [numPages, setNumPages] = useState<number | null>(null);
+    const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchPdf = async () => {
@@ -19,12 +23,12 @@ export default function LatexRenderer() {
             const blob = await response.blob();
             const url = URL.createObjectURL(blob);
 
-            setPdfUrl(url);
+            setPdfUrl(url); 
         }
         fetchPdf();
     }, []);
 
-    function onDocumentLoadSuccess({ numPages }) {
+    function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
         setNumPages(numPages);
     }
 
