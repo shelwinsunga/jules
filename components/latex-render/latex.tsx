@@ -24,7 +24,7 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
     const fetchPdf = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch('http://127.0.0.1:8000', {
+            const response = await fetch('https://fastapi-production-6904.up.railway.app/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -42,15 +42,15 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
         }
     }
 
-    useEffect(() => {
-        const debounceTimer = setTimeout(() => {
-            if (latex && latex.trim() !== '') {
-                fetchPdf();
-            }
-        }, 500);
+    // useEffect(() => {
+    //     const debounceTimer = setTimeout(() => {
+    //         if (latex && latex.trim() !== '') {
+    //             fetchPdf();
+    //         }
+    //     }, 500);
 
-        return () => clearTimeout(debounceTimer);
-    }, [latex]);
+    //     return () => clearTimeout(debounceTimer);
+    // }, [latex]);
 
     function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
         setNumPages(numPages);
