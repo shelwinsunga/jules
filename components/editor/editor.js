@@ -57,6 +57,8 @@ export const CodeEditor = ({ onChange, value }) => {
     const editorRef = useRef()
     const { setLatex } = useFrontend()
     const [generation, setGeneration] = useState('');
+    const [originalText, setOriginalText] = useState('');
+    const [currentDiff, setCurrentDiff] = useState([]);
     // Default options for the editor
     const editorDefaultOptions = {
         wordWrap: 'on',
@@ -107,6 +109,7 @@ export const CodeEditor = ({ onChange, value }) => {
                 selection.endColumn
             );
             const oldText = editor.getModel().getValueInRange(range);
+            setOriginalText(oldText);
 
             // Prompt the user for input
             const userInput = await new Promise((resolve) => {
@@ -174,62 +177,14 @@ export const CodeEditor = ({ onChange, value }) => {
             for await (const delta of readStreamableValue(output)) {
                 newText += delta;
                 setGeneration(currentGeneration => `${currentGeneration}${delta}`);
+                
+                // Calculate and apply diff in real-time
+                const newDiff = calculateDiff(originalText.split('\n'), newText.split('\n'));
+                setCurrentDiff(newDiff);
+                
+                // Apply the diff to the editor
+                applyDiffToEditor(editor, monaco, selection.startLineNumber, newDiff);
             }
-
-            const oldLines = oldText.split('\n');
-            const newLines = newText.split('\n');
-            
-            let diffText = '';
-            let decorations = [];
-            let currentLine = selection.startLineNumber;
-
-            // Calculate the actual diff
-            const diff = calculateDiff(oldLines, newLines);
-
-            diff.forEach(part => {
-                if (part.removed) {
-                    part.value.split('\n').forEach(line => {
-                        if (line) {
-                            diffText += line + '\n';
-                            decorations.push({
-                                range: new monaco.Range(currentLine, 1, currentLine, 1),
-                                options: { isWholeLine: true, className: 'diff-old-content' }
-                            });
-                            currentLine++;
-                        }
-                    });
-                } else if (part.added) {
-                    part.value.split('\n').forEach(line => {
-                        if (line) {
-                            diffText += line + '\n';
-                            decorations.push({
-                                range: new monaco.Range(currentLine, 1, currentLine, 1),
-                                options: { isWholeLine: true, className: 'diff-new-content' }
-                            });
-                            currentLine++;
-                        }
-                    });
-                } else {
-                    part.value.split('\n').forEach(line => {
-                        if (line) {
-                            diffText += line + '\n';
-                            currentLine++;
-                        }
-                    });
-                }
-            });
-
-            // Remove trailing newline
-            diffText = diffText.slice(0, -1);
-
-            // Replace the selected text with the diff text
-            editor.executeEdits('insert-diff-text', [{
-                range: range,
-                text: diffText,
-                forceMoveMarkers: true
-            }]);
-
-            const oldDecorations = editor.deltaDecorations([], decorations);
 
             // Add widget to approve or reject changes
             const contentWidget = {
@@ -303,20 +258,73 @@ export const CodeEditor = ({ onChange, value }) => {
             let newIndex = 0;
 
             while (oldIndex < oldLines.length || newIndex < newLines.length) {
-                if (oldIndex < oldLines.length && newIndex < newLines.length && oldLines[oldIndex] === newLines[newIndex]) {
-                    diff.push({ value: oldLines[oldIndex] + '\n' });
-                    oldIndex++;
+                if (newIndex < newLines.length) {
+                    // Check if the new line is a continuation of the previous line
+                    if (diff.length > 0 && diff[diff.length - 1].added) {
+                        diff[diff.length - 1].value += newLines[newIndex] + '\n';
+                    } else {
+                        diff.push({ added: true, value: newLines[newIndex] + '\n' });
+                    }
                     newIndex++;
                 } else if (oldIndex < oldLines.length) {
                     diff.push({ removed: true, value: oldLines[oldIndex] + '\n' });
                     oldIndex++;
-                } else if (newIndex < newLines.length) {
-                    diff.push({ added: true, value: newLines[newIndex] + '\n' });
-                    newIndex++;
                 }
             }
 
             return diff;
+        }
+
+        // Function to apply the diff to the editor
+        function applyDiffToEditor(editor, monaco, startLineNumber, diff) {
+            let currentLine = startLineNumber;
+            let diffText = '';
+            let decorations = [];
+
+            diff.forEach(part => {
+                if (part.removed) {
+                    part.value.split('\n').forEach(line => {
+                        if (line) {
+                            diffText += line + '\n';
+                            decorations.push({
+                                range: new monaco.Range(currentLine, 1, currentLine, 1),
+                                options: { isWholeLine: true, className: 'diff-old-content' }
+                            });
+                            currentLine++;
+                        }
+                    });
+                } else if (part.added) {
+                    part.value.split('\n').forEach(line => {
+                        if (line) {
+                            diffText += line + '\n';
+                            decorations.push({
+                                range: new monaco.Range(currentLine, 1, currentLine, 1),
+                                options: { isWholeLine: true, className: 'diff-new-content' }
+                            });
+                            currentLine++;
+                        }
+                    });
+                } else {
+                    part.value.split('\n').forEach(line => {
+                        if (line) {
+                            diffText += line + '\n';
+                            currentLine++;
+                        }
+                    });
+                }
+            });
+
+            // Remove trailing newline
+            diffText = diffText.slice(0, -1);
+
+            // Replace the selected text with the diff text
+            editor.executeEdits('insert-diff-text', [{
+                range: new monaco.Range(startLineNumber, 1, currentLine, 1),
+                text: diffText,
+                forceMoveMarkers: true
+            }]);
+
+            editor.deltaDecorations([], decorations);
         }
     }
 
