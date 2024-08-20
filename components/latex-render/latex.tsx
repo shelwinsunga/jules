@@ -4,7 +4,7 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import { Button } from '@/components/ui/button';
-
+import { useFrontend } from '@/contexts/FrontendContext';
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
   import.meta.url,
@@ -19,7 +19,13 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
     
     const fetchPdf = async () => {
-        const response = await fetch('http://127.0.0.1:8000');
+        const response = await fetch('http://127.0.0.1:8000', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ latex: latex }),
+        });
         const blob = await response.blob();
         const url = URL.createObjectURL(blob);
 

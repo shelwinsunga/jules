@@ -1,10 +1,11 @@
-from flask import Flask, send_file
+from flask import Flask, send_file, request
 import os
 import subprocess
 import tempfile
 from flask_cors import CORS
 
 app = Flask(__name__)
+
 CORS(app)
 
 # Dummy LaTeX content
@@ -21,12 +22,13 @@ This is a subsection with some math: $E = mc^2$
 \end{document}
 """
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['POST'])
 def latex_to_pdf():
+    latex_content = request.json.get('latex')
     with tempfile.TemporaryDirectory() as temp_dir:
         input_file = os.path.join(temp_dir, 'input.tex')
         with open(input_file, 'w') as f:
-            f.write(DUMMY_LATEX)
+            f.write(latex_content)
         
         try:
             # Run pdflatex using texlive-latex-base

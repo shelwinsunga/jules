@@ -2,7 +2,7 @@
 'use client'
 import Editor from '@monaco-editor/react'
 import { useRef } from 'react'
-
+import { useFrontend } from '@/contexts/FrontendContext'
 const initialContent = `\\documentclass{article}
 \\begin{document}
 Hello, world! This is a simple LaTeX document.
@@ -30,6 +30,8 @@ function setTheme(monaco) {
 // Main CodeEditor component
 export const CodeEditor = ({ onChange, value }) => {
     const editorRef = useRef()
+    const { setLatex } = useFrontend()
+
 
     // Default options for the editor
     const editorDefaultOptions = {
@@ -69,6 +71,7 @@ export const CodeEditor = ({ onChange, value }) => {
 
         // Initialize with the LaTeX content
         editor.setValue(initialContent)
+        setLatex(initialContent)
     }
 
     // Render the Editor component
