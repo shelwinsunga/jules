@@ -4,7 +4,12 @@ import { useEditorSetup } from './hooks/useEditorSetup';
 import { useAIAssist } from './hooks/useAIAssist';
 import { editorDefaultOptions } from './constants/editorDefaults';
 
-export const CodeEditor = ({ onChange, value }) => {
+interface CodeEditorProps {
+    onChange: (value: string) => void;
+    value: string;
+}
+
+export const CodeEditor = ({ onChange, value }: CodeEditorProps) => {
     const { editorRef, handleEditorDidMount } = useEditorSetup(onChange);
     const { handleAIAssist } = useAIAssist(editorRef);
 

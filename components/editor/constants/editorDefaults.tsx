@@ -1,4 +1,7 @@
-export const editorDefaultOptions = {
+
+import { editor } from 'monaco-editor';
+
+export const editorDefaultOptions: editor.IStandaloneEditorConstructionOptions = {
     wordWrap: 'on',
     folding: false,
     lineNumbersMinChars: 3,
