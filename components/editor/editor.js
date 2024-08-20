@@ -166,7 +166,9 @@ export const CodeEditor = ({ onChange, value }) => {
             });
 
             // Generate text using the user input
-            const { output } = await generate(userInput);
+            
+            const context = `Replace lines ${selection.startLineNumber}-${selection.endLineNumber}:\n${oldText}`;
+            const { output } = await generate(userInput + '\n\n' + context);
             let newText = '';
 
             for await (const delta of readStreamableValue(output)) {
