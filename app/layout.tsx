@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { FrontendProvider } from "@/contexts/FrontendContext";
 import { ThemeProvider } from "@/components/theme-provider"
-
+import Nav from "@/components/nav/nav";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -26,6 +26,9 @@ export default function RootLayout({
             disableTransitionOnChange
           >
         <FrontendProvider>
+        <div className="fixed top-0 left-0 right-0 h-48 bg-gradient-to-b from-gray-400/30 to-transparent pointer-events-none" />
+
+          <Nav />
           {children}
         </FrontendProvider>
         </ThemeProvider>

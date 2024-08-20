@@ -20,6 +20,7 @@ export const CodeEditor = ({ onChange, value }: CodeEditorProps) => {
             height="100%"
             width="100%"
             value={value}
+            className="rounded-md"
             onMount={(editor, monaco) => {
                 handleEditorDidMount(editor, monaco);
                 handleAIAssist(editor, monaco);

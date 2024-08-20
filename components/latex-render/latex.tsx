@@ -6,6 +6,7 @@ import 'react-pdf/dist/Page/TextLayer.css';
 import { Button } from '@/components/ui/button';
 import { useFrontend } from '@/contexts/FrontendContext';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -70,12 +71,12 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
                     {isLoading ? 'Generating...' : 'Generate PDF'}
                 </Button>
             </div>
-            {isLoading ? (
-                <div className="flex-grow overflow-auto w-full h-full flex flex-col items-center">
-                    <Skeleton className="w-[calc(50vw-40px)] h-[calc(100vh-80px)] mt-4" />
-                </div>
-            ) : pdfUrl ? (
-                <div className="flex-grow overflow-auto w-full h-full">
+            <ScrollArea className="flex-grow w-full h-full">
+                {isLoading ? (
+                    <div className="flex flex-col items-center">
+                        <Skeleton className="w-[calc(50vw-40px)] h-[calc(100vh-80px)] mt-4" />
+                    </div>
+                ) : pdfUrl ? (
                     <Document
                         file={pdfUrl}
                         onLoadSuccess={onDocumentLoadSuccess}
@@ -96,8 +97,8 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
                             ),
                         )}
                     </Document>
-                </div>
-            ) : null}
+                ) : null}
+            </ScrollArea>
         </div>
     );
 };
