@@ -116,24 +116,24 @@ export const CodeEditor = ({ onChange, value }) => {
             const diff = calculateDiff(oldLines, newLines);
 
             diff.forEach(part => {
-                if (part.added) {
-                    part.value.split('\n').forEach(line => {
-                        if (line) {
-                            diffText += line + '\n';
-                            decorations.push({
-                                range: new monaco.Range(currentLine, 1, currentLine, 1),
-                                options: { isWholeLine: true, className: 'diff-new-content' }
-                            });
-                            currentLine++;
-                        }
-                    });
-                } else if (part.removed) {
+                if (part.removed) {
                     part.value.split('\n').forEach(line => {
                         if (line) {
                             diffText += line + '\n';
                             decorations.push({
                                 range: new monaco.Range(currentLine, 1, currentLine, 1),
                                 options: { isWholeLine: true, className: 'diff-old-content' }
+                            });
+                            currentLine++;
+                        }
+                    });
+                } else if (part.added) {
+                    part.value.split('\n').forEach(line => {
+                        if (line) {
+                            diffText += line + '\n';
+                            decorations.push({
+                                range: new monaco.Range(currentLine, 1, currentLine, 1),
+                                options: { isWholeLine: true, className: 'diff-new-content' }
                             });
                             currentLine++;
                         }
@@ -166,24 +166,10 @@ export const CodeEditor = ({ onChange, value }) => {
                     const container = document.createElement('div');
                     container.innerHTML = `
                         <div style="background: white; padding: 5px; border: 1px solid black;">
-                            <button id="approve">Approve</button>
                             <button id="reject">Reject</button>
+                            <button id="approve">Approve</button>
                         </div>
                     `;
-                    container.querySelector('#approve').onclick = () => {
-                        editor.executeEdits('approve-changes', [{
-                            range: new monaco.Range(
-                                selection.startLineNumber,
-                                1,
-                                currentLine - 1,
-                                editor.getModel().getLineMaxColumn(currentLine - 1)
-                            ),
-                            text: newText,
-                            forceMoveMarkers: true
-                        }]);
-                        editor.deltaDecorations(oldDecorations, []);
-                        editor.removeContentWidget(contentWidget);
-                    };
                     container.querySelector('#reject').onclick = () => {
                         editor.executeEdits('reject-changes', [{
                             range: new monaco.Range(
@@ -193,6 +179,20 @@ export const CodeEditor = ({ onChange, value }) => {
                                 editor.getModel().getLineMaxColumn(currentLine - 1)
                             ),
                             text: oldText,
+                            forceMoveMarkers: true
+                        }]);
+                        editor.deltaDecorations(oldDecorations, []);
+                        editor.removeContentWidget(contentWidget);
+                    };
+                    container.querySelector('#approve').onclick = () => {
+                        editor.executeEdits('approve-changes', [{
+                            range: new monaco.Range(
+                                selection.startLineNumber,
+                                1,
+                                currentLine - 1,
+                                editor.getModel().getLineMaxColumn(currentLine - 1)
+                            ),
+                            text: newText,
                             forceMoveMarkers: true
                         }]);
                         editor.deltaDecorations(oldDecorations, []);
@@ -236,12 +236,12 @@ export const CodeEditor = ({ onChange, value }) => {
                     diff.push({ value: oldLines[oldIndex] + '\n' });
                     oldIndex++;
                     newIndex++;
-                } else if (newIndex < newLines.length && (oldIndex >= oldLines.length || oldLines[oldIndex] !== newLines[newIndex])) {
-                    diff.push({ added: true, value: newLines[newIndex] + '\n' });
-                    newIndex++;
                 } else if (oldIndex < oldLines.length) {
                     diff.push({ removed: true, value: oldLines[oldIndex] + '\n' });
                     oldIndex++;
+                } else if (newIndex < newLines.length) {
+                    diff.push({ added: true, value: newLines[newIndex] + '\n' });
+                    newIndex++;
                 }
             }
 
