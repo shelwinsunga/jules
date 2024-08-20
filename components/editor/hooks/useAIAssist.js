@@ -25,6 +25,7 @@ export const useAIAssist = (editorRef) => {
             const { output } = await generate(userInput + '\n\n' + context);
             let newText = '';
             let oldDecorations = [];
+            let currentLine = selection.startLineNumber; // Initialize currentLine here
 
             for await (const delta of readStreamableValue(output)) {
                 editor.executeEdits('reset-to-initial', [{
@@ -35,21 +36,19 @@ export const useAIAssist = (editorRef) => {
 
                 newText += delta;
                 setGeneration(currentGeneration => `${currentGeneration}${delta}`);
-                const { diffText, decorations, currentLine } = calculateDiff(oldText, newText, monaco, selection);
+                const { diffText, decorations, currentLine: updatedLine } = calculateDiff(oldText, newText, monaco, selection);
+                currentLine = updatedLine; // Update currentLine
 
                 editor.executeEdits('insert-diff-text', [{
                     range: range,
                     text: diffText,
                     forceMoveMarkers: true
                 }]);
-                oldDecorations = editor.deltaDecorations([], decorations);
-
+                oldDecorations = editor.deltaDecorations(oldDecorations, decorations);
             }
 
-            const { diffText, decorations, currentLine } = calculateDiff(oldText, newText, monaco, selection);
-
-            // const oldDecorations = editor.deltaDecorations([], decorations);
-
+            const { diffText, decorations, currentLine: finalLine } = calculateDiff(oldText, newText, monaco, selection);
+            currentLine = finalLine; // Update currentLine
 
             const contentWidget = createContentWidget(editor, monaco, selection, oldText, newText, currentLine, oldDecorations);
             editor.addContentWidget(contentWidget);
