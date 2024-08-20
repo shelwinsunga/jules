@@ -6,7 +6,7 @@ export default function Home() {
   const { latex } = useFrontend();
   return (
     <main className="flex h-[100vh]">
-      <div className="w-1/2">
+      <div className="rounded-md border w-1/2">
         <EditorContainer />
       </div>
       <div className="w-1/2">

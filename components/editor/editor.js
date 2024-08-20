@@ -3,6 +3,8 @@
 import Editor from '@monaco-editor/react'
 import { useRef } from 'react'
 import { useFrontend } from '@/contexts/FrontendContext'
+import { loader } from '@monaco-editor/react';
+
 const initialContent = `\\documentclass{article}
 \\begin{document}
 Hello, world! This is a simple LaTeX document.
@@ -17,7 +19,7 @@ This is a subsection with some math: $E = mc^2$
 // Function to set custom theme for the editor
 function setTheme(monaco) {
     monaco.editor.defineTheme('myTheme', {
-        base: 'vs-dark',
+        base: 'vs',
         inherit: true,
         rules: [],
         colors: {
@@ -26,6 +28,25 @@ function setTheme(monaco) {
     })
     monaco.editor.setTheme('myTheme')
 }
+
+// Add this before the CodeEditor component
+loader.init().then((monaco) => {
+  // Register a new language
+  monaco.languages.register({ id: 'latex' });
+
+  // Define the token provider for LaTeX syntax highlighting
+  monaco.languages.setMonarchTokensProvider('latex', {
+    tokenizer: {
+      root: [
+        [/\\[a-zA-Z]+/, 'keyword'],
+        [/\{|\}/, 'delimiter.curly'],
+        [/\[|\]/, 'delimiter.square'],
+        [/\$.*?\$/, 'string'],
+        [/%.*$/, 'comment'],
+      ]
+    }
+  });
+});
 
 // Main CodeEditor component
 export const CodeEditor = ({ onChange, value }) => {

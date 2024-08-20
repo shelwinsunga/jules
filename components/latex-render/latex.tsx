@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
@@ -33,31 +33,44 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
         setPdfUrl(url); 
     }
 
+    useEffect(() => {
+        if (latex && latex.trim() !== '') {
+            fetchPdf();
+        }
+    }, [latex]);
+
     function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
         setNumPages(numPages);
     }
-
+    
     return (
-        <div className="w-full h-full">
-            <h1>Latex Renderer</h1>
-            <Button onClick={fetchPdf}>
-                Generate PDF
-            </Button>
+        <div className="w-full h-full flex flex-col">
+            <div className="flex justify-center items-center border-b shadow-sm py-2    ">
+                <Button variant="outline" onClick={fetchPdf}>
+                    Generate PDF
+                </Button>
+            </div>
             {pdfUrl && (
-                <Document
-                    file={pdfUrl}
-                    onLoadSuccess={onDocumentLoadSuccess}
-                >
-                    {Array.from(
-                        new Array(numPages),
-                        (el, index) => (
-                            <Page
-                                key={`page_${index + 1}`}
-                                pageNumber={index + 1}
-                            />
-                        ),
-                    )}
-                </Document>
+                <div className="flex-grow overflow-auto w-full h-full">
+                    <Document
+                        file={pdfUrl}
+                        onLoadSuccess={onDocumentLoadSuccess}
+                        className="flex flex-col items-center w-full h-full"
+                    >
+                        {Array.from(
+                            new Array(numPages),
+                            (el, index) => (
+                                <Page
+                                    key={`page_${index + 1}`}
+                                    pageNumber={index + 1}
+                                    className="mb-4 shadow-lg"
+                                    width={window.innerWidth / 2 - 40}
+                                    height={window.innerHeight - 80}
+                                />
+                            ),
+                        )}
+                    </Document>
+                </div>
             )}
         </div>
     );
