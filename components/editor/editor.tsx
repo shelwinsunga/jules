@@ -15,12 +15,14 @@ export const CodeEditor = ({ onChange, value }: CodeEditorProps) => {
 
     return (
         <Editor
+        
             theme="vs-dark"
             language="latex"
             height="100%"
             width="100%"
             value={value}
-            className="rounded-md"
+        
+            className="pt-2 bg-background"
             onMount={(editor, monaco) => {
                 handleEditorDidMount(editor, monaco);
                 handleAIAssist(editor, monaco);

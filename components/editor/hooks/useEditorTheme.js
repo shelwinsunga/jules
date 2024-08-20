@@ -5,7 +5,9 @@ export const useEditorTheme = () => {
             base: 'vs',
             inherit: true,
             rules: [],
-            colors: {},
+            colors: {
+                'editor.background': '#ffffff',
+            },
         });
         monaco.editor.setTheme('myTheme');
     };

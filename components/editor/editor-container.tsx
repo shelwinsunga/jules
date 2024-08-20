@@ -13,9 +13,9 @@ const EditorContainer = () => {
 
     return (
         <div className="flex flex-col w-full h-full">
-            <div className="flex justify-center items-center border-b shadow-sm py-2">
+            <div className="flex justify-end items-center border-b shadow-sm p-2">
             <Button variant="outline">
-                Generate PDF
+                Assist
             </Button>
             </div>
             <CodeEditor

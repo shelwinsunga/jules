@@ -52,7 +52,7 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
                 if (latex && latex.trim() !== '') {
                     fetchPdf();
                 }
-            }, 250);
+            }, 500);
         };
 
         resetTimer();
@@ -71,32 +71,33 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
                     {isLoading ? 'Generating...' : 'Generate PDF'}
                 </Button>
             </div>
-            <ScrollArea className="flex-grow w-full h-full">
+            <ScrollArea className="flex-grow w-full h-full bg-foreground/20">
                 {isLoading ? (
-                    <div className="flex flex-col items-center">
-                        <Skeleton className="w-[calc(50vw-40px)] h-[calc(100vh-80px)] mt-4" />
+                    <div className="flex justify-center items-center w-full h-full">
+                        <Skeleton className="w-full h-full max-w-4xl" />
                     </div>
                 ) : pdfUrl ? (
-                    <Document
-                        file={pdfUrl}
-                        onLoadSuccess={onDocumentLoadSuccess}
-                        className="flex flex-col items-center w-full h-full"
-                        loading={<Skeleton className="w-[calc(50vw-40px)] h-[calc(100vh-80px)] mt-4" />}
-                    >
-                        {Array.from(
-                            new Array(numPages),
-                            (el, index) => (
-                                <Page
-                                    key={`page_${index + 1}`}
-                                    pageNumber={index + 1}
-                                    className="mb-4 shadow-lg"
-                                    width={window.innerWidth / 2 - 40}
-                                    height={window.innerHeight - 80}
-                                    loading={<Skeleton className="w-[calc(50vw-40px)] h-[calc(100vh-80px)] mb-4" />}
-                                />
-                            ),
-                        )}
-                    </Document>
+                    <div className="flex justify-center w-full">
+                        <Document
+                            file={pdfUrl}
+                            onLoadSuccess={onDocumentLoadSuccess}
+                            className="flex flex-col items-center w-full max-w-4xl"
+                            loading={<Skeleton className="w-full h-full max-w-4xl" />}
+                        >
+                            {Array.from(
+                                new Array(numPages),
+                                (el, index) => (
+                                    <Page
+                                        key={`page_${index + 1}`}
+                                        pageNumber={index + 1}
+                                        className="mb-4 shadow-lg"
+                                        width={Math.min(window.innerWidth - 80, 800)}
+                                        loading={<Skeleton className="w-full h-[calc(100vh-80px)] mb-4" />}
+                                    />
+                                ),
+                            )}
+                        </Document>
+                    </div>
                 ) : null}
             </ScrollArea>
         </div>
