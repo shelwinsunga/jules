@@ -2,6 +2,9 @@
 import EditorContainer from "@/components/editor/editor-container";
 import LatexRenderer from "@/components/latex-render/latex";
 import { useFrontend } from "@/contexts/FrontendContext";
+
+export const maxDuration = 30;
+
 export default function Home() {
   const { latex } = useFrontend();
   return (

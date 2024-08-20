@@ -4,6 +4,10 @@ import Editor from '@monaco-editor/react'
 import { useRef } from 'react'
 import { useFrontend } from '@/contexts/FrontendContext'
 import { loader } from '@monaco-editor/react';
+import { generate } from '@/app/actions';
+import { readStreamableValue } from 'ai/rsc';
+import { useEffect } from 'react';
+import { useState } from 'react';
 
 const initialContent = `\\documentclass{article}
 \\begin{document}
@@ -52,7 +56,7 @@ loader.init().then((monaco) => {
 export const CodeEditor = ({ onChange, value }) => {
     const editorRef = useRef()
     const { setLatex } = useFrontend()
-
+    const [generation, setGeneration] = useState('');
     // Default options for the editor
     const editorDefaultOptions = {
         wordWrap: 'on',
@@ -94,7 +98,7 @@ export const CodeEditor = ({ onChange, value }) => {
         setLatex(initialContent)
 
         // Add key binding for Cmd/Ctrl + K
-        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyK, () => {
+        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyK, async () => {
             const selection = editor.getSelection();
             const range = new monaco.Range(
                 selection.startLineNumber,
@@ -103,7 +107,54 @@ export const CodeEditor = ({ onChange, value }) => {
                 selection.endColumn
             );
             const oldText = editor.getModel().getValueInRange(range);
-            const newText = 'This is a subsection with some math: $E = mc^2$'; // This should be replaced with actual new text generation
+
+            // Prompt the user for input
+            const userInput = await new Promise((resolve) => {
+                const inputContainer = document.createElement('div');
+                inputContainer.style.position = 'absolute';
+                inputContainer.style.zIndex = '1000';
+                inputContainer.style.left = '0';
+                inputContainer.style.top = '0';
+                inputContainer.style.background = 'white';
+                inputContainer.style.padding = '5px';
+                inputContainer.style.boxShadow = '0 0 5px rgba(0,0,0,0.3)';
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.placeholder = 'Enter your text here';
+                input.style.marginRight = '5px';
+                
+                const button = document.createElement('button');
+                button.textContent = 'Submit';
+                button.onclick = () => {
+                    resolve(input.value);
+                    document.body.removeChild(inputContainer);
+                };
+
+                inputContainer.appendChild(input);
+                inputContainer.appendChild(button);
+
+                const editorDomNode = editor.getDomNode();
+                if (editorDomNode) {
+                    const rect = editorDomNode.getBoundingClientRect();
+                    const lineHeight = editor.getOption(monaco.editor.EditorOption.lineHeight);
+                    const lineTop = editor.getTopForLineNumber(selection.startLineNumber);
+                    inputContainer.style.top = `${rect.top + lineTop - lineHeight}px`;
+                    inputContainer.style.left = `${rect.left}px`;
+                }
+
+                document.body.appendChild(inputContainer);
+                input.focus();
+            });
+
+            // Generate text using the user input
+            const { output } = await generate(userInput);
+            let newText = '';
+
+            for await (const delta of readStreamableValue(output)) {
+                newText += delta;
+                setGeneration(currentGeneration => `${currentGeneration}${delta}`);
+            }
 
             const oldLines = oldText.split('\n');
             const newLines = newText.split('\n');
