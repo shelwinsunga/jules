@@ -4,6 +4,10 @@ import { generate } from '@/app/actions';
 import { readStreamableValue } from 'ai/rsc';
 import { calculateDiff } from '../utils/calculateDiff';
 import { createContentWidget } from '../utils/WidgetCreator';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 
 export const useAIAssist = (editorRef) => {
     const [generation, setGeneration] = useState('');
@@ -55,7 +59,6 @@ export const useAIAssist = (editorRef) => {
             editor.addContentWidget(contentWidget);
             
         });
-
         // Add CSS for diff highlighting
         const style = document.createElement('style');
         style.textContent = `
@@ -73,37 +76,52 @@ const promptUserForInput = async (editor, monaco, selection) => {
     return new Promise((resolve) => {
         const inputContainer = document.createElement('div');
         inputContainer.style.position = 'absolute';
+        inputContainer.style.width = '400px';
+        inputContainer.style.height = '150px';
         inputContainer.style.zIndex = '1000';
-        inputContainer.style.background = 'white';
-        inputContainer.style.padding = '10px';
-        inputContainer.style.boxShadow = '0 0 5px rgba(0,0,0,0.3)';
 
-        const textarea = document.createElement('textarea');
-        textarea.placeholder = 'Enter your text here';
-        textarea.style.width = '300px';
-        textarea.style.height = '100px';
-        textarea.style.marginBottom = '10px';
-        textarea.style.resize = 'vertical';
-        
-        const button = document.createElement('button');
-        button.textContent = 'Submit';
-        button.style.display = 'block';
-        
-        textarea.addEventListener('keydown', (event) => {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                resolve(textarea.value);
+        const PromptContent = () => {
+            const [inputValue, setInputValue] = React.useState('');
+            const textareaRef = React.useRef(null);
+
+            React.useEffect(() => {
+                if (textareaRef.current) {
+                    textareaRef.current.focus();
+                }
+            }, []);
+
+            const handleSubmit = () => {
+                resolve(inputValue);
                 document.body.removeChild(inputContainer);
-            }
-        });
+            };
 
-        button.onclick = () => {
-            resolve(textarea.value);
-            document.body.removeChild(inputContainer);
+            const handleKeyDown = (event) => {
+                if (event.key === 'Enter' && !event.shiftKey) {
+                    event.preventDefault();
+                    handleSubmit();
+                }
+            };
+
+            return (
+                <div className="flex bg-background border rounded-md p-2 gap-2 flex-col shadow-md">
+                    <div className="w-full">
+                        <Textarea
+                            ref={textareaRef}
+                            placeholder="Enter your text here"
+                            className="w-full h-full mb-2 border-none outline-none resize-none"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                    </div>
+                    <div className="flex justify-start p-2">
+                        <Button size="sm" onClick={handleSubmit}>Submit</Button>
+                    </div>
+                </div>
+            );
         };
 
-        inputContainer.appendChild(textarea);
-        inputContainer.appendChild(button);
+        ReactDOM.render(<PromptContent />, inputContainer);
 
         const editorDomNode = editor.getDomNode();
         if (editorDomNode) {
@@ -111,11 +129,9 @@ const promptUserForInput = async (editor, monaco, selection) => {
             const lineHeight = editor.getOption(monaco.editor.EditorOption.lineHeight);
             const lineTop = editor.getTopForLineNumber(selection.startLineNumber);
             
-            // Calculate position to ensure it's within screen bounds
             let top = rect.top + lineTop - lineHeight;
             let left = rect.left;
             
-            // Adjust if it would render off-screen
             if (window) {
                 if (top + inputContainer.offsetHeight > window.innerHeight) {
                     top = window.innerHeight - inputContainer.offsetHeight;
@@ -125,7 +141,6 @@ const promptUserForInput = async (editor, monaco, selection) => {
                 }
             }
             
-            // Ensure it's not positioned off the top or left of the screen
             top = Math.max(0, top);
             left = Math.max(0, left);
             
@@ -134,6 +149,5 @@ const promptUserForInput = async (editor, monaco, selection) => {
         }
 
         document.body.appendChild(inputContainer);
-        textarea.focus();
     });
 };

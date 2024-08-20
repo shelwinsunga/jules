@@ -40,7 +40,7 @@ export const createContentWidget = (editor, monaco, selection, oldText, newText,
             };
 
             const WidgetContent = () => (
-                <div className="bg-background border border-border rounded-md p-2 shadow-sm flex gap-2">
+                <div className="w-full bg-background border border-border rounded-md p-2 shadow-sm flex gap-4">
                     <Button variant="outline" className="bg-green-500" size="sm" onClick={handleApprove}>
                         Approve
                     </Button>
