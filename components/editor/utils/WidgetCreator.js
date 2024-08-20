@@ -25,7 +25,6 @@ export const createContentWidget = (editor, monaco, selection, oldText, newText,
                 editor.removeContentWidget(this);
             };
             container.querySelector('#approve').onclick = () => {
-                console.log('Approved changes. Decorations:', oldDecorations);
                 editor.executeEdits('approve-changes', [{
                     range: new monaco.Range(
                         selection.startLineNumber,
@@ -36,7 +35,7 @@ export const createContentWidget = (editor, monaco, selection, oldText, newText,
                     text: newText,
                     forceMoveMarkers: true
                 }]);
-                editor.deltaDecorations(oldDecorations, []);
+                editor.deltaDecorations(oldDecorations, []); // funct signature is (,)
                 editor.removeContentWidget(this);
             };
             return container;

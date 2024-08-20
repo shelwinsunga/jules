@@ -24,6 +24,7 @@ export const useAIAssist = (editorRef) => {
             const context = `Replace lines ${selection.startLineNumber}-${selection.endLineNumber}:\n${oldText}`;
             const { output } = await generate(userInput + '\n\n' + context);
             let newText = '';
+            let oldDecorations = [];
 
             for await (const delta of readStreamableValue(output)) {
                 editor.executeEdits('reset-to-initial', [{
@@ -41,18 +42,16 @@ export const useAIAssist = (editorRef) => {
                     text: diffText,
                     forceMoveMarkers: true
                 }]);
-                const oldDecorations = editor.deltaDecorations([], decorations);
+                oldDecorations = editor.deltaDecorations([], decorations);
 
             }
 
             const { diffText, decorations, currentLine } = calculateDiff(oldText, newText, monaco, selection);
 
-            const oldDecorations = editor.deltaDecorations([], decorations);
+            // const oldDecorations = editor.deltaDecorations([], decorations);
 
 
-            console.log('Before creating content widget');
             const contentWidget = createContentWidget(editor, monaco, selection, oldText, newText, currentLine, oldDecorations);
-            console.log('After creating content widget');
             editor.addContentWidget(contentWidget);
             
         });
