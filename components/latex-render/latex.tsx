@@ -43,9 +43,13 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
     }
 
     useEffect(() => {
-        if (latex && latex.trim() !== '') {
-            fetchPdf();
-        }
+        const debounceTimer = setTimeout(() => {
+            if (latex && latex.trim() !== '') {
+                fetchPdf();
+            }
+        }, 500);
+
+        return () => clearTimeout(debounceTimer);
     }, [latex]);
 
     function onDocumentLoadSuccess({ numPages }: { numPages: number }) {

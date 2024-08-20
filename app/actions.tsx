@@ -10,7 +10,7 @@ export async function generate(input: string) {
   (async () => {
     const { textStream } = await streamText({
       model: openai('gpt-4o'),
-      system: 'You only write latex. You do not write anything else or converse; you only write latex.',
+      system: 'Imagine you are embedded in a latex editor. You only write latex. You do not write anything else or converse; you only write latex.',
       prompt: input,
     });
 
