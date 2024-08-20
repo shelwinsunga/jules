@@ -13,7 +13,14 @@ export const editorDefaultOptions: editor.IStandaloneEditorConstructionOptions =
     overviewRulerLanes: 0,
     hideCursorInOverviewRuler: true,
     scrollbar: {
-        vertical: 'visible'
+        vertical: 'hidden',
+        horizontal: 'visible',
+        useShadows: true,
+        verticalScrollbarSize: 10,
+        horizontalScrollbarSize: 10,
+        verticalHasArrows: false,
+        horizontalHasArrows: false,
+        arrowSize: 30
     },
     overviewRulerBorder: false,
 };

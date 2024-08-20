@@ -42,15 +42,22 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
         }
     }
 
-    // useEffect(() => {
-    //     const debounceTimer = setTimeout(() => {
-    //         if (latex && latex.trim() !== '') {
-    //             fetchPdf();
-    //         }
-    //     }, 500);
+    useEffect(() => {
+        let debounceTimer: NodeJS.Timeout;
 
-    //     return () => clearTimeout(debounceTimer);
-    // }, [latex]);
+        const resetTimer = () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                if (latex && latex.trim() !== '') {
+                    fetchPdf();
+                }
+            }, 250);
+        };
+
+        resetTimer();
+
+        return () => clearTimeout(debounceTimer);
+    }, [latex]);
 
     function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
         setNumPages(numPages);
