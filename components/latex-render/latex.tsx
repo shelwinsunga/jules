@@ -20,7 +20,7 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
     
     const fetchPdf = async () => {
-        const response = await fetch('http://127.0.0.1:8000', {
+        const response = await fetch('fastapi-production-6904.up.railway.app', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
