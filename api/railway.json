@@ -5,10 +5,11 @@
     "nixpacksPlan": {
       "phases": {
         "setup": {
-          "nixPkgs": ["wget"]
+          "nixPkgs": ["curl"]
         }
       }
-    }
+    },
+    "buildCommand": "curl -sL https://yihui.org/tinytex/install-bin-unix.sh | sh"
   },
   "deploy": {
     "startCommand": "hypercorn main:app --bind \"[::]:$PORT\""
