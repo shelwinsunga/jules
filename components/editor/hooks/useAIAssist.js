@@ -87,6 +87,15 @@ const promptUserForInput = async (editor, monaco, selection) => {
         const button = document.createElement('button');
         button.textContent = 'Submit';
         button.style.display = 'block';
+        
+        textarea.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                resolve(textarea.value);
+                document.body.removeChild(inputContainer);
+            }
+        });
+
         button.onclick = () => {
             resolve(textarea.value);
             document.body.removeChild(inputContainer);
