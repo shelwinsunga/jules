@@ -2,8 +2,10 @@ from flask import Flask, send_file
 import os
 import subprocess
 import tempfile
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 # Dummy LaTeX content
 DUMMY_LATEX = r"""
