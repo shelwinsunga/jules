@@ -5,11 +5,7 @@
     "nixpacksPlan": {
       "phases": {
         "setup": {
-          "nixPkgs": ["wget"],
-          "cmds": [
-            "wget -qO- https://yihui.org/tinytex/install-unx.sh | sh",
-            "echo $PATH",
-            "which pdflatex"            ]
+          "nixPkgs": ["texliveTeTeX"]
         }
       }
     }
