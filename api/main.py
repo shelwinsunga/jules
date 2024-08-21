@@ -42,7 +42,7 @@ def latex_to_pdf():
                              as_attachment=True,
                              download_name='output.pdf')
         except subprocess.CalledProcessError as e:
-            return f"Error generating PDF: {e.stderr.decode('utf-8')}", 500
+            return f"Error generating PDF: {e}", 500
 
 if __name__ == '__main__':
     app.run(debug=True)
