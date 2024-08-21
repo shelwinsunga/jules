@@ -4,11 +4,11 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import { Button } from '@/components/ui/button';
-import { useFrontend } from '@/contexts/FrontendContext';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import LatexError from './latex-error';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -86,13 +86,7 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
                         <Skeleton className="w-full h-full max-w-4xl" />
                     </div>
                 ) : error ? (
-                    <Alert variant="destructive" className="m-4">
-                        <AlertCircle className="h-4 w-4" />
-                        <AlertTitle>Error</AlertTitle>
-                        <AlertDescription>
-                            <pre className="whitespace-pre-wrap">{error}</pre>
-                        </AlertDescription>
-                    </Alert>
+                    <LatexError error={error} />
                 ) : pdfUrl ? (
                     <div className="flex justify-center w-full">
                         <Document
