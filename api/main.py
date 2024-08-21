@@ -32,9 +32,10 @@ def latex_to_pdf():
         
         try:
             # Run pdflatex using texlive-latex-base
-            subprocess.run(['pdflatex', '-output-directory', temp_dir, input_file], 
-                           check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                           env=dict(os.environ, PATH=f"{os.environ['PATH']}:/usr/bin"))
+            result = subprocess.run(['pdflatex', '-output-directory', temp_dir, input_file], 
+                                    check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                    env=dict(os.environ, PATH=f"{os.environ['PATH']}:/usr/bin"),
+                                    text=True)
             
             # Send the generated PDF
             return send_file(os.path.join(temp_dir, 'input.pdf'), 
@@ -42,8 +43,16 @@ def latex_to_pdf():
                              as_attachment=True,
                              download_name='output.pdf')
         except subprocess.CalledProcessError as e:
-            print(e)
-            return f"Error generating PDF: {e}", 500
+            # Capture both stdout and stderr
+            output = e.stdout + e.stderr
+            # Log the full error
+            app.logger.error(f"Error generating PDF: {e}\nOutput: {output}")
+            # Return a more detailed error message
+            return {
+                "error": "Error generating PDF",
+                "message": str(e),
+                "details": output
+            }, 500
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -37,8 +37,8 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
                 body: JSON.stringify({ latex: latex }),
             });
             if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(errorText);
+                const errorData = await response.json();
+                throw new Error(`${errorData.error}: ${errorData.message}\n\nDetails: ${errorData.details}`);
             }
             const blob = await response.blob();
             const url = URL.createObjectURL(blob);
@@ -89,7 +89,9 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
                     <Alert variant="destructive" className="m-4">
                         <AlertCircle className="h-4 w-4" />
                         <AlertTitle>Error</AlertTitle>
-                        <AlertDescription>{error}</AlertDescription>
+                        <AlertDescription>
+                            <pre className="whitespace-pre-wrap">{error}</pre>
+                        </AlertDescription>
                     </Alert>
                 ) : pdfUrl ? (
                     <div className="flex justify-center w-full">
