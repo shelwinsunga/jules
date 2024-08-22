@@ -5,12 +5,11 @@ import { readStreamableValue } from 'ai/rsc';
 import { calculateDiff } from '../utils/calculateDiff';
 import { createContentWidget } from '../utils/WidgetCreator';
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client'; // Updated import
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 
 export const useAIAssist = (editorRef) => {
-    const [generation, setGeneration] = useState('');
 
     const handleAIAssist = (editor, monaco) => {
         editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyK, async () => {
@@ -38,7 +37,6 @@ export const useAIAssist = (editorRef) => {
 
                 if (buffer.endsWith('\n')) {
                     newText += buffer;
-                    setGeneration(currentGeneration => `${currentGeneration}${buffer}`);
                     const { diffText, decorations, currentLine: updatedLine } = calculateDiff(oldText, newText, monaco, selection);
                     currentLine = updatedLine; // Update currentLine
 
@@ -61,7 +59,6 @@ export const useAIAssist = (editorRef) => {
 
             if (buffer) {
                 newText += buffer;
-                setGeneration(currentGeneration => `${currentGeneration}${buffer}`);
                 const { diffText, decorations, currentLine: updatedLine } = calculateDiff(oldText, newText, monaco, selection);
                 currentLine = updatedLine; // Update currentLine
 
@@ -157,7 +154,8 @@ const promptUserForInput = async (editor, monaco, selection) => {
             );
         };
 
-        ReactDOM.render(<PromptContent />, inputContainer);
+        const root = ReactDOM.createRoot(inputContainer); // Use createRoot
+        root.render(<PromptContent />);
 
         const editorDomNode = editor.getDomNode();
         if (editorDomNode) {
