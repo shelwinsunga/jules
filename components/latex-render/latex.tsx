@@ -52,22 +52,22 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
         }
     }
 
-    useEffect(() => {
-        let debounceTimer: NodeJS.Timeout;
+    // useEffect(() => {
+    //     let debounceTimer: NodeJS.Timeout;
 
-        const resetTimer = () => {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                if (latex && latex.trim() !== '') {
-                    fetchPdf();
-                }
-            }, 10);
-        };
+    //     const resetTimer = () => {
+    //         clearTimeout(debounceTimer);
+    //         debounceTimer = setTimeout(() => {
+    //             if (latex && latex.trim() !== '') {
+    //                 fetchPdf();
+    //             }
+    //         }, 10);
+    //     };
 
-        resetTimer();
+    //     resetTimer();
 
-        return () => clearTimeout(debounceTimer);
-    }, [latex]);
+    //     return () => clearTimeout(debounceTimer);
+    // }, [latex]);
 
     function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
         setNumPages(numPages);

@@ -12,7 +12,6 @@ import { Textarea } from '@/components/ui/textarea';
 export const useAIAssist = (editorRef) => {
     const [generation, setGeneration] = useState('');
 
-
     const handleAIAssist = (editor, monaco) => {
         editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyK, async () => {
             const selection = editor.getSelection();
@@ -32,17 +31,45 @@ export const useAIAssist = (editorRef) => {
             let oldDecorations = [];
             let currentLine = selection.startLineNumber; // Initialize currentLine here
 
+            let buffer = '';
+
             for await (const delta of readStreamableValue(output)) {
+                buffer += delta;
+
+                if (buffer.endsWith('\n')) {
+                    newText += buffer;
+                    setGeneration(currentGeneration => `${currentGeneration}${buffer}`);
+                    const { diffText, decorations, currentLine: updatedLine } = calculateDiff(oldText, newText, monaco, selection);
+                    currentLine = updatedLine; // Update currentLine
+
+                    editor.executeEdits('reset-to-initial', [{
+                        range: editor.getModel().getFullModelRange(),
+                        text: initialText,
+                        forceMoveMarkers: true
+                    }]);
+
+                    editor.executeEdits('insert-diff-text', [{
+                        range: range,
+                        text: diffText,
+                        forceMoveMarkers: true
+                    }]);
+                    oldDecorations = editor.deltaDecorations(oldDecorations, decorations);
+
+                    buffer = '';
+                }
+            }
+
+            if (buffer) {
+                newText += buffer;
+                setGeneration(currentGeneration => `${currentGeneration}${buffer}`);
+                const { diffText, decorations, currentLine: updatedLine } = calculateDiff(oldText, newText, monaco, selection);
+                currentLine = updatedLine; // Update currentLine
+
                 editor.executeEdits('reset-to-initial', [{
                     range: editor.getModel().getFullModelRange(),
                     text: initialText,
                     forceMoveMarkers: true
                 }]);
-
-                newText += delta;
-                setGeneration(currentGeneration => `${currentGeneration}${delta}`);
-                const { diffText, decorations, currentLine: updatedLine } = calculateDiff(oldText, newText, monaco, selection);
-                currentLine = updatedLine; // Update currentLine
 
                 editor.executeEdits('insert-diff-text', [{
                     range: range,
