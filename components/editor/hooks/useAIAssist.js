@@ -5,22 +5,10 @@ import { readStreamableValue } from 'ai/rsc';
 import { calculateDiff } from '../utils/calculateDiff';
 import { createContentWidget } from '../utils/WidgetCreator';
 import { promptModal } from '../utils/promptModal';
+import { applyEdit } from '../utils/applyEdit';
 
 export const useAIAssist = (editorRef) => {
 
-    const applyEdit = async (editor, initialText, range, diffText) => {
-        editor.executeEdits('reset-to-initial', [{
-            range: editor.getModel().getFullModelRange(),
-            text: initialText,
-            forceMoveMarkers: true
-        }]);
-        
-        editor.executeEdits('insert-diff-text', [{
-            range: range,
-            text: diffText,
-            forceMoveMarkers: true
-        }]);
-    }
 
     const handleAIAssist = (editor, monaco) => {
         editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyK, async () => {
