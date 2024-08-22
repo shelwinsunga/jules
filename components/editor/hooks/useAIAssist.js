@@ -97,10 +97,9 @@ export const useAIAssist = (editorRef) => {
 
     return { handleAIAssist };
 };
-
 // Helper function to prompt user for input
 const promptUserForInput = async (editor, monaco, selection) => {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
         const inputContainer = document.createElement('div');
         inputContainer.style.position = 'absolute';
         inputContainer.style.width = '400px';
@@ -122,10 +121,19 @@ const promptUserForInput = async (editor, monaco, selection) => {
                 document.body.removeChild(inputContainer);
             };
 
+            const handleClose = () => {
+                document.body.removeChild(inputContainer);
+                reject(new Error('User cancelled input'));
+            };
+
             const handleKeyDown = (event) => {
                 if (event.key === 'Enter' && !event.shiftKey) {
                     event.preventDefault();
                     handleSubmit();
+                } else if (event.key === 'k' && (event.ctrlKey || event.metaKey)) {
+                    console.log('Ctrl+K or Cmd+K pressed');
+                    event.preventDefault();
+                    handleClose();
                 }
             };
 
@@ -141,8 +149,9 @@ const promptUserForInput = async (editor, monaco, selection) => {
                             onKeyDown={handleKeyDown}
                         />
                     </div>
-                    <div className="flex justify-start p-2">
+                    <div className="flex justify-between p-2">
                         <Button size="sm" onClick={handleSubmit}>Submit</Button>
+                        <Button size="sm" variant="destructive" onClick={handleClose}>Close</Button>
                     </div>
                 </div>
             );
