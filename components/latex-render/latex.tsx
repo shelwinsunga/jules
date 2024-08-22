@@ -8,7 +8,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import LatexError from './latex-error';
+import { Label } from "@/components/ui/label"
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.min.mjs',
@@ -24,6 +26,7 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [autoFetch, setAutoFetch] = useState(true);
     
     const fetchPdf = async () => {
         setIsLoading(true);
@@ -52,22 +55,22 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
         }
     }
 
-    // useEffect(() => {
-    //     let debounceTimer: NodeJS.Timeout;
+    useEffect(() => {
+        let debounceTimer: NodeJS.Timeout;
 
-    //     const resetTimer = () => {
-    //         clearTimeout(debounceTimer);
-    //         debounceTimer = setTimeout(() => {
-    //             if (latex && latex.trim() !== '') {
-    //                 fetchPdf();
-    //             }
-    //         }, 10);
-    //     };
+        const resetTimer = () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                if (autoFetch && latex && latex.trim() !== '') {
+                    fetchPdf();
+                }
+            }, 10);
+        };
 
-    //     resetTimer();
+        resetTimer();
 
-    //     return () => clearTimeout(debounceTimer);
-    // }, [latex]);
+        return () => clearTimeout(debounceTimer);
+    }, [latex, autoFetch]);
 
     function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
         setNumPages(numPages);
@@ -75,10 +78,15 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
     
     return (
         <div className="w-full h-full flex flex-col">
-            <div className="flex justify-center items-center border-b shadow-sm py-2">
+            <div className="flex justify-center items-center border-b shadow-sm py-2 gap-4">
                 <Button variant="outline" onClick={fetchPdf}>
                     Generate PDF
                 </Button>
+                <Switch
+                    checked={autoFetch}
+                    onCheckedChange={setAutoFetch}
+                />
+                <Label htmlFor="auto-fetch">Auto Compile</Label>
             </div>
             <ScrollArea className="flex-grow w-full h-full bg-foreground/5">
                 {isLoading ? (
