@@ -22,8 +22,6 @@ export const useAIAssist = (editorRef) => {
         }]);
     }
 
-    
-
     const handleAIAssist = (editor, monaco) => {
         editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyK, async () => {
             const selection = editor.getSelection();
@@ -57,7 +55,7 @@ export const useAIAssist = (editorRef) => {
                 }
             }
 
-            const { diffText, decorations, currentLine: finalLine } = calculateDiff(oldText, newText, monaco, selection);
+            const { currentLine: finalLine } = calculateDiff(oldText, newText, monaco, selection);
             currentLine = finalLine;
 
             const contentWidget = createContentWidget(editor, monaco, selection, oldText, newText, currentLine, oldDecorations);
