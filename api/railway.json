@@ -5,7 +5,7 @@
     "nixpacksPlan": {
       "phases": {
         "setup": {
-          "nixPkgs": ["python3", "texliveFull"]
+          "nixPkgs": ["python3", "texliveSmall"]
         }
       }
     }
