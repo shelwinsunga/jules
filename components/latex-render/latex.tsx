@@ -12,10 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import LatexError from './latex-error';
 import { Label } from "@/components/ui/label"
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url,
-).toString();
+pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs';
 
 interface LatexRendererProps {
     latex: string;
