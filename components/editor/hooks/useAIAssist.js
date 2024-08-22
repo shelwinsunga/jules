@@ -47,25 +47,14 @@ export const useAIAssist = (editorRef) => {
             for await (const delta of readStreamableValue(output)) {
                 buffer += delta;
 
-                if (buffer.endsWith('\n')) {
+                if (buffer.endsWith('\n') || buffer.length > 0) {
                     newText += buffer;
                     const { diffText, decorations, currentLine: updatedLine } = calculateDiff(oldText, newText, monaco, selection);
                     currentLine = updatedLine; // Update currentLine
-
                     await applyEdit(editor, initialText, range, diffText);
-
                     oldDecorations = editor.deltaDecorations(oldDecorations, decorations);
-
                     buffer = '';
                 }
-            }
-
-            if (buffer) {
-                newText += buffer;
-                const { diffText, decorations, currentLine: updatedLine } = calculateDiff(oldText, newText, monaco, selection);
-                currentLine = updatedLine; // Update currentLine
-                await applyEdit(editor, initialText, range, diffText);
-                oldDecorations = editor.deltaDecorations(oldDecorations, decorations);
             }
 
             const { diffText, decorations, currentLine: finalLine } = calculateDiff(oldText, newText, monaco, selection);
