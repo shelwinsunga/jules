@@ -71,3 +71,6 @@
     box-shadow: none !important;
   }
 }
+
+.diff-old-content { background-color: #ffeeee; }
+.diff-new-content { background-color: #eeffee; }

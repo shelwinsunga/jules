@@ -79,13 +79,6 @@ export const useAIAssist = (editorRef) => {
             editor.addContentWidget(contentWidget);
             
         });
-        // Add CSS for diff highlighting
-        const style = document.createElement('style');
-        style.textContent = `
-            .diff-old-content { background-color: #ffeeee; }
-            .diff-new-content { background-color: #eeffee; }
-        `;
-        document.head.appendChild(style);
     };
 
     return { handleAIAssist };

@@ -1,13 +1,11 @@
 'use client'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import LatexError from './latex-error';
 import { Label } from "@/components/ui/label"
@@ -18,16 +16,18 @@ interface LatexRendererProps {
     latex: string;
 }
 
-export default function LatexRenderer({ latex }: LatexRendererProps) {
-    const [numPages, setNumPages] = useState<number | null>(null);
+const LatexRenderer = ({ latex }: LatexRendererProps) => {
+    const [numPages, setNumPages] = useState<number>(0);
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [autoFetch, setAutoFetch] = useState(true);
+    const [isDocumentReady, setIsDocumentReady] = useState(false);
     
     const fetchPdf = async () => {
         setIsLoading(true);
         setError(null);
+        setIsDocumentReady(false);
         try {
             const response = await fetch('https://fastapi-production-6904.up.railway.app/', {
                 method: 'POST',
@@ -61,7 +61,7 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
                 if (autoFetch && latex && latex.trim() !== '') {
                     fetchPdf();
                 }
-            }, 10);
+            }, 1000);
         };
 
         resetTimer();
@@ -69,9 +69,15 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
         return () => clearTimeout(debounceTimer);
     }, [latex, autoFetch]);
 
-    function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
+    const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
         setNumPages(numPages);
+        setIsDocumentReady(true);
     }
+
+    const options = useMemo(() => ({
+        cMapUrl: 'cmaps/',
+        cMapPacked: true,
+    }), []);
     
     return (
         <div className="w-full h-full flex flex-col">
@@ -99,8 +105,9 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
                             onLoadSuccess={onDocumentLoadSuccess}
                             className="flex flex-col items-center w-full max-w-4xl"
                             loading={<Skeleton className="w-full h-full max-w-4xl" />}
+                            options={options}
                         >
-                            {Array.from(
+                            {isDocumentReady && Array.from(
                                 new Array(numPages),
                                 (el, index) => (
                                     <Page
@@ -119,3 +126,5 @@ export default function LatexRenderer({ latex }: LatexRendererProps) {
         </div>
     );
 };
+
+export default LatexRenderer;
