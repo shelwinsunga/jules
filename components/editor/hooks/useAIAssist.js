@@ -36,12 +36,11 @@ export const useAIAssist = (editorRef) => {
 
             // Read the generated output in a streamable manner
             for await (const delta of readStreamableValue(output)) {
-                buffer += delta;
-
-                if (buffer.endsWith('\n') || buffer.length > 0) {
+                buffer += delta.content;
+                if (buffer.endsWith('\n') || delta.isComplete) {
                     newText += buffer;
                     const { diffText, decorations, currentLine: updatedLine } = calculateDiff(oldText, newText, monaco, selection);
-                    currentLine = updatedLine; // Update currentLine
+                    currentLine = updatedLine;
                     await applyEdit(editor, initialText, range, diffText);
                     oldDecorations = editor.deltaDecorations(oldDecorations, decorations);
                     buffer = '';
