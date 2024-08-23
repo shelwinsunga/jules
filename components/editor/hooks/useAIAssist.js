@@ -47,10 +47,6 @@ export const useAIAssist = (editorRef) => {
                 }
             }
 
-            // Final calculation of differences
-            const { currentLine: finalLine } = calculateDiff(oldText, newText, monaco, selection);
-            currentLine = finalLine;
-
             // Create and add a content widget to the editor
             const contentWidget = createContentWidget(editor, monaco, selection, oldText, newText, currentLine, oldDecorations);
             editor.addContentWidget(contentWidget);
