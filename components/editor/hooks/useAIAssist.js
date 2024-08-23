@@ -37,7 +37,7 @@ export const useAIAssist = (editorRef) => {
             // Read the generated output in a streamable manner
             for await (const delta of readStreamableValue(output)) {
                 buffer += delta.content;
-                if (buffer.endsWith('\n') || delta.isComplete) {
+                if (buffer.endsWith('\n') || buffer.length > 0) {
                     newText += buffer;
                     const { diffText, decorations, currentLine: updatedLine } = calculateDiff(oldText, newText, monaco, selection);
                     currentLine = updatedLine;
