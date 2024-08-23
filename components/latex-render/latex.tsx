@@ -9,13 +9,13 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Switch } from "@/components/ui/switch";
 import LatexError from './latex-error';
 import { Label } from "@/components/ui/label"
+import { ZoomIn, ZoomOut, RotateCcw  } from 'lucide-react';
 
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs';
 
 interface LatexRendererProps {
     latex: string;
 }
-
 const LatexRenderer = ({ latex }: LatexRendererProps) => {
     const [numPages, setNumPages] = useState<number>(0);
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
@@ -23,7 +23,8 @@ const LatexRenderer = ({ latex }: LatexRendererProps) => {
     const [error, setError] = useState<string | null>(null);
     const [autoFetch, setAutoFetch] = useState(true);
     const [isDocumentReady, setIsDocumentReady] = useState(false);
-    
+    const [scale, setScale] = useState(1.0);
+
     const fetchPdf = async () => {
         setIsLoading(true);
         setError(null);
@@ -78,18 +79,43 @@ const LatexRenderer = ({ latex }: LatexRendererProps) => {
         cMapUrl: 'cmaps/',
         cMapPacked: true,
     }), []);
+
+    const handleZoomIn = () => {
+        setScale(prevScale => Math.min(prevScale + 0.1, 2.0));
+    };
+
+    const handleZoomOut = () => {
+        setScale(prevScale => Math.max(prevScale - 0.1, 0.5));
+    };
+
+    const handleResetZoom = () => {
+        setScale(1.0);
+    };
     
     return (
         <div className="w-full h-full flex flex-col">
-            <div className="flex justify-center items-center border-b shadow-sm py-2 gap-4">
-                <Button variant="outline" onClick={fetchPdf}>
-                    Generate PDF
-                </Button>
-                <Switch
-                    checked={autoFetch}
-                    onCheckedChange={setAutoFetch}
-                />
-                <Label htmlFor="auto-fetch">Auto Compile</Label>
+            <div className="flex justify-between items-center border-b shadow-sm p-2 gap-4">
+                <div className="flex items-center gap-4">
+                    <Button variant="outline" onClick={fetchPdf}>
+                        Generate PDF
+                    </Button>
+                    <Switch
+                        checked={autoFetch}
+                        onCheckedChange={setAutoFetch}
+                    />
+                    <Label htmlFor="auto-fetch">Auto Compile</Label>
+                </div>
+                <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" onClick={handleZoomIn}>
+                        <ZoomIn className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={handleZoomOut}>
+                        <ZoomOut className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={handleResetZoom}>
+                        <RotateCcw className="h-4 w-4" />
+                    </Button>
+                </div>
             </div>
             <ScrollArea className="flex-grow w-full h-full bg-foreground/5">
                 {isLoading ? (
@@ -114,6 +140,7 @@ const LatexRenderer = ({ latex }: LatexRendererProps) => {
                                         key={`page_${index + 1}`}
                                         pageNumber={index + 1}
                                         className="mb-4 shadow-lg"
+                                        scale={scale}
                                         width={Math.min(window.innerWidth - 80, 800)}
                                         loading={<Skeleton className="w-full h-[calc(100vh-80px)] mb-4" />}
                                     />
