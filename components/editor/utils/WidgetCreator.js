@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import { Button } from '@/components/ui/button';
 
 export const createContentWidget = (editor, monaco, selection, oldText, newText, currentLine, oldDecorations) => {
@@ -51,7 +51,8 @@ export const createContentWidget = (editor, monaco, selection, oldText, newText,
                 </div>
             );
 
-            ReactDOM.render(<WidgetContent />, container);
+            const root = ReactDOM.createRoot(container);
+            root.render(<WidgetContent />);
             return container;
         },
         getId: function() {
