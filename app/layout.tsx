@@ -27,8 +27,6 @@ export default function RootLayout({
           >
         <FrontendProvider>
         <div className="fixed top-0 left-0 right-0 h-48 bg-gradient-to-b from-gray-400/30 to-transparent pointer-events-none" />
-
-          <Nav />
           {children}
         </FrontendProvider>
         </ThemeProvider>
