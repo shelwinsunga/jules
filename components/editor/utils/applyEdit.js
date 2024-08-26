@@ -1,14 +1,15 @@
 'use client';
 export const applyEdit = async (editor, initialText, range, diffText) => {
-    editor.executeEdits('reset-to-initial', [{
-        range: editor.getModel().getFullModelRange(),
-        text: initialText,
-        forceMoveMarkers: true
-    }]);
+    // Reset to initial text without adding to undo stack
+    editor.getModel().setValue(initialText);
     
-    editor.executeEdits('insert-diff-text', [{
-        range: range,
-        text: diffText,
-        forceMoveMarkers: true
-    }]);
+    // Apply diff text without adding to undo stack
+    editor.getModel().pushEditOperations(
+        [],
+        [{
+            range: range,
+            text: diffText,
+        }],
+        () => null
+    );
 }
