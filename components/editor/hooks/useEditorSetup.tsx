@@ -3,7 +3,7 @@ import { useRef } from 'react';
 import { useFrontend } from '@/contexts/FrontendContext';
 import { useEditorTheme } from './useEditorTheme';
 import { useLatexSyntaxHighlighting } from './useLatexSyntaxHighlighting';
-import { Editor } from '@/components/editor/types';
+import { Editor, Monaco } from '@/components/editor/types';
 
 const initialContent = `\\documentclass{article}
 \\begin{document}
@@ -22,7 +22,7 @@ export function useEditorSetup(onChange: (value: string) => void) {
     const { setTheme } = useEditorTheme();
     const { setupLatexSyntaxHighlighting } = useLatexSyntaxHighlighting();
 
-    const handleEditorDidMount = (editor: Editor, monacoInstance: object) => {
+    const handleEditorDidMount = (editor: Editor, monacoInstance: Monaco) => {
         editorRef.current = editor;
         editor.onDidChangeModelContent(() => {
             onChange(editor.getValue());

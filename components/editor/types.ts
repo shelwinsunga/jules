@@ -5,4 +5,8 @@ export interface CodeEditorProps {
     value: string;
 }
 
+
+export interface Monaco {
+    editor: typeof editor;
+}
 export type Editor = editor.IStandaloneCodeEditor;

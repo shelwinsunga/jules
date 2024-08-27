@@ -1,6 +1,8 @@
 'use client';
+import { Monaco } from '@/components/editor/types';
+
 export const useEditorTheme = () => {
-    const setTheme = (monaco) => {
+    const setTheme = (monaco: Monaco) => {
         monaco.editor.defineTheme('myTheme', {
             base: 'vs',
             inherit: true,
