@@ -37,6 +37,7 @@ export const useEditorTheme = () => {
                 'editorIndentGuide.background': '#404040',
                 'editor.selectionBackground': '#264f78',
                 'editor.inactiveSelectionBackground': '#3a3d41',
+                'focusBorder': `${colors['--border']}00` // Appending '00' for full transparency
             },
         });
         monacoInstance.editor.setTheme('myDarkTheme');
