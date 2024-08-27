@@ -5,22 +5,19 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
-import SideNav from "@/components/nav/side-nav";
+import { ModeToggle } from "@/components/ui/mode-toggle"
+
 export const maxDuration = 30;
 
 export default function Home() {
   return (
     <main className="flex flex-col h-screen">
       <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel defaultSize={15}>
-          <SideNav />
-        </ResizablePanel>
-        <ResizableHandle />
-        <ResizablePanel defaultSize={40}>
+        <ResizablePanel defaultSize={50}>
           <EditorContainer />
         </ResizablePanel>
         <ResizableHandle />
-        <ResizablePanel defaultSize={40}>
+        <ResizablePanel defaultSize={50}>
           <LatexRenderer />
         </ResizablePanel>
       </ResizablePanelGroup>
