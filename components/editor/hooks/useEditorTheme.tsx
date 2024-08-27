@@ -31,7 +31,7 @@ export const useEditorTheme = () => {
             colors: {
                 'editor.background': colors['--background'],
                 'editor.foreground': colors['--foreground'],
-                'editor.lineHighlightBackground': '#2d2d2d',
+                'editor.lineHighlightBackground': colors['--background'],
                 'editorCursor.foreground': '#d4d4d4',
                 'editorWhitespace.foreground': '#3a3a3a',
                 'editorIndentGuide.background': '#404040',
