@@ -19,16 +19,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-      <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            forcedTheme="light"
-            disableTransitionOnChange
-          >
-        <FrontendProvider>
-        <div className="fixed top-0 left-0 right-0 h-48 bg-gradient-to-b from-gray-400/30 to-transparent pointer-events-none" />
-          {children}
-        </FrontendProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          forcedTheme="dark"
+          disableTransitionOnChange
+        >
+          <FrontendProvider>
+            {children}
+          </FrontendProvider>
         </ThemeProvider>
       </body>
     </html>

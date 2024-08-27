@@ -117,7 +117,7 @@ const LatexRenderer = () => {
                     </Button>
                 </div>
             </div>
-            <ScrollArea className="flex-grow w-full h-full bg-foreground/5">
+            <ScrollArea className="flex-grow w-full h-full bg-background">
                 {isLoading ? (
                     <div className="flex justify-center items-center w-full h-full">
                         <Skeleton className="w-full h-full max-w-4xl" />
