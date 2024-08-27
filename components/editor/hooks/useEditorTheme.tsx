@@ -31,12 +31,12 @@ export const useEditorTheme = () => {
             colors: {
                 'editor.background': colors['--background'],
                 'editor.foreground': colors['--foreground'],
-                'editor.lineHighlightBackground': colors['--muted'],
-                'editorCursor.foreground': colors['--accent'],
-                'editorWhitespace.foreground': colors['--border'],
-                'editorIndentGuide.background': colors['--border'],
+                'editor.lineHighlightBackground': '#2d2d2d',
+                'editorCursor.foreground': '#d4d4d4',
+                'editorWhitespace.foreground': '#3a3a3a',
+                'editorIndentGuide.background': '#404040',
                 'editor.selectionBackground': '#264f78',
-                'editor.inactiveSelectionBackground': colors['--border'],
+                'editor.inactiveSelectionBackground': '#3a3d41',
             },
         });
         monacoInstance.editor.setTheme('myDarkTheme');
