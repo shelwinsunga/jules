@@ -1,10 +1,14 @@
 'use client';
-export const calculateDiff = (oldText, newText, monaco, selection) => {
+import * as monaco from 'monaco-editor';
+
+
+
+export const calculateDiff = (oldText: string, newText: string, monacoInstance: typeof monaco, selection: monaco.Selection) => {
     const oldLines = oldText.split('\n');
     const newLines = newText.split('\n');
-    
+
     let diffText = '';
-    let decorations = [];
+    let decorations: monaco.editor.IModelDeltaDecoration[] = [];
     let currentLine = selection.startLineNumber;
 
     const diff = [];
@@ -29,14 +33,14 @@ export const calculateDiff = (oldText, newText, monaco, selection) => {
         if (part.removed) {
             diffText += part.value + '\n';
             decorations.push({
-                range: new monaco.Range(currentLine, 1, currentLine, 1),
+                range: new monacoInstance.Range(currentLine, 1, currentLine, 1),
                 options: { isWholeLine: true, className: 'diff-old-content' }
             });
             currentLine++;
         } else if (part.added) {
             diffText += part.value + '\n';
             decorations.push({
-                range: new monaco.Range(currentLine, 1, currentLine, 1),
+                range: new monacoInstance.Range(currentLine, 1, currentLine, 1),
                 options: { isWholeLine: true, className: 'diff-new-content' }
             });
             currentLine++;

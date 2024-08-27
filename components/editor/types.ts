@@ -6,12 +6,17 @@ export interface CodeEditorProps {
     value: string;
 }
 
-
-export interface Monaco {
-    editor: typeof editor;
-    languages: typeof languages;
+export interface ApplyEditProps {
+    editor: Editor;
+    initialText: string;
+    range: Range;
+    diffText: string;
 }
 
 export type Range = monaco.Range;
 
 export type Editor = editor.IStandaloneCodeEditor;
+
+export type StreamableValue = { 
+    
+}
