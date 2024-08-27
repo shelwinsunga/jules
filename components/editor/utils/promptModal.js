@@ -1,6 +1,5 @@
-
-import React from 'react';
-import ReactDOM from 'react-dom/client'; // Updated import
+import { useState, useEffect, useRef } from 'react';
+import ReactDOM from 'react-dom/client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -13,10 +12,10 @@ export const promptModal = async (editor, monaco, selection) => {
         inputContainer.style.zIndex = '1000';
 
         const PromptContent = () => {
-            const [inputValue, setInputValue] = React.useState('');
-            const textareaRef = React.useRef(null);
+            const [inputValue, setInputValue] = useState('');
+            const textareaRef = useRef(null);
 
-            React.useEffect(() => {
+            useEffect(() => {
                 if (textareaRef.current) {
                     textareaRef.current.focus();
                 }
@@ -63,7 +62,7 @@ export const promptModal = async (editor, monaco, selection) => {
             );
         };
 
-        const root = ReactDOM.createRoot(inputContainer); // Use createRoot
+        const root = ReactDOM.createRoot(inputContainer);
         root.render(<PromptContent />);
 
         const editorDomNode = editor.getDomNode();
