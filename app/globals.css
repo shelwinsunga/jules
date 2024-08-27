@@ -81,11 +81,10 @@
   background-color: #eeffee; 
 }
 
-@media (prefers-color-scheme: dark) {
-  .diff-old-content { 
-    background-color: #2a1414; 
-  }
-  .diff-new-content { 
-    background-color: #142a14; 
-  }
+.dark .diff-old-content { 
+  background-color: #2a1414; 
 }
+.dark .diff-new-content { 
+  background-color: #142a14; 
+}
+

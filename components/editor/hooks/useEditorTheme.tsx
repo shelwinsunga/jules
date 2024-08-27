@@ -1,6 +1,6 @@
 'use client';
 import * as monaco from 'monaco-editor';
-
+import { useTheme } from 'next-themes';
 const cssVariables = [
     '--background',
     '--foreground',
@@ -12,6 +12,7 @@ const cssVariables = [
 ];
 
 export const useEditorTheme = () => {
+    const { theme, systemTheme } = useTheme();
     const setTheme = (monacoInstance: typeof monaco) => {
         const getColorFromVariable = (variable: string) => {
             const hslColor = getComputedStyle(document.documentElement).getPropertyValue(variable).trim();
@@ -24,8 +25,10 @@ export const useEditorTheme = () => {
             return acc;
         }, {} as Record<string, string>);
 
+        const base = theme === 'dark' ? 'vs-dark' : 'vs';
+
         monacoInstance.editor.defineTheme('myDarkTheme', {
-            base: 'vs-dark',
+            base: base,
             inherit: true,
             rules: [],
             colors: {
@@ -35,8 +38,8 @@ export const useEditorTheme = () => {
                 'editorCursor.foreground': '#d4d4d4',
                 'editorWhitespace.foreground': '#3a3a3a',
                 'editorIndentGuide.background': '#404040',
-                'editor.selectionBackground': '#264f78',
-                'editor.inactiveSelectionBackground': '#3a3d41',
+                'editor.selectionBackground': colors['--secondary'],
+                'editor.inactiveSelectionBackground': colors['--muted'],
                 'focusBorder': `${colors['--border']}00` // Appending '00' for full transparency
             },
         });
