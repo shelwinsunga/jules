@@ -32,29 +32,23 @@ const FileTreeNode = ({ node, style, dragHandle }) => (
 const FileTree = ({ initialData }) => {
     const [data, setData] = useState([
         {
-            id: '1',
-            name: 'Project',
+            id: '2',
+            name: 'src',
             children: [
-                {
-                    id: '2',
-                    name: 'src',
-                    children: [
-                        { id: '3', name: 'index.js' },
-                        { id: '4', name: 'styles.css' }
-                    ]
-                },
-                {
-                    id: '5',
-                    name: 'public',
-                    children: [
-                        { id: '6', name: 'index.html' },
-                        { id: '7', name: 'favicon.ico' }
-                    ]
-                },
-                { id: '8', name: 'package.json' },
-                { id: '9', name: 'README.md' }
+                { id: '3', name: 'index.js' },
+                { id: '4', name: 'styles.css' }
             ]
-        }
+        },
+        {
+            id: '5',
+            name: 'public',
+            children: [
+                { id: '6', name: 'index.html' },
+                { id: '7', name: 'favicon.ico' }
+            ]
+        },
+        { id: '8', name: 'package.json' },
+        { id: '9', name: 'README.md' }
     ]);
 
     const handleCreate = ({ parentId, index, type }) => {
