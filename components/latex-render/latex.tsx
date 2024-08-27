@@ -9,14 +9,14 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Switch } from "@/components/ui/switch";
 import LatexError from './latex-error';
 import { Label } from "@/components/ui/label"
-import { ZoomIn, ZoomOut, RotateCcw  } from 'lucide-react';
+import { ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import { useFrontend } from "@/contexts/FrontendContext";
 
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs';
 
-interface LatexRendererProps {
-    latex: string;
-}
-const LatexRenderer = ({ latex }: LatexRendererProps) => {
+
+const LatexRenderer = () => {
+    const { latex } = useFrontend();
     const [numPages, setNumPages] = useState<number>(0);
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -91,7 +91,7 @@ const LatexRenderer = ({ latex }: LatexRendererProps) => {
     const handleResetZoom = () => {
         setScale(1.0);
     };
-    
+
     return (
         <div className="w-full h-full flex flex-col">
             <div className="flex justify-between items-center border-b shadow-sm p-2 gap-4">

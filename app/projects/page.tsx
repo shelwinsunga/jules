@@ -1,12 +1,9 @@
-'use client'
 import EditorContainer from "@/components/editor/editor-container";
 import LatexRenderer from "@/components/latex-render/latex";
-import { useFrontend } from "@/contexts/FrontendContext";
 
 export const maxDuration = 30;
 
 export default function Home() {
-  const { latex } = useFrontend();
   return (
     <main className="flex flex-col px-4">
       <div className="flex flex-row justify-between">
@@ -16,7 +13,7 @@ export default function Home() {
           <EditorContainer />
         </div>
         <div className="w-1/2 flex flex-col border justify-start px-0 rounded-md bg-secondary/20 items-center">
-          <LatexRenderer latex={latex} />
+          <LatexRenderer />
         </div>
       </div>
     </main>
