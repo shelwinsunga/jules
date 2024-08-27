@@ -3,7 +3,8 @@ import { useRef } from 'react';
 import { useFrontend } from '@/contexts/FrontendContext';
 import { useEditorTheme } from './useEditorTheme';
 import { useLatexSyntaxHighlighting } from './useLatexSyntaxHighlighting';
-import { Editor, Monaco } from '@/components/editor/types';
+import { editor, languages } from 'monaco-editor';
+import * as monaco from 'monaco-editor';
 
 const initialContent = `\\documentclass{article}
 \\begin{document}
@@ -17,12 +18,12 @@ This is a subsection with some math: $E = mc^2$
 \\end{document}`
 
 export function useEditorSetup(onChange: (value: string) => void) {
-    const editorRef = useRef<Editor | null>(null);
+    const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
     const { setLatex } = useFrontend();
     const { setTheme } = useEditorTheme();
     const { setupLatexSyntaxHighlighting } = useLatexSyntaxHighlighting();
 
-    const handleEditorDidMount = (editor: Editor, monacoInstance: Monaco) => {
+    const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor, monacoInstance: typeof monaco) => {
         editorRef.current = editor;
         editor.onDidChangeModelContent(() => {
             onChange(editor.getValue());

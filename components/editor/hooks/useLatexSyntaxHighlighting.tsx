@@ -1,9 +1,10 @@
 'use client';
 
 import { loader } from '@monaco-editor/react';
-import { Monaco } from '@/components/editor/types';
+import * as monaco from 'monaco-editor';
+
 export const useLatexSyntaxHighlighting = () => {
-    const setupLatexSyntaxHighlighting = (monaco: Monaco) => {
+    const setupLatexSyntaxHighlighting = (monacoInstance: typeof monaco) => {
         monaco.languages.register({ id: 'latex' });
         monaco.languages.setMonarchTokensProvider('latex', {
             tokenizer: {

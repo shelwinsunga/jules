@@ -1,7 +1,7 @@
 'use client';
-import { ApplyEditProps } from '@/components/editor/types';
+import { editor, Range } from 'monaco-editor';
 
-export const applyEdit = async ({ editor, initialText, range, diffText }: ApplyEditProps) => {
+export const applyEdit = async (editor: editor.IStandaloneCodeEditor, initialText: string, range: Range, diffText: string) => {
     const model = editor.getModel();
     if (!model) return;
     model.setValue(initialText);
