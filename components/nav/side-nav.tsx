@@ -8,6 +8,7 @@ import { Search, HelpCircle } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import Link from 'next/link'
+
 export default function SideNav() {
     const [projectName, setProjectName] = useState('Riemann Hypothesis')
 

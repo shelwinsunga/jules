@@ -33,24 +33,26 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
             onMouseOver={onMouseOver}
             onMouseLeave={onMouseLeave}
         >
-            <div className="flex items-center gap-2 p-1 rounded-md text-foreground">
+            <div className="flex items-center justify-between w-full p-1 rounded-md text-foreground">
+                <div className="flex items-center gap-2">
+                    {node.isLeaf ? (
+                        node.data.name.endsWith('.tex') ? (
+                            <Tex />
+                        ) : (
+                            <File className="w-4 h-4" />
+                        )
+                    ) : node.isOpen ? (
+                        <FolderOpen className="w-4 h-4" />
+                    ) : (
+                        <Folder className="w-4 h-4" />
+                    )}
+                    <span className="text-sm">{node.data.name}</span>
+                </div>
                 {!node.isLeaf && (
                     <button onClick={() => node.toggle()} className="focus:outline-none">
                         {node.isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                     </button>
                 )}
-                {node.isLeaf ? (
-                    node.data.name.endsWith('.tex') ? (
-                        <Tex />
-                    ) : (
-                        <File className="w-4 h-4" />
-                    )
-                ) : node.isOpen ? (
-                    <FolderOpen className="w-4 h-4" />
-                ) : (
-                    <Folder className="w-4 h-4" />
-                )}
-                <span className="text-sm">{node.data.name}</span>
             </div>
         </div>
     );
