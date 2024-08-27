@@ -189,18 +189,6 @@ const FileTree = ({ initialData }) => {
         return false;
     };
 
-    const onToggle = (node, toggled) => {
-        if (cursor) {
-          cursor.active = false;
-        }
-        node.active = true;
-        if (node.children) {
-          node.toggled = toggled;
-        }
-        setCursor(node);
-        setData(Object.assign({}, data));
-    };
-
     return (
         <div className="p-4 border h-full shadow-sm w-full flex justify-center">
             <Tree
