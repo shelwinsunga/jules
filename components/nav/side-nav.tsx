@@ -7,21 +7,21 @@ import { Button } from '@/components/ui/button'
 import { Search, HelpCircle } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { ScrollArea } from '@/components/ui/scroll-area'
-
+import Link from 'next/link'
 export default function SideNav() {
     const [projectName, setProjectName] = useState('Riemann Hypothesis')
 
     return (
         <div className="w-full h-full flex flex-col  bg-muted/25">
             <div className="p-4 flex items-center justify-between">
-                <div className="flex items-center space-x-2">
+                <Link href="/projects" className="flex items-center space-x-2">
                     <div className="h-6 w-6 rounded-md bg-primary flex items-center justify-center">
                         <span className="text-sm font-medium text-primary-foreground">
                             {projectName.split(' ').map(word => word[0]).join('')}
                         </span>
                     </div>
                     <span className="text-sm text-medium text-foreground">{projectName}</span>
-                </div>
+                </Link>
                 <ModeToggle />
             </div>
             
