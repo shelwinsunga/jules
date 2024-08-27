@@ -200,11 +200,10 @@ const FileTree = ({ initialData }) => {
                 onToggle={handleToggle}
                 className="text-foreground"
                 width={256}
-                height={911}
-                indent={24}
+                height={735}
+                // indent={24}
                 rowHeight={36}
-                overscanCount={1}
-                padding={25}
+                // padding={25}
             >
                 {FileTreeNode}
             </Tree>

@@ -12,7 +12,7 @@ export default function SideNav() {
     const [projectName, setProjectName] = useState('My Project')
 
     return (
-        <div className="w-full h-full flex flex-col">
+        <div className="w-full h-full flex flex-col  bg-muted/25">
             <div className="p-4 flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                     <span className="font-bold text-lg">AnyTeX</span>
