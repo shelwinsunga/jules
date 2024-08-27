@@ -74,5 +74,18 @@
   }
 }
 
-.diff-old-content { background-color: #ffeeee; }
-.diff-new-content { background-color: #eeffee; }
+.diff-old-content { 
+  background-color: #ffeeee; 
+}
+.diff-new-content { 
+  background-color: #eeffee; 
+}
+
+@media (prefers-color-scheme: dark) {
+  .diff-old-content { 
+    background-color: #2a1414; 
+  }
+  .diff-new-content { 
+    background-color: #142a14; 
+  }
+}

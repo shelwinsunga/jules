@@ -33,10 +33,10 @@ export const useEditorTheme = () => {
                 'editor.foreground': colors['--foreground'],
                 'editor.lineHighlightBackground': colors['--muted'],
                 'editorCursor.foreground': colors['--accent'],
-                'editorWhitespace.foreground': '#3a3a3a',
-                'editorIndentGuide.background': '#404040',
+                'editorWhitespace.foreground': colors['--border'],
+                'editorIndentGuide.background': colors['--border'],
                 'editor.selectionBackground': '#264f78',
-                'editor.inactiveSelectionBackground': '#3a3d41',
+                'editor.inactiveSelectionBackground': colors['--border'],
             },
         });
         monacoInstance.editor.setTheme('myDarkTheme');
