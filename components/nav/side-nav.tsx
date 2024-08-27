@@ -9,21 +9,25 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
 export default function SideNav() {
-    const [projectName, setProjectName] = useState('My Project')
+    const [projectName, setProjectName] = useState('Riemann Hypothesis')
 
     return (
         <div className="w-full h-full flex flex-col  bg-muted/25">
             <div className="p-4 flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                    <span className="font-bold text-lg">AnyTeX</span>
-                    <span className="text-sm text-muted-foreground">{projectName}</span>
+                    <div className="h-6 w-6 rounded-md bg-primary flex items-center justify-center">
+                        <span className="text-sm font-medium text-primary-foreground">
+                            {projectName.split(' ').map(word => word[0]).join('')}
+                        </span>
+                    </div>
+                    <span className="text-sm text-medium text-foreground">{projectName}</span>
                 </div>
                 <ModeToggle />
             </div>
             
             <div className="p-4 flex space-x-2">
                 <Input placeholder="Search files..." className="flex-grow" />
-                <Button size="icon">
+                <Button>
                     <Search className="h-4 w-4" />
                 </Button>
             </div>
