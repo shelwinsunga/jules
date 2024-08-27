@@ -31,11 +31,16 @@ def latex_to_pdf():
             f.write(latex_content)
         
         try:
-            # Run pdflatex using texlive-latex-base
-            result = subprocess.run(['pdflatex', '-output-directory', temp_dir, input_file], 
-                                    check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                    env=dict(os.environ, PATH=f"{os.environ['PATH']}:/usr/bin"),
-                                    text=True)
+            # Run pdflatex with optimization flags
+            result = subprocess.run([
+                'pdflatex',
+                '-draftmode',                # Faster, draft-quality output
+                '-output-directory', temp_dir,
+                input_file
+            ], 
+            check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            env=dict(os.environ, PATH=f"{os.environ['PATH']}:/usr/bin"),
+            text=True)
             
             # Send the generated PDF
             return send_file(os.path.join(temp_dir, 'input.pdf'), 
