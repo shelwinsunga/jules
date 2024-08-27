@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Tree } from 'react-arborist';
 import { File, Folder, FolderOpen, ChevronRight, ChevronDown } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import Image from 'next/image';
+import texSvg from '@/public/tex.svg';
 
 const FileTreeNode = ({ node, style, dragHandle }) => (
     <div 
@@ -19,7 +21,11 @@ const FileTreeNode = ({ node, style, dragHandle }) => (
             </button>
         )}
         {node.isLeaf ? (
-            <File className="w-4 h-4" />
+            node.data.name.endsWith('.tex') ? (
+                <Image src={texSvg} alt="TeX file" width={20} height={20} />
+            ) : (
+                <File className="w-4 h-4" />
+            )
         ) : node.isOpen ? (
             <FolderOpen className="w-4 h-4" />
         ) : (
@@ -32,23 +38,36 @@ const FileTreeNode = ({ node, style, dragHandle }) => (
 const FileTree = ({ initialData }) => {
     const [data, setData] = useState([
         {
+            id: '1',
+            name: 'main.tex',
+        },
+        {
             id: '2',
-            name: 'src',
+            name: 'chapters',
             children: [
-                { id: '3', name: 'index.js' },
-                { id: '4', name: 'styles.css' }
+                { id: '3', name: 'introduction.tex' },
+                { id: '4', name: 'methodology.tex' },
+                { id: '5', name: 'results.tex' },
+                { id: '6', name: 'conclusion.tex' }
             ]
         },
         {
-            id: '5',
-            name: 'public',
+            id: '7',
+            name: 'figures',
             children: [
-                { id: '6', name: 'index.html' },
-                { id: '7', name: 'favicon.ico' }
+                { id: '8', name: 'figure1.png' },
+                { id: '9', name: 'figure2.png' }
             ]
         },
-        { id: '8', name: 'package.json' },
-        { id: '9', name: 'README.md' }
+        {
+            id: '10',
+            name: 'bibliography',
+            children: [
+                { id: '11', name: 'references.bib' }
+            ]
+        },
+        { id: '12', name: 'abstract.tex' },
+        { id: '13', name: 'preamble.tex' }
     ]);
 
     const handleCreate = ({ parentId, index, type }) => {
@@ -138,7 +157,7 @@ const FileTree = ({ initialData }) => {
     };
 
     return (
-        <div className="p-4 border h-full shadow-sm">
+        <div className="p-4 border h-full shadow-sm w-full flex justify-center">
             <Tree
                 data={data}
                 onCreate={handleCreate}
@@ -147,6 +166,8 @@ const FileTree = ({ initialData }) => {
                 onDelete={handleDelete}
                 onToggle={handleToggle}
                 className="text-foreground"
+                width={256}
+                height={911}
             >
                 {FileTreeNode}
             </Tree>
