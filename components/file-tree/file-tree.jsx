@@ -144,7 +144,7 @@ const FileTree = ({ initialData }) => {
     };
 
     return (
-        <div className="p-4 border rounded-lg shadow-sm">
+        <div className="p-4 border h-full shadow-sm">
             <Tree
                 data={data}
                 onCreate={handleCreate}
