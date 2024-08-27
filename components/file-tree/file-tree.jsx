@@ -168,6 +168,12 @@ const FileTree = ({ initialData }) => {
                 className="text-foreground"
                 width={256}
                 height={911}
+                indent={24}
+                rowHeight={36}
+                overscanCount={1}
+                paddingTop={30}
+                paddingBottom={10}
+                padding={25}
             >
                 {FileTreeNode}
             </Tree>
