@@ -14,7 +14,7 @@ export default function Home() {
     <main className="flex flex-col h-screen">
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={20}>
-          <FileTree />
+          <FileTree initialData={[]} />
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel defaultSize={40}>

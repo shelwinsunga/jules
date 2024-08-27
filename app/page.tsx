@@ -9,19 +9,19 @@ export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   return (
-    <div className="flex flex-col min-h-screen bg-white text-gray-800">
-      <header className="px-4 lg:px-6 h-14 flex items-center justify-between border-b">
+    <div className="flex flex-col min-h-screen bg-background text-foreground">
+      <header className="px-4 lg:px-6 h-14 flex items-center justify-between border-b border-border">
         <Link className="text-lg font-bold" href="#">
           AnyTeX
         </Link>
         <nav className="hidden md:flex gap-6">
-          <Link className="text-sm hover:text-gray-600 transition-colors" href="#">
+          <Link className="text-sm hover:text-muted-foreground transition-colors" href="#">
             Features
           </Link>
-          <Link className="text-sm hover:text-gray-600 transition-colors" href="#">
+          <Link className="text-sm hover:text-muted-foreground transition-colors" href="#">
             Pricing
           </Link>
-          <Link className="text-sm hover:text-gray-600 transition-colors" href="#">
+          <Link className="text-sm hover:text-muted-foreground transition-colors" href="#">
             Documentation
           </Link>
         </nav>
@@ -36,14 +36,14 @@ export default function Home() {
         </Button>
       </header>
       {isMenuOpen && (
-        <nav className="flex flex-col items-center gap-4 p-4 md:hidden border-b">
-          <Link className="text-sm hover:text-gray-600 transition-colors" href="#">
+        <nav className="flex flex-col items-center gap-4 p-4 md:hidden border-b border-border">
+          <Link className="text-sm hover:text-muted-foreground transition-colors" href="#">
             Features
           </Link>
-          <Link className="text-sm hover:text-gray-600 transition-colors" href="#">
+          <Link className="text-sm hover:text-muted-foreground transition-colors" href="#">
             Pricing
           </Link>
-          <Link className="text-sm hover:text-gray-600 transition-colors" href="#">
+          <Link className="text-sm hover:text-muted-foreground transition-colors" href="#">
             Documentation
           </Link>
         </nav>
@@ -54,7 +54,7 @@ export default function Home() {
             <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-4 animate-fade-in">
               AI-Powered LaTeX Editing
             </h1>
-            <p className="max-w-[600px] text-gray-500 md:text-xl mb-8 animate-fade-in animation-delay-200">
+            <p className="max-w-[600px] text-muted-foreground md:text-xl mb-8 animate-fade-in animation-delay-200">
               Elevate your LaTeX game with AnyTeX. AI-powered tools for faster, smarter academic and professional writing.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in animation-delay-300">
@@ -68,14 +68,14 @@ export default function Home() {
           </div>
         </section>
       </main>
-      <footer className="py-6 w-full px-4 md:px-6 border-t">
+      <footer className="py-6 w-full px-4 md:px-6 border-t border-border">
         <div className="container mx-auto flex justify-between items-center">
-          <p className="text-xs text-gray-500">© 2024 AnyTeX. All rights reserved.</p>
+          <p className="text-xs text-muted-foreground">© 2024 AnyTeX. All rights reserved.</p>
           <nav className="flex gap-4">
-            <Link className="text-xs text-gray-500 hover:text-gray-600 transition-colors" href="#">
+            <Link className="text-xs text-muted-foreground hover:text-foreground transition-colors" href="#">
               Privacy
             </Link>
-            <Link className="text-xs text-gray-500 hover:text-gray-600 transition-colors" href="#">
+            <Link className="text-xs text-muted-foreground hover:text-foreground transition-colors" href="#">
               Terms
             </Link>
           </nav>
