@@ -4,7 +4,7 @@ import { Tree } from 'react-arborist';
 import { File, Folder, FolderOpen, ChevronRight, ChevronDown } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import Image from 'next/image';
-import texSvg from '@/public/tex.svg';
+import Tex from '@/public/tex.tsx';
 
 const FileTreeNode = ({ node, style, dragHandle }) => {
     const [nodeStyle, setNodeStyle] = useState({ base: style });
@@ -33,7 +33,7 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
             onMouseOver={onMouseOver}
             onMouseLeave={onMouseLeave}
         >
-            <div className="flex items-center gap-2 p-1 rounded-md">
+            <div className="flex items-center gap-2 p-1 rounded-md text-foreground">
                 {!node.isLeaf && (
                     <button onClick={() => node.toggle()} className="focus:outline-none">
                         {node.isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
@@ -41,7 +41,7 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
                 )}
                 {node.isLeaf ? (
                     node.data.name.endsWith('.tex') ? (
-                        <Image src={texSvg} alt="TeX file" width={20} height={20} />
+                        <Tex />
                     ) : (
                         <File className="w-4 h-4" />
                     )
