@@ -59,7 +59,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in animation-delay-300">
               <Button asChild>
-                <Link href="/projects">
+                <Link href="/project">
                   Try AnyTeX Now
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
