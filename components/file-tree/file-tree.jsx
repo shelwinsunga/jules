@@ -33,7 +33,7 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
             onMouseOver={onMouseOver}
             onMouseLeave={onMouseLeave}
         >
-            <div className="flex items-center gap-2 p-2 rounded-md">
+            <div className="flex items-center gap-2 p-1 rounded-md">
                 {!node.isLeaf && (
                     <button onClick={() => node.toggle()} className="focus:outline-none">
                         {node.isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
