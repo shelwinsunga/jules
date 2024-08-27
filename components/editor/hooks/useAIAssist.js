@@ -19,6 +19,7 @@ export const useAIAssist = (editorRef) => {
                 selection.endLineNumber,
                 selection.endColumn
             );
+            
             const oldText = editor.getModel().getValueInRange(range);
             const context = `Replace lines ${selection.startLineNumber}-${selection.endLineNumber}:\n${oldText}`;
             
