@@ -5,8 +5,8 @@ import * as monaco from 'monaco-editor';
 
 export const useLatexSyntaxHighlighting = () => {
     const setupLatexSyntaxHighlighting = (monacoInstance: typeof monaco) => {
-        monaco.languages.register({ id: 'latex' });
-        monaco.languages.setMonarchTokensProvider('latex', {
+        monacoInstance.languages.register({ id: 'latex' });
+        monacoInstance.languages.setMonarchTokensProvider('latex', {
             tokenizer: {
                 root: [
                     [/\\[a-zA-Z]+/, 'keyword'],

@@ -3,7 +3,7 @@ import * as monaco from 'monaco-editor';
 
 export const useEditorTheme = () => {
     const setTheme = (monacoInstance: typeof monaco) => {
-        monaco.editor.defineTheme('myTheme', {
+        monacoInstance.editor.defineTheme('myTheme', {
             base: 'vs',
             inherit: true,
             rules: [],
@@ -11,7 +11,7 @@ export const useEditorTheme = () => {
                 'editor.background': '#ffffff',
             },
         });
-        monaco.editor.setTheme('myTheme');
+        monacoInstance.editor.setTheme('myTheme');
     };
 
     return { setTheme };
