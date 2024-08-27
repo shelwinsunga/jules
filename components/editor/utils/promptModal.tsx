@@ -2,8 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import * as monaco from 'monaco-editor';
 
-export const promptModal = async (editor, monaco, selection) => {
+export const promptModal = async (editor: monaco.editor.IStandaloneCodeEditor, monacoInstance: typeof monaco, selection: monaco.Range) => {
     return new Promise((resolve, reject) => {
         const inputContainer = document.createElement('div');
         inputContainer.style.position = 'absolute';
@@ -13,7 +14,7 @@ export const promptModal = async (editor, monaco, selection) => {
 
         const PromptContent = () => {
             const [inputValue, setInputValue] = useState('');
-            const textareaRef = useRef(null);
+            const textareaRef = useRef<HTMLTextAreaElement>(null);
 
             useEffect(() => {
                 if (textareaRef.current) {
@@ -31,7 +32,7 @@ export const promptModal = async (editor, monaco, selection) => {
                 reject(new Error('User cancelled input'));
             };
 
-            const handleKeyDown = (event) => {
+            const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
                 if (event.key === 'Enter' && !event.shiftKey) {
                     event.preventDefault();
                     handleSubmit();
@@ -68,12 +69,12 @@ export const promptModal = async (editor, monaco, selection) => {
         const editorDomNode = editor.getDomNode();
         if (editorDomNode) {
             const rect = editorDomNode.getBoundingClientRect();
-            const lineHeight = editor.getOption(monaco.editor.EditorOption.lineHeight);
+            const lineHeight = editor.getOption(monacoInstance.editor.EditorOption.lineHeight);
             const lineTop = editor.getTopForLineNumber(selection.startLineNumber);
-            
+
             let top = rect.top + lineTop - lineHeight;
             let left = rect.left;
-            
+
             if (window) {
                 if (top + inputContainer.offsetHeight > window.innerHeight) {
                     top = window.innerHeight - inputContainer.offsetHeight;
@@ -82,10 +83,10 @@ export const promptModal = async (editor, monaco, selection) => {
                     left = window.innerWidth - inputContainer.offsetWidth;
                 }
             }
-            
+
             top = Math.max(0, top);
             left = Math.max(0, left);
-            
+
             inputContainer.style.top = `${top}px`;
             inputContainer.style.left = `${left}px`;
         }
