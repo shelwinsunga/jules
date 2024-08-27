@@ -1,18 +1,23 @@
 'use client'
 import React, { useState } from 'react';
 import { Tree } from 'react-arborist';
-import { File, Folder, FolderOpen } from 'lucide-react';
+import { File, Folder, FolderOpen, ChevronRight, ChevronDown } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
 const FileTreeNode = ({ node, style, dragHandle }) => (
     <div 
         className={cn(
             "flex items-center gap-2 p-2 rounded-md",
-            node.isSelected && ""
+            node.isSelected && "bg-accent"
         )}
         style={style} 
         ref={dragHandle}
     >
+        {!node.isLeaf && (
+            <button onClick={() => node.toggle()} className="focus:outline-none">
+                {node.isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+            </button>
+        )}
         {node.isLeaf ? (
             <File className="w-4 h-4" />
         ) : node.isOpen ? (
@@ -103,6 +108,17 @@ const FileTree = ({ initialData }) => {
         });
     };
 
+    const handleToggle = ({ id, isOpen }) => {
+        setData(prevData => {
+            const updatedData = JSON.parse(JSON.stringify(prevData));
+            const node = findNodeById(updatedData, id);
+            if (node && node.children) {
+                node.isOpen = isOpen;
+            }
+            return updatedData;
+        });
+    };
+
     const findNodeById = (nodes, id) => {
         for (let node of nodes) {
             if (node.id === id) return node;
@@ -135,6 +151,7 @@ const FileTree = ({ initialData }) => {
                 onRename={handleRename}
                 onMove={handleMove}
                 onDelete={handleDelete}
+                onToggle={handleToggle}
                 className="text-foreground"
             >
                 {FileTreeNode}
