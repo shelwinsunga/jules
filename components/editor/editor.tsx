@@ -15,13 +15,11 @@ export const CodeEditor = ({ onChange, value }: CodeEditorProps) => {
 
     return (
         <Editor
-        
             theme="vs-dark"
             language="latex"
             height="100%"
             width="100%"
             value={value}
-        
             className="pt-2 bg-background"
             onMount={(editor, monaco) => {
                 handleEditorDidMount(editor, monaco);

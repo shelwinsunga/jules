@@ -3,7 +3,7 @@ import { useRef } from 'react';
 import { useFrontend } from '@/contexts/FrontendContext';
 import { useEditorTheme } from './useEditorTheme';
 import { useLatexSyntaxHighlighting } from './useLatexSyntaxHighlighting';
-import * as monaco from 'monaco-editor';
+import { Editor } from '@/components/editor/types';
 
 const initialContent = `\\documentclass{article}
 \\begin{document}
@@ -16,13 +16,13 @@ This is a section in our document.
 This is a subsection with some math: $E = mc^2$
 \\end{document}`
 
-export const useEditorSetup = (onChange: (value: string) => void) => {
-    const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+export function useEditorSetup(onChange: (value: string) => void) {
+    const editorRef = useRef<Editor | null>(null);
     const { setLatex } = useFrontend();
     const { setTheme } = useEditorTheme();
     const { setupLatexSyntaxHighlighting } = useLatexSyntaxHighlighting();
 
-    const handleEditorDidMount = (editor: monaco.editor.IStandaloneCodeEditor, monacoInstance: typeof monaco) => {
+    const handleEditorDidMount = (editor: Editor, monacoInstance: object) => {
         editorRef.current = editor;
         editor.onDidChangeModelContent(() => {
             onChange(editor.getValue());
