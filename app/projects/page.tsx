@@ -5,8 +5,7 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
-import FileTree from "@/components/file-tree/file-tree";
-
+import SideNav from "@/components/nav/side-nav";
 export const maxDuration = 30;
 
 export default function Home() {
@@ -14,7 +13,7 @@ export default function Home() {
     <main className="flex flex-col h-screen">
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={15}>
-          <FileTree initialData={[]} />
+          <SideNav />
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel defaultSize={40}>
