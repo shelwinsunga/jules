@@ -27,6 +27,8 @@
     "next": "14.2.5",
     "next-themes": "^0.3.0",
     "react": "^18",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18",
     "react-pdf": "^9.1.0",
     "react-resizable-panels": "^2.1.1",
