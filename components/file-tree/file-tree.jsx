@@ -1,10 +1,11 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Tree } from 'react-arborist';
 import { File, Folder, FolderOpen, ChevronRight, ChevronDown } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import Image from 'next/image';
 import Tex from '@/public/tex.tsx';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const FileTreeNode = ({ node, style, dragHandle }) => {
     const [nodeStyle, setNodeStyle] = useState({ base: style });
@@ -96,7 +97,11 @@ const FileTree = ({ initialData }) => {
         { id: '12', name: 'abstract.tex', hover: true },
         { id: '13', name: 'preamble.tex', hover: true }
     ]);
-    
+    const treeContainerRef = useRef(null);
+    const [treeContainer, setTreeContainer] = useState({
+        width: 256,
+        height: 735
+    });
     const [cursor, setCursor] = useState(false);
 
     const handleCreate = ({ parentId, index, type }) => {
@@ -191,24 +196,48 @@ const FileTree = ({ initialData }) => {
         return false;
     };
 
+  
+    useEffect(() => {
+        const updateTreeContainer = () => {
+            if (treeContainerRef.current) {
+                console.log("Changing width");
+                const { width, height } = treeContainerRef.current.getBoundingClientRect();
+                console.log(width, height);
+                setTreeContainer({
+                    width: width - 32,
+                    height: height - 32
+                });
+            }
+        };
+
+        updateTreeContainer();
+
+        const resizeObserver = new ResizeObserver(updateTreeContainer);
+        if (treeContainerRef.current) {
+            resizeObserver.observe(treeContainerRef.current);
+        }
+    }, []);
+
     return (
-        <div className="p-4 h-full shadow-sm w-full">
-            <Tree
-                data={data}
+        <div ref={treeContainerRef} className="flex grow p-4 h-full shadow-sm w-full">
+            <ScrollArea className="flex-grow w-full">
+                <Tree
+                    data={data}
                 onCreate={handleCreate}
                 onRename={handleRename}
                 onMove={handleMove}
                 onDelete={handleDelete}
                 onToggle={handleToggle}
                 className="text-foreground"
-                width={256}
-                height={735}
+                width={treeContainer.width}
+                height={treeContainer.height}
                 // indent={24}
                 rowHeight={36}
                 // padding={25}
             >
-                {FileTreeNode}
-            </Tree>
+                    {FileTreeNode}
+                </Tree>
+            </ScrollArea>
         </div>
     );
 };

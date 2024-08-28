@@ -25,18 +25,16 @@ export default function SideNav() {
                 </Link>
                 <ModeToggle />
             </div>
-            
+
             <div className="p-4 flex space-x-2">
                 <Input placeholder="Search files..." className="flex-grow" />
                 <Button>
                     <Search className="h-4 w-4" />
                 </Button>
             </div>
-            
-            <ScrollArea className="flex-grow">
-                <FileTree initialData={[]} />
-            </ScrollArea>
-            
+
+            <FileTree initialData={[]} />
+
             <div className="p-4 border-t">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
