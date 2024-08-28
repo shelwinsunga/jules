@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Menu, X } from "lucide-react"
 import Link from "next/link"
+import { init } from '@instantdb/react';
+
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -14,7 +16,7 @@ export default function Home() {
         <Link className="text-lg font-bold" href="#">
           AnyTeX
         </Link>
-        <nav className="hidden md:flex gap-6">
+        <nav className="hidden md:flex gap-6 items-center">
           <Link className="text-sm hover:text-muted-foreground transition-colors" href="#">
             Features
           </Link>
@@ -24,6 +26,12 @@ export default function Home() {
           <Link className="text-sm hover:text-muted-foreground transition-colors" href="#">
             Documentation
           </Link>
+          <Button variant="outline" size="sm" asChild>
+            <Link href="/login">Log In</Link>
+          </Button>
+          <Button size="sm" asChild>
+            <Link href="/signup">Sign Up</Link>
+          </Button>
         </nav>
         <Button
           variant="ghost"
