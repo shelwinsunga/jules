@@ -198,21 +198,15 @@ const FileTree = ({ initialData }) => {
 
   
     useEffect(() => {
-        const updateTreeContainer = () => {
-            if (treeContainerRef.current) {
-                console.log("Changing width");
-                const { width, height } = treeContainerRef.current.getBoundingClientRect();
-                console.log(width, height);
-                setTreeContainer({
-                    width: width - 32,
-                    height: height - 32
-                });
-            }
-        };
+        const resizeObserver = new ResizeObserver(([entry]) => {
+            // contentRect excludes padding/scrollbars/etc, unlike offsetWidth/Height and getBoundingClientRect
+            const { width, height } = entry.contentRect;
+            setTreeContainer({
+                width: width,
+                height: height 
+            });
+        });
 
-        updateTreeContainer();
-
-        const resizeObserver = new ResizeObserver(updateTreeContainer);
         if (treeContainerRef.current) {
             resizeObserver.observe(treeContainerRef.current);
         }
@@ -222,7 +216,7 @@ const FileTree = ({ initialData }) => {
         <div ref={treeContainerRef} className="flex grow p-4 h-full shadow-sm w-full">
             <ScrollArea className="flex-grow w-full">
                 <Tree
-                    data={data}
+                data={data}
                 onCreate={handleCreate}
                 onRename={handleRename}
                 onMove={handleMove}
@@ -231,9 +225,7 @@ const FileTree = ({ initialData }) => {
                 className="text-foreground"
                 width={treeContainer.width}
                 height={treeContainer.height}
-                // indent={24}
                 rowHeight={36}
-                // padding={25}
             >
                     {FileTreeNode}
                 </Tree>
