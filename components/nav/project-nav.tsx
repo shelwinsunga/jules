@@ -29,23 +29,22 @@ export default function ProjectNav() {
       </div>
       
       <nav className="flex items-center space-x-4">
-        <Link className="text-sm hover:text-muted-foreground transition-colors" href="#">
+        <Link className="text-sm text-muted-foreground" href="#">
           Changelog
         </Link>
-        <Link className="text-sm hover:text-muted-foreground transition-colors" href="#">
+        <Link className="text-sm text-muted-foreground" href="#">
           Docs
         </Link>
         <Popover>
           <PopoverTrigger asChild>
-            <Avatar className="cursor-pointer">
+            <Avatar className="cursor-pointer w-8 h-8">
             <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-500" />
-
             </Avatar>
           </PopoverTrigger>
           <PopoverContent className="w-64 sm:w-72 p-4">
             <div className="flex flex-col space-y-4">
               <div className="flex items-center space-x-3 pb-3 border-b">
-                <Avatar className="h-10 w-10">
+                <Avatar className="w-8 h-8">
                 <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-500" />
                 </Avatar>
                 <div className="flex flex-col">
