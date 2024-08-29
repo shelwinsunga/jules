@@ -56,8 +56,38 @@ const LatexRenderer = () => {
                 throw new Error(`${errorData.error}: ${errorData.message}\n\nDetails: ${errorData.details}`);
             }
             const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
+            // Save PDF file
+            const pdfFile = new File([blob], "main.pdf", { type: blob.type });
+            const pdfPathname = `${id}/main.pdf`;
+            await db.storage.put(pdfPathname, pdfFile);
 
+            // Generate preview image
+            const pdfDocument = await pdfjs.getDocument({ data: await blob.arrayBuffer() }).promise;
+            const page = await pdfDocument.getPage(1);
+            const viewport = page.getViewport({ scale: 1.0 });
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            if (context) {
+                await page.render({ canvasContext: context, viewport: viewport }).promise;
+            } else {
+                throw new Error('Failed to get canvas context');
+            }
+
+            // Save preview image
+            const previewBlob = await new Promise<Blob>((resolve, reject) => {
+                canvas.toBlob((blob) => {
+                    if (blob) resolve(blob);
+                    else reject(new Error('Failed to create blob'));
+                }, 'image/webp', 0.8);
+            });
+            
+            const previewFile = new File([previewBlob], "preview.webp", { type: 'image/webp' });
+            const previewPathname = `${id}/preview.webp`;
+            await db.storage.put(previewPathname, previewFile);
+            
+            const url = URL.createObjectURL(blob);
             setPdfUrl(url);
         } catch (error) {
             console.error('Error fetching PDF:', error);
