@@ -15,9 +15,9 @@ import ProjectNav from "@/components/nav/project-nav"
 import Link from "next/link"
 import { db } from "@/lib/constants"
 import { Skeleton } from "@/components/ui/skeleton"
-
 export default function Projects() {
   const { user } = db.useAuth();
+  const [searchTerm, setSearchTerm] = React.useState('');
   
   const { isLoading, error, data } = db.useQuery({ projects: {
     $: {
@@ -29,9 +29,12 @@ export default function Projects() {
 
   if (isLoading) return <ProjectSkeleton />
 
-  const projects = data?.projects;
-  const recentDocuments = projects?.slice(0, 3) || [];
-  const allDocuments = projects || [];
+  const projects = data?.projects || [];
+  const filteredProjects = projects.filter(project => 
+    project.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const recentDocuments = projects.slice(0, 3);
+  const allDocuments = projects;
 
   const DocumentCard = ({ doc, detailed = false }: { doc: any, detailed?: boolean }) => (
     <Card className="flex flex-col">
@@ -95,7 +98,12 @@ export default function Projects() {
         <div className="mb-8 flex justify-between items-center">
           <div className="relative flex-grow mr-4">
             <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input className="pl-10 py-5 text-sm w-full" placeholder="Search LaTeX documents..." />
+            <Input 
+              className="pl-10 py-5 text-sm w-full" 
+              placeholder="Search LaTeX documents..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
           <Button className="whitespace-nowrap" asChild>
             <Link href="/new">
@@ -116,10 +124,19 @@ export default function Projects() {
               </Link>
             </Button>
           </Card>
+        ) : searchTerm ? (
+          <section>
+            <h2 className="text-xl font-semibold mb-4">Results</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {filteredProjects.map((doc) => (
+                <DocumentCard key={doc.id} doc={doc} />
+              ))}
+            </div>
+          </section>
         ) : (
           <>
             <section className="mb-12">
-              <h2 className="text-xl font-semibold mb-4">Recently Compiled</h2>
+              <h2 className="text-xl font-semibold mb-4">Recents</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {recentDocuments.map((doc) => (
                   <DocumentCard key={doc.id} doc={doc} detailed={true} />
