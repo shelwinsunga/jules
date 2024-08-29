@@ -28,7 +28,9 @@ import {
 import Link from 'next/link';
 import { useState } from 'react';
 import { Input } from "@/components/ui/input"
-import { DialogFooter } from "@/components/ui/dialog"
+import { DialogFooter } from "@/components/ui/dialog";
+import { id } from "@instantdb/react";
+
 export default function DocumentCard({ doc, detailed = false }: { doc: any, detailed?: boolean }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newTitle, setNewTitle] = useState(doc.title);
@@ -45,6 +47,25 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
     e.preventDefault();
     e.stopPropagation();
     setIsDialogOpen(true);
+    setIsDropdownOpen(false);
+  }
+
+  const handleDuplicate = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    db.transact([
+      tx.projects[id()].update({
+        title: `${doc.title} (Copy)`,
+        project_content: doc.project_content,
+        document_class: doc.document_class,
+        template: doc.template,
+        user_id: doc.user_id,
+        created_at: new Date(),
+        last_compiled: new Date(),
+        word_count: 0,
+        page_count: 0
+      })
+    ]);
     setIsDropdownOpen(false);
   }
 
@@ -91,12 +112,7 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
                     <Edit2Icon className="mr-2 h-4 w-4" />
                     <span>Edit</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    // Add duplicate functionality here
-                    setIsDropdownOpen(false);
-                  }}>
+                  <DropdownMenuItem onClick={handleDuplicate}>
                     <CopyIcon className="mr-2 h-4 w-4" />
                     <span>Duplicate</span>
                   </DropdownMenuItem>
