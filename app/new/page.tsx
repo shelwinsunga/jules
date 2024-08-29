@@ -43,7 +43,6 @@ export default function NewDocument() {
         db.transact(
             tx.projects[id()].update({
                 title: title.trim(),
-                id: nanoid(),
                 template: selectedTemplate,
                 last_compiled: new Date(),
                 word_count: 0,
@@ -52,7 +51,6 @@ export default function NewDocument() {
                 createdAt: new Date(),
             })
         );
-        console.log({ title: title.trim(), selectedTemplate });
     };
 
     return (
