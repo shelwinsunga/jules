@@ -16,7 +16,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { v4 as uuidv4 } from 'uuid';
+import { nanoid } from 'nanoid';
   
 const templates = [
   { id: "blank", title: "Blank", image: "/placeholder.svg" },
@@ -31,13 +31,19 @@ const templates = [
 export default function NewDocument() {
     const [title, setTitle] = useState('');
     const [selectedTemplate, setSelectedTemplate] = useState('blank');
+    const [titleError, setTitleError] = useState('');
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        if (!title.trim()) {
+            setTitleError('Title cannot be empty');
+            return;
+        }
+        setTitleError('');
         db.transact(
             tx.projects[id()].update({
-                title: title,
-                id: uuidv4(),
+                title: title.trim(),
+                id: nanoid(),
                 template: selectedTemplate,
                 last_compiled: new Date(),
                 word_count: 0,
@@ -46,7 +52,7 @@ export default function NewDocument() {
                 createdAt: new Date(),
             })
         );
-        console.log({ title, selectedTemplate });
+        console.log({ title: title.trim(), selectedTemplate });
     };
 
     return (
@@ -101,9 +107,14 @@ export default function NewDocument() {
                                     <Input
                                         id="title"
                                         value={title}
-                                        onChange={(e) => setTitle(e.target.value)}
+                                        onChange={(e) => {
+                                            setTitle(e.target.value);
+                                            if (titleError) setTitleError('');
+                                        }}
                                         placeholder="Enter document title"
+                                        className={titleError ? "border-red-500" : ""}
                                     />
+                                    {titleError && <p className="text-red-500 text-sm">{titleError}</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="template">Template</Label>
