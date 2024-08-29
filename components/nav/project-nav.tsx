@@ -3,11 +3,10 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar } from '@/components/ui/avatar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { LogOut, Settings, Sun, Moon } from 'lucide-react';
+import { LogOut} from 'lucide-react';
 import { db } from '@/lib/constants';
-import { useTheme } from 'next-themes';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import { useRouter } from 'next/navigation';
 
