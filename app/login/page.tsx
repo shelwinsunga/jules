@@ -5,12 +5,14 @@ import { init } from '@instantdb/react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useRouter } from 'next/navigation';
 
 const APP_ID = 'ef0233cf-3c42-40ee-98dc-bee7019c7319';
 
 const db = init({ appId: APP_ID });
 
 export default function Login() {
+    const router = useRouter();
     const { isLoading, user, error } = db.useAuth();
     if (isLoading) {
       return <div>Loading...</div>;
@@ -19,9 +21,8 @@ export default function Login() {
       return <div>Uh oh! {error.message}</div>;
     }
     if (user) {
-      return <h1>Hello {user.email}!</h1>;
+      router.push('/projects');
     }
-
     return <LoginForm />;
 }
 
