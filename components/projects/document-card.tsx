@@ -1,3 +1,4 @@
+'use client'
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -13,8 +14,16 @@ import {
   Edit2Icon,
   MoreVertical,
 } from "lucide-react";
+import { db } from "@/lib/constants"
+import { tx, id } from '@instantdb/react';
+import { XIcon} from "lucide-react"
 
 export default function DocumentCard({ doc, detailed = false }: { doc: any, detailed?: boolean }) {
+
+  const handleDelete = () => {
+    db.transact([tx.projects[doc.id].delete()])
+  }
+
   return (
     <Card className="flex flex-col">
       <CardContent className="flex-grow p-4">
@@ -28,13 +37,17 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={handleDelete}>
+                <XIcon className="mr-2 h-4 w-4" />
+                <span>Delete</span>
+              </DropdownMenuItem>
               <DropdownMenuItem>
                 <Edit2Icon className="mr-2 h-4 w-4" />
                 <span>Edit</span>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <CopyIcon className="mr-2 h-4 w-4" />
-                <span>Copy</span>
+                <span>Duplicate</span>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <DownloadIcon className="mr-2 h-4 w-4" />
