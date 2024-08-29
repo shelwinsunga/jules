@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { FileIcon, SearchIcon, PlusIcon, BookOpenIcon, FileTextIcon, GraduationCapIcon, MoreVertical, Edit2Icon, CopyIcon, DownloadIcon } from "lucide-react"
-
+import ProjectNav from "@/components/nav/project-nav"
 export default function Projects() {
   const recentDocuments = [
     { id: 1, name: "thesis-chapter-3.tex", lastCompiled: "2 hours ago", preview: "/placeholder.svg?height=100&width=80", wordCount: 2500, pageCount: 15, documentClass: "report" },
@@ -83,27 +83,7 @@ export default function Projects() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold">My LaTeX Documents</h1>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button>
-                <PlusIcon className="mr-2 h-4 w-4" /> New Document
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem>
-                <FileTextIcon className="mr-2 h-4 w-4" /> Blank Document
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <BookOpenIcon className="mr-2 h-4 w-4" /> Article Template
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <GraduationCapIcon className="mr-2 h-4 w-4" /> Thesis Template
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+          <ProjectNav />
       </header>
 
       <main className="flex-grow container mx-auto px-4 py-8">
