@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { db } from '@/lib/constants'
+import Profile from '@/components/profile/profile'
 
 export default function SideNav() {
     const { user } = db.useAuth();
@@ -47,18 +48,7 @@ export default function SideNav() {
 
             <FileTree initialData={[]} />
 
-            <div className="p-4 border-t">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                        <Avatar>
-                            <AvatarFallback>S</AvatarFallback>
-                        </Avatar>
-                        <div>
-                            <p className="text-xs font-medium">{user?.email}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <Profile />
         </div>
     );
 };
