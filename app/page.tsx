@@ -8,8 +8,6 @@ import { init } from '@instantdb/react';
 import { LayoutGrid } from 'lucide-react';
 import { APP_ID } from '@/lib/constants';
 
-console.log(APP_ID);
-
 const db = init({ appId: APP_ID });
 
 export default function Home() {
