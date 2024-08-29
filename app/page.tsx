@@ -40,11 +40,8 @@ export default function Home() {
               </Button>
             ) : (
               <>
-                <Button variant="outline" size="sm" asChild>
-                  <Link href="/login">Log In</Link>
-                </Button>
                 <Button size="sm" asChild>
-                  <Link href="/signup">Sign Up</Link>
+                  <Link href="/login">Log In</Link>
                 </Button>
               </>
             )}
