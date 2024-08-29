@@ -22,7 +22,7 @@ export default function Home() {
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel defaultSize={44}>
-          {/* <LatexRenderer /> */}
+          <LatexRenderer />
         </ResizablePanel>
       </ResizablePanelGroup>
     </main>

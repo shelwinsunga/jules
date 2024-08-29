@@ -11,12 +11,26 @@ import LatexError from './latex-error';
 import { Label } from "@/components/ui/label"
 import { ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 import { useFrontend } from "@/contexts/FrontendContext";
-
+import { db } from '@/lib/constants';
+import { tx} from '@instantdb/react'
+import { useParams } from 'next/navigation'
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs';
 
 
 const LatexRenderer = () => {
-    const { latex } = useFrontend();
+    const { id } = useParams<{ id: string }>();
+    const { data } = db.useQuery({
+        projects: {
+            $: {
+                where: {
+                    id: id
+                }
+            }
+        }
+    });
+
+    const latex = data?.projects[0]?.project_content;
+    
     const [numPages, setNumPages] = useState<number>(0);
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
