@@ -9,7 +9,6 @@ import { LogOut} from 'lucide-react';
 import { db } from '@/lib/constants';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import { useRouter } from 'next/navigation';
-import { Input } from '@/components/ui/input';
 
 export default function ProjectNav() {
   const router = useRouter();
@@ -21,13 +20,15 @@ export default function ProjectNav() {
   };
 
   return (
+    <header className="border-b">
+
     <div className="container mx-auto px-4 py-4 flex justify-between items-center">
       <div className="flex items-center">
         <Link className="text-lg font-bold" href="#">
           Yomi
         </Link>
       </div>
-      
+  
       <nav className="flex items-center space-x-4">
         <Link className="text-sm text-muted-foreground" href="#">
           Changelog
@@ -62,7 +63,8 @@ export default function ProjectNav() {
             </div>
           </PopoverContent>
         </Popover>
-      </nav>
-    </div>
+        </nav>
+      </div>
+    </header>
   );
 };
