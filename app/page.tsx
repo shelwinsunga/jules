@@ -1,12 +1,9 @@
-'use client'
-
 import { Button } from "@/components/ui/button"
-import { ArrowRight, LayoutGrid } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import Link from "next/link"
-import { db } from '@/lib/constants';
+import AuthButtons from '@/components/projects/auth-buttons';
 
 export default function Home() {
-  const { user } = db.useAuth();
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
@@ -26,20 +23,7 @@ export default function Home() {
               Documentation
             </Link>
           </div>
-          <div className="flex items-center gap-4 border-l border-border pl-6">
-            {user ? (
-              <Button size="sm" className="bg-transparent border-primary/75 border text-primary hover:bg-primary/5" asChild>
-                <Link href="/projects">
-                  <LayoutGrid className="h-4 w-4" />
-                  <span className="ml-2">Projects</span>
-                </Link>
-              </Button>
-            ) : (
-              <Button size="sm" asChild>
-                <Link href="/login">Log In</Link>
-              </Button>
-            )}
-          </div>
+          <AuthButtons />
         </nav>
       </header>
       <main className="flex-1">
