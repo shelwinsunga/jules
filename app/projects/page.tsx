@@ -14,9 +14,16 @@ import { FileIcon, SearchIcon, PlusIcon, BookOpenIcon, FileTextIcon, GraduationC
 import ProjectNav from "@/components/nav/project-nav"
 import Link from "next/link"
 import { db } from "@/lib/constants"
+import { useRouter } from "next/navigation"
 
 export default function Projects() {
   const { user } = db.useAuth();
+  const router = useRouter();
+  if (!user) {
+    router.push('/login');
+    return null;
+  }
+  
   const { isLoading, error, data } = db.useQuery({ projects: {
     $: {
       where: {
