@@ -6,6 +6,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
 import SideNav from "@/components/nav/side-nav"
+
 export const maxDuration = 30;
 
 export default function Home() {
@@ -21,7 +22,7 @@ export default function Home() {
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel defaultSize={44}>
-          <LatexRenderer />
+          {/* <LatexRenderer /> */}
         </ResizablePanel>
       </ResizablePanelGroup>
     </main>

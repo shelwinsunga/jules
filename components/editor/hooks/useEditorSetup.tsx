@@ -6,24 +6,34 @@ import { useLatexSyntaxHighlighting } from './useLatexSyntaxHighlighting';
 import { editor, languages } from 'monaco-editor';
 import * as monaco from 'monaco-editor';
 import { useParams } from 'next/navigation'
-import { db, defaultContent } from '@/lib/constants';
+import { db } from '@/lib/constants';
+
+export const defaultContent = `\\documentclass{article}
+\\begin{document}
+Hello, world! This is a simple LaTeX document.
+
+\\section{A Section}
+This is a section in our document.
+
+\\subsection{A Subsection}
+This is a subsection with some math: $E = mc^2$
+\\end{document}`
 
 export function useEditorSetup(onChange: (value: string) => void) {
     const { id } = useParams<{ id: string }>();
-    const { isLoading, error, data } = db.useQuery({
-        projects: {
-            $: {
-                where: {
-                    id: id
-                }
-            }
-        }
-    })
 
-    const initializedContent = data?.projects[0]?.project_content || defaultContent;
+    // const { isLoading, error, data } = db.useQuery({
+    //     projects: {
+    //         $: {
+    //             where: {
+    //                 id: id
+    //             }
+    //         }
+    //     }
+    // })
 
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-    const { setLatex } = useFrontend();
+    const { latex } = useFrontend();
     const { setTheme } = useEditorTheme();
     const { setupLatexSyntaxHighlighting } = useLatexSyntaxHighlighting();
 
@@ -40,8 +50,7 @@ export function useEditorSetup(onChange: (value: string) => void) {
         setTheme(monacoInstance);
         setupLatexSyntaxHighlighting(monacoInstance);
 
-        editor.setValue(initializedContent);
-        setLatex(initializedContent);
+        editor.setValue(latex);
     };
 
     return { editorRef, handleEditorDidMount };

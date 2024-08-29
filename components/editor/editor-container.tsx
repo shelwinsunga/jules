@@ -1,25 +1,35 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { CodeEditor } from './editor'
 import { useFrontend } from '@/contexts/FrontendContext'
 import { Button } from '@/components/ui/button'
 import { useTheme } from 'next-themes'
+import { db } from '@/lib/constants'
+import { useParams } from 'next/navigation'
+import { tx } from '@instantdb/react'
+import { Skeleton } from '@/components/ui/skeleton'
 
 const EditorContainer = () => {
-    const { latex, setLatex } = useFrontend()
+    const { latex, setLatex, isLoading } = useFrontend()
     const { theme, systemTheme } = useTheme()
-    const [mounted, setMounted] = useState(false)
-
-    useEffect(() => {
-        setMounted(true)
-    }, [])
+    const { id } = useParams<{ id: string }>();
 
     const handleCodeChange = (newCode: string) => {
-        setLatex(newCode)
+        setLatex(newCode);
+        db.transact([tx.projects[id].update({ project_content: newCode })])
     }
 
-    if (!mounted) return null
+    if (isLoading) {
+        return (
+            <div className="flex flex-col w-full h-full">
+                <div className="flex justify-end items-center border-b shadow-sm p-2">
+                    <Skeleton className="h-10 w-20" />
+                </div>
+                <Skeleton className="flex-grow" />
+            </div>
+        )
+    }
 
     return (
         <div className="flex flex-col w-full h-full">
@@ -31,7 +41,7 @@ const EditorContainer = () => {
             <CodeEditor
                 onChange={handleCodeChange}
                 value={latex}
-                key={theme || systemTheme} // Force re-render when theme changes
+                key={theme || systemTheme}
             />
         </div>
     )
