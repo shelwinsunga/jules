@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
 import { FileIcon, SearchIcon, PlusIcon, BookOpenIcon, FileTextIcon, GraduationCapIcon, MoreVertical, Edit2Icon, CopyIcon, DownloadIcon } from "lucide-react"
-import ProjectNav from "@/components/nav/project-nav"
+import ProjectNav from "@/components/projects/project-nav"
 import Link from "next/link"
 import { db } from "@/lib/constants"
 import { Skeleton } from "@/components/ui/skeleton"
