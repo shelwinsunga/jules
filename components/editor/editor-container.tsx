@@ -11,14 +11,26 @@ import { tx } from '@instantdb/react'
 import { Skeleton } from '@/components/ui/skeleton'
 
 const EditorContainer = () => {
-    const { latex, setLatex, isLoading } = useFrontend()
+    // const { latex, setLatex, isLoading } = useFrontend()
     const { theme, systemTheme } = useTheme()
     const { id } = useParams<{ id: string }>();
 
+    const { isLoading, error, data } = db.useQuery({
+        projects: {
+            $: {
+                where: {
+                    id: id
+                }
+            }
+        }
+    });
+
+
     const handleCodeChange = (newCode: string) => {
-        setLatex(newCode);
         db.transact([tx.projects[id].update({ project_content: newCode })])
     }
+
+
 
     if (isLoading) {
         return (
@@ -40,7 +52,7 @@ const EditorContainer = () => {
             </div>
             <CodeEditor
                 onChange={handleCodeChange}
-                value={latex}
+                value={data?.projects[0]?.project_content}
                 key={theme || systemTheme}
             />
         </div>

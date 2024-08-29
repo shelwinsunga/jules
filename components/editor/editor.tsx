@@ -10,7 +10,7 @@ interface CodeEditorProps {
 }
 
 export const CodeEditor = ({ onChange, value }: CodeEditorProps) => {
-    const { editorRef, handleEditorDidMount } = useEditorSetup(onChange);
+    const { editorRef, handleEditorDidMount } = useEditorSetup(onChange, value);
     const { handleAIAssist } = useAIAssist();
 
     return (

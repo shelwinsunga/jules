@@ -19,21 +19,8 @@ This is a section in our document.
 This is a subsection with some math: $E = mc^2$
 \\end{document}`
 
-export function useEditorSetup(onChange: (value: string) => void) {
-    const { id } = useParams<{ id: string }>();
-
-    // const { isLoading, error, data } = db.useQuery({
-    //     projects: {
-    //         $: {
-    //             where: {
-    //                 id: id
-    //             }
-    //         }
-    //     }
-    // })
-
+export function useEditorSetup(onChange: (value: string) => void, value: string) {
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-    const { latex } = useFrontend();
     const { setTheme } = useEditorTheme();
     const { setupLatexSyntaxHighlighting } = useLatexSyntaxHighlighting();
 
@@ -50,7 +37,7 @@ export function useEditorSetup(onChange: (value: string) => void) {
         setTheme(monacoInstance);
         setupLatexSyntaxHighlighting(monacoInstance);
 
-        editor.setValue(latex);
+        editor.setValue(value);
     };
 
     return { editorRef, handleEditorDidMount };
