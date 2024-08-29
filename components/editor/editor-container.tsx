@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useCallback } from 'react'
 import { CodeEditor } from './editor'
 import { useFrontend } from '@/contexts/FrontendContext'
 import { Button } from '@/components/ui/button'
@@ -9,11 +9,12 @@ import { db } from '@/lib/constants'
 import { useParams } from 'next/navigation'
 import { tx } from '@instantdb/react'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useDebounce } from '@/hooks/useDebounce'
 
 const EditorContainer = () => {
-    // const { latex, setLatex, isLoading } = useFrontend()
     const { theme, systemTheme } = useTheme()
     const { id } = useParams<{ id: string }>();
+    const [localContent, setLocalContent] = useState('');
 
     const { isLoading, error, data } = db.useQuery({
         projects: {
@@ -25,12 +26,14 @@ const EditorContainer = () => {
         }
     });
 
-
-    const handleCodeChange = (newCode: string) => {
+    const debouncedUpdateDb = useDebounce((newCode: string) => {
         db.transact([tx.projects[id].update({ project_content: newCode })])
-    }
+    }, 1000);
 
-
+    const handleCodeChange = useCallback((newCode: string) => {
+        setLocalContent(newCode);
+        debouncedUpdateDb(newCode);
+    }, [debouncedUpdateDb]);
 
     if (isLoading) {
         return (
@@ -52,7 +55,7 @@ const EditorContainer = () => {
             </div>
             <CodeEditor
                 onChange={handleCodeChange}
-                value={data?.projects[0]?.project_content}
+                value={localContent || data?.projects[0]?.project_content}
                 key={theme || systemTheme}
             />
         </div>
