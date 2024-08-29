@@ -9,7 +9,14 @@ import { Button } from "@/components/ui/button";
 import { db } from '@/lib/constants';
 import { tx, id } from '@instantdb/react';
 import { CheckIcon } from "lucide-react";
-
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+  } from "@/components/ui/select"
+  
 const templates = [
   { id: "blank", title: "Blank", image: "/placeholder.svg" },
   { id: "article", title: "Article", image: "/placeholder.svg" },
@@ -18,6 +25,7 @@ const templates = [
   { id: "letter", title: "Letter", image: "/placeholder.svg" },
   { id: "proposal", title: "Proposal", image: "/placeholder.svg" },
 ];
+
 
 export default function NewDocument() {
     const [title, setTitle] = useState('');
@@ -90,6 +98,21 @@ export default function NewDocument() {
                                         onChange={(e) => setTitle(e.target.value)}
                                         placeholder="Enter document title"
                                     />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="template">Template</Label>
+                                    <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select a template" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {templates.map((template) => (
+                                                <SelectItem key={template.id} value={template.id}>
+                                                    {template.title}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                 </div>
                                 <Button type="submit" className="w-full">Create Document</Button>
                             </form>
