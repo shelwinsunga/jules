@@ -15,7 +15,8 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-  } from "@/components/ui/select"
+} from "@/components/ui/select"
+import { v4 as uuidv4 } from 'uuid';
   
 const templates = [
   { id: "blank", title: "Blank", image: "/placeholder.svg" },
@@ -36,7 +37,12 @@ export default function NewDocument() {
         db.transact(
             tx.projects[id()].update({
                 title: title,
+                id: uuidv4(),
                 template: selectedTemplate,
+                last_compiled: new Date(),
+                word_count: 0,
+                page_count: 0,
+                document_class: selectedTemplate,
                 createdAt: new Date(),
             })
         );

@@ -1,3 +1,4 @@
+"use client"
 import * as React from "react"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -12,8 +13,12 @@ import { Badge } from "@/components/ui/badge"
 import { FileIcon, SearchIcon, PlusIcon, BookOpenIcon, FileTextIcon, GraduationCapIcon, MoreVertical, Edit2Icon, CopyIcon, DownloadIcon } from "lucide-react"
 import ProjectNav from "@/components/nav/project-nav"
 import Link from "next/link"
+import { db } from "@/lib/constants"
 
 export default function Projects() {
+  const { isLoading, error, data } = db.useQuery({ projects: {} });
+  console.log(data)
+
   const recentDocuments = [
     { id: 1, name: "thesis-chapter-3.tex", lastCompiled: "2 hours ago", preview: "/placeholder.svg?height=100&width=80", wordCount: 2500, pageCount: 15, documentClass: "report" },
     { id: 2, name: "conference-paper.tex", lastCompiled: "Yesterday", preview: "/placeholder.svg?height=100&width=80", wordCount: 3000, pageCount: 8, documentClass: "article" },
