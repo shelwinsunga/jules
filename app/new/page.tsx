@@ -16,6 +16,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { defaultContent } from "@/lib/constants"
   
 const templates = [
   { id: "blank", title: "Blank", image: "/placeholder.svg" },
@@ -49,6 +50,7 @@ export default function NewDocument() {
                 page_count: 0,
                 document_class: selectedTemplate,
                 createdAt: new Date(),
+                project_content: defaultContent,
             })
         );
     };

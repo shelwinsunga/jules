@@ -5,19 +5,23 @@ import { useEditorTheme } from './useEditorTheme';
 import { useLatexSyntaxHighlighting } from './useLatexSyntaxHighlighting';
 import { editor, languages } from 'monaco-editor';
 import * as monaco from 'monaco-editor';
-
-const initialContent = `\\documentclass{article}
-\\begin{document}
-Hello, world! This is a simple LaTeX document.
-
-\\section{A Section}
-This is a section in our document.
-
-\\subsection{A Subsection}
-This is a subsection with some math: $E = mc^2$
-\\end{document}`
+import { useParams } from 'next/navigation'
+import { db, defaultContent } from '@/lib/constants';
 
 export function useEditorSetup(onChange: (value: string) => void) {
+    const { id } = useParams<{ id: string }>();
+    const { isLoading, error, data } = db.useQuery({
+        projects: {
+            $: {
+                where: {
+                    id: id
+                }
+            }
+        }
+    })
+
+    const initializedContent = data?.projects[0]?.project_content || defaultContent;
+
     const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
     const { setLatex } = useFrontend();
     const { setTheme } = useEditorTheme();
@@ -36,8 +40,8 @@ export function useEditorSetup(onChange: (value: string) => void) {
         setTheme(monacoInstance);
         setupLatexSyntaxHighlighting(monacoInstance);
 
-        editor.setValue(initialContent);
-        setLatex(initialContent);
+        editor.setValue(initializedContent);
+        setLatex(initializedContent);
     };
 
     return { editorRef, handleEditorDidMount };
