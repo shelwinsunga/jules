@@ -17,26 +17,15 @@ import { db } from "@/lib/constants"
 
 export default function Projects() {
   const { isLoading, error, data } = db.useQuery({ projects: {} });
-  console.log(data)
-
-  const recentDocuments = [
-    { id: 1, name: "thesis-chapter-3.tex", lastCompiled: "2 hours ago", preview: "/placeholder.svg?height=100&width=80", wordCount: 2500, pageCount: 15, documentClass: "report" },
-    { id: 2, name: "conference-paper.tex", lastCompiled: "Yesterday", preview: "/placeholder.svg?height=100&width=80", wordCount: 3000, pageCount: 8, documentClass: "article" },
-    { id: 3, name: "research-proposal.tex", lastCompiled: "3 days ago", preview: "/placeholder.svg?height=100&width=80", wordCount: 1800, pageCount: 5, documentClass: "article" },
-  ]
-
-  const allDocuments = [
-    ...recentDocuments,
-    { id: 4, name: "literature-review.tex", lastCompiled: "1 week ago", preview: "/placeholder.svg?height=100&width=80", wordCount: 5000, pageCount: 20, documentClass: "report" },
-    { id: 5, name: "journal-submission.tex", lastCompiled: "2 weeks ago", preview: "/placeholder.svg?height=100&width=80", wordCount: 4500, pageCount: 12, documentClass: "article" },
-    { id: 6, name: "presentation-slides.tex", lastCompiled: "1 month ago", preview: "/placeholder.svg?height=100&width=80", wordCount: 1000, pageCount: 15, documentClass: "beamer" },
-  ]
+  const projects = data?.projects;
+  const recentDocuments = projects?.slice(0, 3) || [];
+  const allDocuments = projects || [];
 
   const DocumentCard = ({ doc, detailed = false }: { doc: any, detailed?: boolean }) => (
     <Card className="flex flex-col">
       <CardContent className="flex-grow p-4">
         <div className="flex items-center justify-between mb-4">
-          <Badge variant="outline" className="text-primary">{doc.documentClass}</Badge>
+          <Badge variant="outline" className="text-primary">{doc.document_class || doc.template}</Badge>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
@@ -63,19 +52,19 @@ export default function Projects() {
         {detailed ? (
           <div className="flex space-x-4">
             <div className="flex-shrink-0">
-              <img src={doc.preview} alt={`Preview of ${doc.name}`} className="w-20 h-25 object-cover rounded" />
+              <img src="/placeholder.svg?height=100&width=80" alt={`Preview of ${doc.title}`} className="w-20 h-25 object-cover rounded" />
             </div>
             <div>
-              <h3 className="font-semibold truncate">{doc.name}</h3>
-              <p className="text-sm text-muted-foreground">Last compiled: {doc.lastCompiled}</p>
-              <p className="text-sm text-muted-foreground">{doc.wordCount} words | {doc.pageCount} pages</p>
+              <h3 className="font-semibold truncate">{doc.title}</h3>
+              <p className="text-sm text-muted-foreground">Last compiled: {new Date(doc.last_compiled).toLocaleString()}</p>
+              <p className="text-sm text-muted-foreground">{doc.word_count} words | {doc.page_count} pages</p>
             </div>
           </div>
         ) : (
           <>
-            <h3 className="font-semibold truncate text-sm">{doc.name}</h3>
-            <p className="text-xs text-muted-foreground">Compiled: {doc.lastCompiled}</p>
-            <p className="text-xs text-muted-foreground">{doc.wordCount} words | {doc.pageCount} pages</p>
+            <h3 className="font-semibold truncate text-sm">{doc.title}</h3>
+            <p className="text-xs text-muted-foreground">Compiled: {new Date(doc.last_compiled).toLocaleString()}</p>
+            <p className="text-xs text-muted-foreground">{doc.word_count} words | {doc.page_count} pages</p>
           </>
         )}
       </CardContent>
@@ -90,7 +79,6 @@ export default function Projects() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
         <ProjectNav />
-
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="mb-8 flex justify-between items-center">
           <div className="relative flex-grow mr-4">
@@ -105,23 +93,38 @@ export default function Projects() {
           </Button>
         </div>
 
-        <section className="mb-12">
-          <h2 className="text-xl font-semibold mb-4">Recently Compiled</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recentDocuments.map((doc) => (
-              <DocumentCard key={doc.id} doc={doc} detailed={true} />
-            ))}
-          </div>
-        </section>
+        {allDocuments.length === 0 ? (
+          <Card className="p-12 text-center">
+            <h2 className="text-xl font-semibold mb-4">No Documents Yet</h2>
+            <p className="text-muted-foreground mb-4">Get started by creating your first LaTeX document.</p>
+            <Button asChild>
+              <Link href="/new">
+                <PlusIcon className="mr-2 h-4 w-4" />
+                Add Your First Document
+              </Link>
+            </Button>
+          </Card>
+        ) : (
+          <>
+            <section className="mb-12">
+              <h2 className="text-xl font-semibold mb-4">Recently Compiled</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {recentDocuments.map((doc) => (
+                  <DocumentCard key={doc.id} doc={doc} detailed={true} />
+                ))}
+              </div>
+            </section>
 
-        <section>
-          <h2 className="text-xl font-semibold mb-4">All Documents</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {allDocuments.map((doc) => (
-              <DocumentCard key={doc.id} doc={doc} />
-            ))}
-          </div>
-        </section>
+            <section>
+              <h2 className="text-xl font-semibold mb-4">All Documents</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {allDocuments.map((doc) => (
+                  <DocumentCard key={doc.id} doc={doc} />
+                ))}
+              </div>
+            </section>
+          </>
+        )}
       </main>
 
       <footer className="border-t mt-auto">
