@@ -10,7 +10,7 @@ export default function AuthButtons() {
   return (
     <div className="flex items-center gap-4 border-l border-border pl-6">
     {user ? (
-      <Button size="sm" className="bg-transparent border-primary/75 border text-primary hover:bg-primary/5" asChild>
+      <Button size="sm" className="dark:bg-transparent dark:border-primary/75 dark:border dark:text-primary dark:hover:bg-primary/5 light:border-primary/75 light:border light:text-primary light:hover:bg-primary/10" asChild>
         <Link href="/projects">
           <LayoutGrid className="h-4 w-4" />
           <span className="ml-2">Projects</span>
