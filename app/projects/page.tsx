@@ -1,5 +1,5 @@
 "use client"
-import * as React from "react"
+import { useState } from "react"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,16 +9,10 @@ import Link from "next/link"
 import { db } from "@/lib/constants"
 import { Skeleton } from "@/components/ui/skeleton"
 import DocumentCard from "@/components/projects/document-card"
-import { useRouter } from "next/navigation"
 
 export default function Projects() {
   const { user } = db.useAuth();
-  const router = useRouter();
-  const [searchTerm, setSearchTerm] = React.useState('');
-  if(!user) {
-    router.push('/login');
-    return;
-  }
+  const [searchTerm, setSearchTerm] = useState('');
   
   const { isLoading, error, data } = db.useQuery({ projects: {
     $: {
