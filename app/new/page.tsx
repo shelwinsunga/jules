@@ -16,7 +16,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { nanoid } from 'nanoid';
   
 const templates = [
   { id: "blank", title: "Blank", image: "/placeholder.svg" },
@@ -26,7 +25,6 @@ const templates = [
   { id: "letter", title: "Letter", image: "/placeholder.svg" },
   { id: "proposal", title: "Proposal", image: "/placeholder.svg" },
 ];
-
 
 export default function NewDocument() {
     const [title, setTitle] = useState('');
