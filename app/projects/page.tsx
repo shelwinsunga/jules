@@ -11,6 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { FileIcon, SearchIcon, PlusIcon, BookOpenIcon, FileTextIcon, GraduationCapIcon, MoreVertical, Edit2Icon, CopyIcon, DownloadIcon } from "lucide-react"
 import ProjectNav from "@/components/nav/project-nav"
+
 export default function Projects() {
   const recentDocuments = [
     { id: 1, name: "thesis-chapter-3.tex", lastCompiled: "2 hours ago", preview: "/placeholder.svg?height=100&width=80", wordCount: 2500, pageCount: 15, documentClass: "report" },
@@ -87,11 +88,15 @@ export default function Projects() {
       </header>
 
       <main className="flex-grow container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <div className="relative">
-            <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-            <Input className="pl-10 py-6 text-lg" placeholder="Search LaTeX documents..." />
+        <div className="mb-8 flex justify-between items-center">
+          <div className="relative flex-grow mr-4">
+            <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+            <Input className="pl-10 py-5 text-sm w-full" placeholder="Search LaTeX documents..." />
           </div>
+          <Button className="whitespace-nowrap">
+            <PlusIcon className="mr-2 h-4 w-4" />
+            Add Document
+          </Button>
         </div>
 
         <section className="mb-12">

@@ -9,6 +9,7 @@ import { LogOut} from 'lucide-react';
 import { db } from '@/lib/constants';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import { useRouter } from 'next/navigation';
+import { Input } from '@/components/ui/input';
 
 export default function ProjectNav() {
   const router = useRouter();
