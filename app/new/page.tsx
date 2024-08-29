@@ -17,6 +17,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { defaultContent } from "@/lib/constants"
+import { useRouter } from "next/navigation";
   
 const templates = [
   { id: "blank", title: "Blank", image: "/placeholder.svg" },
@@ -29,9 +30,11 @@ const templates = [
 
 export default function NewDocument() {
     const { user } = db.useAuth();
+    const router = useRouter();
     const [title, setTitle] = useState('');
     const [selectedTemplate, setSelectedTemplate] = useState('blank');
     const [titleError, setTitleError] = useState('');
+
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -40,8 +43,9 @@ export default function NewDocument() {
             return;
         }
         setTitleError('');
+        const newProjectId = id();
         db.transact(
-            tx.projects[id()].update({
+            tx.projects[newProjectId].update({
                 user_id: user?.id,
                 title: title.trim(),
                 template: selectedTemplate,
@@ -53,6 +57,7 @@ export default function NewDocument() {
                 project_content: defaultContent,
             })
         );
+        router.push(`/project/${newProjectId}`);
     };
 
     return (

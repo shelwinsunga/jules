@@ -1,16 +1,28 @@
 'use client'
-import { useState } from 'react'
 import FileTree from '@/components/file-tree/file-tree'
 import { ModeToggle } from '@/components/ui/mode-toggle'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Search, HelpCircle } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import Link from 'next/link'
+import { useParams } from 'next/navigation'
+import { db } from '@/lib/constants'
 
 export default function SideNav() {
-    const [projectName, setProjectName] = useState('Riemann Hypothesis')
+    const { user } = db.useAuth();
+    const { id } = useParams<{ id: string }>();
+    const { data } = db.useQuery({
+        projects: {
+            $: {
+                where: {
+                    id: id
+                }
+            }
+        }
+    });
+
+    const projectTitle = data?.projects[0]?.title;
 
     return (
         <div className="w-full h-full flex flex-col  bg-muted/25">
@@ -18,10 +30,10 @@ export default function SideNav() {
                 <Link href="/projects" className="flex items-center space-x-2">
                     <div className="h-6 w-6 rounded-md bg-primary flex items-center justify-center">
                         <span className="text-sm font-medium text-primary-foreground">
-                            {projectName.split(' ').map(word => word[0]).join('')}
+                            {projectTitle ? projectTitle.split(' ').map((word: string) => word[0]).join('') : ''}
                         </span>
                     </div>
-                    <span className="text-sm text-medium text-foreground">{projectName}</span>
+                    <span className="text-sm text-medium text-foreground">{projectTitle}</span>
                 </Link>
                 <ModeToggle />
             </div>
@@ -39,17 +51,12 @@ export default function SideNav() {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                         <Avatar>
-                            {/* <AvatarImage src="/avatar.png" /> */}
-                            <AvatarFallback>UN</AvatarFallback>
+                            <AvatarFallback>S</AvatarFallback>
                         </Avatar>
                         <div>
-                            <p className="text-sm font-medium">User Name</p>
-                            <p className="text-xs text-muted-foreground">user@example.com</p>
+                            <p className="text-xs font-medium">{user?.email}</p>
                         </div>
                     </div>
-                    <Button variant="ghost" size="icon">
-                        <HelpCircle className="h-5 w-5" />
-                    </Button>
                 </div>
             </div>
         </div>
