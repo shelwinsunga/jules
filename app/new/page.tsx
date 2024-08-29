@@ -6,13 +6,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { db } from '@/lib/constants';
+import { tx, id } from '@instantdb/react';
 
 export default function NewDocument() {
+
     const [title, setTitle] = useState('');
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Handle form submission here
+        db.transact(
+            tx.projects[id()].update({
+                title: title,
+                createdAt: new Date(),
+            })
+        );
         console.log({ title });
     };
 
