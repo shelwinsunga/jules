@@ -28,7 +28,7 @@ const EditorContainer = () => {
 
     const debouncedUpdateDb = useDebounce((newCode: string) => {
         db.transact([tx.projects[id].update({ project_content: newCode })])
-    }, 1000);
+    }, 250);
 
     const handleCodeChange = useCallback((newCode: string) => {
         setLocalContent(newCode);
