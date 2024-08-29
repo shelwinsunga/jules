@@ -1,0 +1,1 @@
+export const APP_ID = process.env.NEXT_PUBLIC_INSTANT_APP_ID as string;

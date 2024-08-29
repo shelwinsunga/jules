@@ -6,8 +6,9 @@ import { ArrowRight, Menu, X } from "lucide-react"
 import Link from "next/link"
 import { init } from '@instantdb/react';
 import { LayoutGrid } from 'lucide-react';
+import { APP_ID } from '@/lib/constants';
 
-const APP_ID = 'ef0233cf-3c42-40ee-98dc-bee7019c7319';
+console.log(APP_ID);
 
 const db = init({ appId: APP_ID });
 

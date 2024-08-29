@@ -6,8 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useRouter } from 'next/navigation';
-
-const APP_ID = 'ef0233cf-3c42-40ee-98dc-bee7019c7319';
+import { APP_ID } from '@/lib/constants';
 
 const db = init({ appId: APP_ID });
 
