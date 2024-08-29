@@ -24,17 +24,14 @@ export default function ProjectNav() {
 
     <div className="container mx-auto px-4 py-4 flex justify-between items-center">
       <div className="flex items-center">
-        <Link className="text-lg font-bold" href="/projects">
+        <Link className="text-lg font-bold" href="/">
           Yomi
         </Link>
       </div>
   
       <nav className="flex items-center space-x-4">
-        <Link className="text-sm text-muted-foreground" href="#">
-          Changelog
-        </Link>
-        <Link className="text-sm text-muted-foreground" href="#">
-          Docs
+        <Link className="text-sm text-muted-foreground" href="/projects">
+          Projects
         </Link>
         <Popover>
           <PopoverTrigger asChild>
