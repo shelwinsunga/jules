@@ -27,6 +27,7 @@ const templates = [
 ];
 
 export default function NewDocument() {
+    const { user } = db.useAuth();
     const [title, setTitle] = useState('');
     const [selectedTemplate, setSelectedTemplate] = useState('blank');
     const [titleError, setTitleError] = useState('');
@@ -40,6 +41,7 @@ export default function NewDocument() {
         setTitleError('');
         db.transact(
             tx.projects[id()].update({
+                user_id: user?.id,
                 title: title.trim(),
                 template: selectedTemplate,
                 last_compiled: new Date(),

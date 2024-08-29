@@ -16,7 +16,14 @@ import Link from "next/link"
 import { db } from "@/lib/constants"
 
 export default function Projects() {
-  const { isLoading, error, data } = db.useQuery({ projects: {} });
+  const { user } = db.useAuth();
+  const { isLoading, error, data } = db.useQuery({ projects: {
+    $: {
+      where: {
+        user_id: user?.id || ''
+      }
+    }
+  } });
   const projects = data?.projects;
   const recentDocuments = projects?.slice(0, 3) || [];
   const allDocuments = projects || [];
