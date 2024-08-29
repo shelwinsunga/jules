@@ -4,26 +4,28 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { LogOut, Settings, Sun, Moon } from 'lucide-react';
 import { db } from '@/lib/constants';
 import { useTheme } from 'next-themes';
+import { ModeToggle } from '@/components/ui/mode-toggle';
+import { useRouter } from 'next/navigation';
 
 export default function ProjectNav() {
+  const router = useRouter();
   const { user } = db.useAuth();
-  const { setTheme } = useTheme();
-  
+
+  const handleSignOut = () => {
+    db.auth.signOut();
+    router.push('/');
+  };
+
   return (
     <div className="container mx-auto px-4 py-4 flex justify-between items-center">
       <div className="flex items-center">
         <Link className="text-lg font-bold" href="#">
           Yomi
         </Link>
-        {user && (
-          <span className="ml-2 text-sm text-muted-foreground">
-            / {user.email}
-          </span>
-        )}
       </div>
       
       <nav className="flex items-center space-x-4">
@@ -33,31 +35,34 @@ export default function ProjectNav() {
         <Link className="text-sm hover:text-muted-foreground transition-colors" href="#">
           Docs
         </Link>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+        <Popover>
+          <PopoverTrigger asChild>
             <Avatar className="cursor-pointer">
-              <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-500" />
+            <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-500" />
+
             </Avatar>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setTheme('light')}>
-              <Sun className="mr-2 h-4 w-4" />
-              <span>Light Mode</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme('dark')}>
-              <Moon className="mr-2 h-4 w-4" />
-              <span>Dark Mode</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="mr-2 h-4 w-4" />
-              <span>Settings</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => db.auth.signOut()}>
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Log out</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          </PopoverTrigger>
+          <PopoverContent className="w-64 sm:w-72 p-4">
+            <div className="flex flex-col space-y-4">
+              <div className="flex items-center space-x-3 pb-3 border-b">
+                <Avatar className="h-10 w-10">
+                <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-500" />
+                </Avatar>
+                <div className="flex flex-col">
+                  <span className="text-sm text-muted-foreground">{user?.email}</span>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Theme</span>
+                <ModeToggle />
+              </div>
+              <Button variant="outline" className="w-full" onClick={handleSignOut}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Log out
+              </Button>
+            </div>
+          </PopoverContent>
+        </Popover>
       </nav>
     </div>
   );
