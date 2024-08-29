@@ -16,10 +16,16 @@ import Link from "next/link"
 import { db } from "@/lib/constants"
 import { Skeleton } from "@/components/ui/skeleton"
 import DocumentCard from "@/components/projects/document-card"
+import { useRouter } from "next/navigation"
 
 export default function Projects() {
   const { user } = db.useAuth();
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = React.useState('');
+  if(!user) {
+    router.push('/login');
+    return;
+  }
   
   const { isLoading, error, data } = db.useQuery({ projects: {
     $: {
