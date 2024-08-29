@@ -4,11 +4,9 @@ import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Menu, X } from "lucide-react"
 import Link from "next/link"
-import { init } from '@instantdb/react';
 import { LayoutGrid } from 'lucide-react';
-import { APP_ID } from '@/lib/constants';
+import { db } from '@/lib/constants';
 
-const db = init({ appId: APP_ID });
 
 export default function Home() {
   const { isLoading, user, error } = db.useAuth();

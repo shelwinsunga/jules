@@ -1,14 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { init } from '@instantdb/react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useRouter } from 'next/navigation';
-import { APP_ID } from '@/lib/constants';
-
-const db = init({ appId: APP_ID });
+import { db } from '@/lib/constants';
 
 export default function Login() {
     const router = useRouter();
