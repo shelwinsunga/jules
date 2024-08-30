@@ -35,9 +35,8 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
     return (
         <div 
             className={cn(
-                "flex items-center gap-2 p-1 rounded-md",
+                "flex items-center gap-2 p-1 rounded-md cursor-pointer",
                 node.isSelected && "bg-accent",
-                !node.isLeaf && "cursor-pointer"
             )}
             style={nodeStyle.base} 
             ref={dragHandle}

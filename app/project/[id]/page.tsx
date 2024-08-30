@@ -16,14 +16,18 @@ export default function Home() {
         <ResizablePanel defaultSize={12} collapsible={true}>
           <SideNav />
         </ResizablePanel>
-        {/* <ResizableHandle />
+        <ResizableHandle />
         <ResizablePanel defaultSize={44}>
-          <EditorContainer />
+          <div className="w-full h-full bg-background flex items-center justify-center">
+            <p className="text-foreground">Editor Container Placeholder</p>
+          </div>
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel defaultSize={44}>
-          <LatexRenderer />
-        </ResizablePanel> */}
+          <div className="w-full h-full bg-background flex items-center justify-center">
+            <p className="text-foreground">LaTeX Renderer Placeholder</p>
+          </div>
+        </ResizablePanel>
       </ResizablePanelGroup>
     </main>
   );
