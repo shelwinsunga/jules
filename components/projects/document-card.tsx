@@ -150,11 +150,10 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
                   <Image 
                     src={imageURL || "/placeholder.svg"} 
                     alt={`Preview of ${doc.title}`} 
-                    className="w-20 h-25 object-cover rounded" 
-                    width={100} 
+                    className="w-20 h-20 object-cover rounded shadow-md border" 
+                    width={80} 
                     height={80} 
-                    loader={({ src }) => src} // Add this line
-                    unoptimized // Add this line if you want to bypass Next.js image optimization
+                    loader={({ src }) => src} 
                   />
                 </div>
                 <div>
