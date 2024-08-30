@@ -37,6 +37,7 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
   const [newTitle, setNewTitle] = useState(doc.title);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [imageURL, setImageURL] = useState('');
+  const [imageError, setImageError] = useState(false);
   const { email, id: userId } = db.useAuth().user || {};
 
   useEffect(() => {
@@ -46,7 +47,10 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
       db.storage
         .getDownloadUrl(pathname + 'preview.webp')
         .then((signedUrl) => setImageURL(signedUrl))
-        .catch((err) => console.error('Failed to get file URL', err));
+        .catch((err) => {
+          console.error('Failed to get file URL', err);
+          setImageError(true);
+        });
     }
   }, [doc.id, doc.title, email, userId]);
 
@@ -96,12 +100,13 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
         <Card className="flex flex-col overflow-hidden">
           <div className="relative">
             <Image 
-              src={imageURL || "/placeholder.svg"} 
+              src={!imageError && imageURL ? imageURL : "/placeholder.svg"} 
               alt={`Preview of ${doc.title}`} 
               className="w-full h-40 object-cover" 
               width={300} 
               height={160} 
               loader={({ src }) => src} 
+              onError={() => setImageError(true)}
             />
             <div className="absolute top-2 right-2">
               <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
