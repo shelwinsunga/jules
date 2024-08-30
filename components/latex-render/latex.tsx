@@ -10,10 +10,11 @@ import { Switch } from "@/components/ui/switch";
 import LatexError from './latex-error';
 import { Label } from "@/components/ui/label"
 import { ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
-import { useFrontend } from "@/contexts/FrontendContext";
 import { db } from '@/lib/constants';
 import { tx} from '@instantdb/react'
 import { useParams } from 'next/navigation'
+import { savePdfToStorage, savePreviewToStorage } from '@/lib/db-utils';
+
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs';
 
 
@@ -56,37 +57,8 @@ const LatexRenderer = () => {
                 throw new Error(`${errorData.error}: ${errorData.message}\n\nDetails: ${errorData.details}`);
             }
             const blob = await response.blob();
-            // Save PDF file
-            const pdfFile = new File([blob], "main.pdf", { type: blob.type });
-            const pdfPathname = `${id}/main.pdf`;
-            await db.storage.put(pdfPathname, pdfFile);
-
-            // Generate preview image
-            const pdfDocument = await pdfjs.getDocument({ data: await blob.arrayBuffer() }).promise;
-            const page = await pdfDocument.getPage(1);
-            const viewport = page.getViewport({ scale: 1.0 });
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-            if (context) {
-                await page.render({ canvasContext: context, viewport: viewport }).promise;
-            } else {
-                throw new Error('Failed to get canvas context');
-            }
-
-            // Save preview image
-            const previewBlob = await new Promise<Blob>((resolve, reject) => {
-                canvas.toBlob((blob) => {
-                    if (blob) resolve(blob);
-                    else reject(new Error('Failed to create blob'));
-                }, 'image/webp', 0.8);
-            });
-            
-            const previewFile = new File([previewBlob], "preview.webp", { type: 'image/webp' });
-            const previewPathname = `${id}/preview.webp`;
-            await db.storage.put(previewPathname, previewFile);
-            
+            savePdfToStorage(blob, id);
+            savePreviewToStorage(blob, id);
             const url = URL.createObjectURL(blob);
             setPdfUrl(url);
         } catch (error) {
