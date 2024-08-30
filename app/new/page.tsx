@@ -20,12 +20,12 @@ import { defaultContent } from "@/lib/constants"
 import { useRouter } from "next/navigation";
   
 const templates = [
-  { id: "blank", title: "Blank", image: "/placeholder.svg" },
-  { id: "article", title: "Article", image: "/placeholder.svg" },
-  { id: "report", title: "Report", image: "/placeholder.svg" },
-  { id: "resume", title: "Resume", image: "/placeholder.svg" },
-  { id: "letter", title: "Letter", image: "/placeholder.svg" },
-  { id: "proposal", title: "Proposal", image: "/placeholder.svg" },
+  { id: "blank", title: "Blank", image: "/blank_preview.webp" },
+  { id: "article", title: "Article", image: "/article_preview.webp" },
+  { id: "report", title: "Report", image: "/report_preview.webp" },
+  { id: "resume", title: "Resume", image: "/resume_preview.webp" },
+  { id: "letter", title: "Letter", image: "/letter_preview.webp" },
+  { id: "proposal", title: "Proposal", image: "/proposal_preview.webp" },
 ];
 
 export default function NewDocument() {
