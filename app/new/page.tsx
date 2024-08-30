@@ -17,7 +17,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { useRouter } from "next/navigation";
-import { templateContent } from '@/lib/constants';
+import { templateContent } from '@/lib/constants/templates';
 
 const templates = [
   { id: "blank", title: "Blank", image: "/blank_preview.webp" },
