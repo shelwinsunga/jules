@@ -30,6 +30,7 @@ import { useState } from 'react';
 import { Input } from "@/components/ui/input"
 import { id } from "@instantdb/react";
 import Image from 'next/image';
+import { savePdfToStorage, savePreviewToStorage } from '@/lib/db-utils';
 
 export default function DocumentCard({ doc, detailed = false }: { doc: any, detailed?: boolean }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -75,11 +76,24 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
     setIsDropdownOpen(false);
   }
 
-  const handleDuplicate = (e: React.MouseEvent) => {
+  const handleDuplicate = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    const doc_id = id();
+    if (downloadURL) {
+      try {
+        const response = await fetch(downloadURL);
+        const blob = await response.blob();
+        const pathname = `${userId}/${doc_id}/`;
+        await savePreviewToStorage(blob, pathname + 'preview.webp');
+        savePdfToStorage(blob, pathname + 'main.pdf');
+      } catch (error) {
+        console.error('Error downloading file:', error);
+      }
+    } 
+
     db.transact([
-      tx.projects[id()].update({
+      tx.projects[doc_id].update({
         title: `${doc.title} (Copy)`,
         project_content: doc.project_content,
         document_class: doc.document_class,
