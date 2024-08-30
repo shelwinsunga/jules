@@ -79,6 +79,7 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
   const handleDuplicate = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    setIsDropdownOpen(false);
     const doc_id = id();
     if (downloadURL) {
       try {
@@ -105,7 +106,6 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
         page_count: 0
       })
     ]);
-    setIsDropdownOpen(false);
   }
 
   const handleDownload = (e: React.MouseEvent) => {
