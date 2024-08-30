@@ -285,33 +285,36 @@ const FileTree = ({ projectId }) => {
 
     return (
         <div ref={treeContainerRef} className="flex flex-col grow h-full shadow-sm w-full">
-            <div className="flex items-center justify-end p-2">
-                <Tooltip delayDuration={0}>
-                    <TooltipTrigger asChild>
-                        <Button variant="ghost" size="sm">
-                            <Plus className="h-4 w-4" />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Add</TooltipContent>
-                </Tooltip>
-                <Tooltip delayDuration={0}>
-                    <TooltipTrigger asChild>
-                        <Button variant="ghost" size="sm">
-                            <Edit className="h-4 w-4" />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Edit</TooltipContent>
-                </Tooltip>
-                <Tooltip delayDuration={0}>
-                    <TooltipTrigger asChild>
-                        <Button variant="ghost" size="sm">
-                            <Trash2 className="h-4 w-4" />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Delete</TooltipContent>
-                </Tooltip>
+            <div className="flex items-center justify-between  px-4 border-b py-2">
+                <div className="text-sm font-medium">Files</div>
+                <div className="flex items-center gap-2 ">
+                    <Tooltip delayDuration={0}>
+                        <TooltipTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                                <Plus className="h-4 w-4" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Add</TooltipContent>
+                    </Tooltip>
+                    <Tooltip delayDuration={0}>
+                        <TooltipTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                                <Edit className="h-4 w-4" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Edit</TooltipContent>
+                    </Tooltip>
+                    <Tooltip delayDuration={0}>
+                        <TooltipTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Delete</TooltipContent>
+                    </Tooltip>
+                </div>
             </div>
-            <ScrollArea className="flex-grow w-full px-4">
+            <ScrollArea className="flex-grow w-full px-4 py-2">
                 <Tree
                     data={transformedData}
                     onMove={handleMove}
