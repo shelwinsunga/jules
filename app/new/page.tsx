@@ -33,7 +33,7 @@ type TemplateKey = keyof typeof templateContent;
 export default function NewDocument() {
     const { user } = db.useAuth();
     const router = useRouter();
-    const [title, setTitle] = useState('');
+    const [title, setTitle] = useState('New Document');
     const [selectedTemplate, setSelectedTemplate] = useState<TemplateKey>('blank');
     const [titleError, setTitleError] = useState('');
 
@@ -46,7 +46,8 @@ export default function NewDocument() {
         }
         setTitleError('');
         const newProjectId = id();
-        db.transact(
+        const newFileId = id();
+        db.transact([
             tx.projects[newProjectId].update({
                 user_id: user?.id,
                 title: title.trim(),
@@ -57,7 +58,16 @@ export default function NewDocument() {
                 document_class: selectedTemplate,
                 createdAt: new Date(),
                 project_content: templateContent[selectedTemplate],
+            }),
+            tx.files[newFileId].update({
+                user_id: user?.id,
+                projectId: newProjectId,
+                name: 'main.tex',
+                type: 'file',
+                content: templateContent[selectedTemplate],
+                createdAt: new Date(),
             })
+        ]
         );
         router.push(`/project/${newProjectId}`);
     };
