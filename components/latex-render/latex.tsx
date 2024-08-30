@@ -61,7 +61,7 @@ const LatexRenderer = () => {
             }
             const blob = await response.blob();
             
-            const pathname = `${user.email.replace(/[^a-zA-Z0-9]/g, '_')}-${user.id}/${data?.projects[0].title.replace(/[^a-zA-Z0-9]/g, '_')}-${id}/`;
+            const pathname = `${user.id}/${id}/`;
 
             await savePdfToStorage(blob, pathname + 'main.pdf');
             await savePreviewToStorage(blob, pathname + 'preview.webp');

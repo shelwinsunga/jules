@@ -30,7 +30,6 @@ import { useState } from 'react';
 import { Input } from "@/components/ui/input"
 import { id } from "@instantdb/react";
 import Image from 'next/image';
-import { generateProjectPathname } from '@/lib/client-utils';
 
 export default function DocumentCard({ doc, detailed = false }: { doc: any, detailed?: boolean }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -42,7 +41,7 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
 
   useEffect(() => {
     if (email && userId) {
-      const pathname = generateProjectPathname(email, userId, doc.title, doc.id);
+      const pathname = `${userId}/${doc.id}/`;
       
       db.storage
         .getDownloadUrl(pathname + 'preview.webp')
