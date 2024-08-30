@@ -14,7 +14,7 @@ import { db } from '@/lib/constants';
 import { tx} from '@instantdb/react'
 import { useParams } from 'next/navigation'
 import { savePdfToStorage, savePreviewToStorage } from '@/lib/db-utils';
-
+import { Download } from 'lucide-react';
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs';
 
 
@@ -113,6 +113,17 @@ const LatexRenderer = () => {
     const handleResetZoom = () => {
         setScale(1.0);
     };
+
+    const handleDownload = () => {
+        if (pdfUrl) {
+            const link = document.createElement('a');
+            link.href = pdfUrl;
+            link.download = `${data?.projects[0]?.title || 'document'}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    }
     
 
     return (
@@ -137,6 +148,9 @@ const LatexRenderer = () => {
                     </Button>
                     <Button variant="outline" size="sm" onClick={handleResetZoom}>
                         <RotateCcw className="h-4 w-4" />
+                    </Button>
+                    <Button size="sm" onClick={handleDownload}>
+                        <Download className="h-4 w-4" />
                     </Button>
                 </div>
             </div>
