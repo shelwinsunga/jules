@@ -197,7 +197,7 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
           </div>
           <CardContent className="flex-grow p-4">
             <div className="flex items-center justify-between mb-2">
-              <Badge variant="secondary" className="text-primary">{doc.document_class || doc.template}</Badge>
+              <Badge variant="secondary" className="bg-primary text-foreground dark:bg-secondary dark:text-primary">{doc.document_class || doc.template}</Badge>
             </div>
             <h3 className="font-semibold truncate text-lg mb-1">{doc.title}</h3>
             <p className="text-sm text-muted-foreground mb-1">Last compiled: {new Date(doc.last_compiled).toLocaleString()}</p>
