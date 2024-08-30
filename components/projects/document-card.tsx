@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,22 +14,20 @@ import {
   DownloadIcon,
   Edit2Icon,
   MoreVertical,
+  XIcon
 } from "lucide-react";
 import { db } from "@/lib/constants"
 import { tx } from '@instantdb/react';
-import { XIcon } from "lucide-react"
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogFooter
 } from "@/components/ui/dialog"
 import Link from 'next/link';
 import { useState } from 'react';
 import { Input } from "@/components/ui/input"
-import { DialogFooter } from "@/components/ui/dialog";
 import { id } from "@instantdb/react";
 import Image from 'next/image';
 import { generateProjectPathname } from '@/lib/client-utils';
@@ -95,15 +93,23 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
   return (
     <>
       <Link href={`/project/${doc.id}`} passHref>
-        <Card className="flex flex-col cursor-pointer hover:shadow-md hover:bg-foreground/5 hover:border-foreground/20 transition-shadow">
-          <CardContent className="flex-grow p-4">
-            <div className="flex items-center justify-between mb-4">
-              <Badge variant="outline" className="text-primary">{doc.document_class || doc.template}</Badge>
+        <Card className="flex flex-col overflow-hidden">
+          <div className="relative">
+            <Image 
+              src={imageURL || "/placeholder.svg"} 
+              alt={`Preview of ${doc.title}`} 
+              className="w-full h-40 object-cover" 
+              width={300} 
+              height={160} 
+              loader={({ src }) => src} 
+            />
+            <div className="absolute top-2 right-2">
               <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
                 <DropdownMenuTrigger asChild>
                   <Button 
-                    variant="ghost" 
-                    className="h-8 w-8 p-0" 
+                    variant="secondary" 
+                    size="icon" 
+                    className="h-8 w-8"
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -144,32 +150,20 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-            {detailed ? (
-              <div className="flex space-x-4">
-                <div className="flex-shrink-0">
-                  <Image 
-                    src={imageURL || "/placeholder.svg"} 
-                    alt={`Preview of ${doc.title}`} 
-                    className="w-20 h-20 object-cover rounded shadow-md border" 
-                    width={80} 
-                    height={80} 
-                    loader={({ src }) => src} 
-                  />
-                </div>
-                <div>
-                  <h3 className="font-semibold truncate">{doc.title}</h3>
-                  <p className="text-sm text-muted-foreground">Last compiled: {new Date(doc.last_compiled).toLocaleString()}</p>
-                  <p className="text-sm text-muted-foreground">{doc.word_count} words | {doc.page_count} pages</p>
-                </div>
-              </div>
-            ) : (
-              <>
-                <h3 className="font-semibold truncate text-sm">{doc.title}</h3>
-                <p className="text-xs text-muted-foreground">Compiled: {new Date(doc.last_compiled).toLocaleString()}</p>
-                <p className="text-xs text-muted-foreground">{doc.word_count} words | {doc.page_count} pages</p>
-              </>
-            )}
+          </div>
+          <CardContent className="flex-grow p-4">
+            <div className="flex items-center justify-between mb-2">
+              <Badge variant="outline" className="text-primary">{doc.document_class || doc.template}</Badge>
+            </div>
+            <h3 className="font-semibold truncate text-lg mb-1">{doc.title}</h3>
+            <p className="text-sm text-muted-foreground mb-1">Last compiled: {new Date(doc.last_compiled).toLocaleString()}</p>
+            <p className="text-sm text-muted-foreground">{doc.word_count} words | {doc.page_count} pages</p>
           </CardContent>
+          {detailed && (
+            <CardFooter className="p-4 pt-0">
+              <Button variant="outline" className="w-full">Open</Button>
+            </CardFooter>
+          )}
         </Card>
       </Link>
       <Dialog open={isDialogOpen} onOpenChange={handleDialogOpenChange}>
