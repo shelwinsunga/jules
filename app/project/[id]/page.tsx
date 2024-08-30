@@ -1,5 +1,4 @@
-import EditorContainer from "@/components/editor/editor-container";
-import LatexRenderer from "@/components/latex-render/latex";
+'use client'
 import {
   ResizableHandle,
   ResizablePanel,
@@ -10,10 +9,13 @@ import SideNav from "@/components/nav/side-nav"
 export const maxDuration = 30;
 
 export default function Home() {
+  const sideNavSize = typeof window !== 'undefined' ? (window.innerWidth < 1440 ? 20 : 16) : 16;
+
+  
   return (
     <main className="flex flex-col h-screen">
       <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel defaultSize={16} collapsible={true}>
+        <ResizablePanel defaultSize={sideNavSize} collapsible={true}>
           <SideNav />
         </ResizablePanel>
         <ResizableHandle />
