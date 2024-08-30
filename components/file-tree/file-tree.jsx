@@ -8,18 +8,11 @@ import Tex from '@/public/tex.tsx';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { db } from '@/lib/constants';
 import { tx } from '@instantdb/react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
 const FileTreeNode = ({ node, style, dragHandle }) => {
-
     const [nodeStyle, setNodeStyle] = useState({ base: style });
     const onMouseOver = () => {
         if (node.data.hover) {
@@ -41,40 +34,72 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
         node.tree.props.onToggle({ id: node.id, isExpanded: !node.data.isExpanded });
     };
 
+    const handleRename = () => {
+        // Implement rename logic here
+    };
+
+    const handleDelete = () => {
+        // Implement delete logic here
+    };
+
+    const handleAddFile = () => {
+        // Implement add file logic here
+    };
+
     return (
-        <div 
-            className={cn(
-                "flex items-center gap-2 p-1 rounded-md cursor-pointer",
-                node.isSelected && "bg-accent",
-            )}
-            style={nodeStyle.base} 
-            ref={dragHandle}
-            onMouseOver={onMouseOver}
-            onMouseLeave={onMouseLeave}
-            onClick={!node.isLeaf ? handleToggleClick : undefined}
-        >
-            <div className="flex items-center justify-between w-full p-1 rounded-md text-foreground">
-                <div className="flex items-center gap-2">
-                    {node.isLeaf ? (
-                        node.data.name.endsWith('.tex') ? (
-                            <Tex />
-                        ) : (
-                            <File className="w-4 h-4" />
-                        )
-                    ) : node.data.isExpanded ? (
-                        <FolderOpen className="w-4 h-4" />
-                    ) : (
-                        <Folder className="w-4 h-4" />
+        <ContextMenu>
+            <ContextMenuTrigger>
+                <div 
+                    className={cn(
+                        "flex items-center gap-2 p-1 rounded-md cursor-pointer",
+                        node.isSelected && "bg-accent",
                     )}
-                    <span className="text-sm">{node.data.name}</span>
-                </div>
-                {!node.isLeaf && (
-                    <div className="focus:outline-none">
-                        {node.data.isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                    style={nodeStyle.base} 
+                    ref={dragHandle}
+                    onMouseOver={onMouseOver}
+                    onMouseLeave={onMouseLeave}
+                    onClick={!node.isLeaf ? handleToggleClick : undefined}
+                >
+                    <div className="flex items-center justify-between w-full p-1 rounded-md text-foreground">
+                        <div className="flex items-center gap-2">
+                            {node.isLeaf ? (
+                                node.data.name.endsWith('.tex') ? (
+                                    <Tex />
+                                ) : (
+                                    <File className="w-4 h-4" />
+                                )
+                            ) : node.data.isExpanded ? (
+                                <FolderOpen className="w-4 h-4" />
+                            ) : (
+                                <Folder className="w-4 h-4" />
+                            )}
+                            <span className="text-sm">{node.data.name}</span>
+                        </div>
+                        {!node.isLeaf && (
+                            <div className="focus:outline-none">
+                                {node.data.isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                            </div>
+                        )}
                     </div>
+                </div>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+                <ContextMenuItem onClick={handleRename}>
+                    <Edit className="w-4 h-4 mr-2" />
+                    Rename
+                </ContextMenuItem>
+                <ContextMenuItem onClick={handleDelete}>
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete
+                </ContextMenuItem>
+                {!node.isLeaf && (
+                    <ContextMenuItem onClick={handleAddFile}>
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add File
+                    </ContextMenuItem>
                 )}
-            </div>
-        </div>
+            </ContextMenuContent>
+        </ContextMenu>
     );
 };
 
