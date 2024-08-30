@@ -46,7 +46,7 @@ export default function SideNav() {
                 </Button>
             </div>
 
-            <FileTree initialData={[]} />
+            <FileTree projectId={id} />
 
             <Profile />
         </div>

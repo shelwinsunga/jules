@@ -1,11 +1,13 @@
 'use client'
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Tree } from 'react-arborist';
 import { File, Folder, FolderOpen, ChevronRight, ChevronDown } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import Image from 'next/image';
 import Tex from '@/public/tex.tsx';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { db } from '@/lib/constants';
+import { tx } from '@instantdb/react';
 
 const FileTreeNode = ({ node, style, dragHandle }) => {
     const [nodeStyle, setNodeStyle] = useState({ base: style });
@@ -59,44 +61,37 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
     );
 };
 
-const FileTree = ({ initialData }) => {
-    const [data, setData] = useState([
-        {
-            id: '1',
-            name: 'main.tex',
-            hover: true
-        },
-        {
-            id: '2',
-            name: 'chapters',
-            hover: true,
-            children: [
-                { id: '3', name: 'introduction.tex', hover: true },
-                { id: '4', name: 'methodology.tex', hover: true },
-                { id: '5', name: 'results.tex', hover: true },
-                { id: '6', name: 'conclusion.tex', hover: true }
-            ]
-        },
-        {
-            id: '7',
-            name: 'figures',
-            hover: true,
-            children: [
-                { id: '8', name: 'figure1.png', hover: true },
-                { id: '9', name: 'figure2.png', hover: true }
-            ]
-        },
-        {
-            id: '10',
-            name: 'bibliography',
-            hover: true,
-            children: [
-                { id: '11', name: 'references.bib', hover: true }
-            ]
-        },
-        { id: '12', name: 'abstract.tex', hover: true },
-        { id: '13', name: 'preamble.tex', hover: true }
-    ]);
+const FileTree = ({ projectId }) => {
+    const { data: filesData, error, isLoading} = db.useQuery({
+        files: {
+            $: {
+                where: {
+                    projectId: projectId
+                }
+            }
+        }
+    });
+
+
+    const transformedData = useMemo(() => {
+        if (!filesData?.files) return [];
+
+        const buildTree = (parentId = null) => {
+            return filesData.files
+                .filter(file => file.parent_id === parentId)
+                .map(file => ({
+                    id: file.id,
+                    name: file.name,
+                    hover: true,
+                    ...(file.type === 'folder' && {
+                        children: buildTree(file.id)
+                    })
+                }));
+        };
+
+        return buildTree();
+    }, [filesData]);
+
     const treeContainerRef = useRef(null);
     const [treeContainer, setTreeContainer] = useState({
         width: 256,
@@ -104,97 +99,116 @@ const FileTree = ({ initialData }) => {
     });
     const [cursor, setCursor] = useState(false);
 
-    const handleCreate = ({ parentId, index, type }) => {
-        setData(prevData => {
-            const newNode = {
-                id: Date.now().toString(),
-                name: type === 'file' ? 'New File' : 'New Folder',
-                children: type === 'folder' ? [] : undefined,
-                hover: true
-            };
-            const updatedData = JSON.parse(JSON.stringify(prevData));
-            const parent = findNodeById(updatedData, parentId);
-            if (parent) {
-                parent.children.splice(index, 0, newNode);
-            } else {
-                updatedData.splice(index, 0, newNode);
-            }
-            return updatedData;
-        });
-    };
+    // const handleCreate = ({ parentId, index, type }) => {
+    //     setData(prevData => {
+    //         const newNode = {
+    //             id: Date.now().toString(),
+    //             name: type === 'file' ? 'New File' : 'New Folder',
+    //             children: type === 'folder' ? [] : undefined,
+    //             hover: true
+    //         };
+    //         const updatedData = JSON.parse(JSON.stringify(prevData));
+    //         const parent = findNodeById(updatedData, parentId);
+    //         if (parent) {
+    //             parent.children.splice(index, 0, newNode);
+    //         } else {
+    //             updatedData.splice(index, 0, newNode);
+    //         }
+    //         return updatedData;
+    //     });
+    // };
 
-    const handleRename = ({ id, name }) => {
-        setData(prevData => {
-            const updatedData = JSON.parse(JSON.stringify(prevData));
-            const node = findNodeById(updatedData, id);
-            if (node) {
-                node.name = name;
-            }
-            return updatedData;
-        });
-    };
+    // const handleRename = ({ id, name }) => {
+    //     setData(prevData => {
+    //         const updatedData = JSON.parse(JSON.stringify(prevData));
+    //         const node = findNodeById(updatedData, id);
+    //         if (node) {
+    //             node.name = name;
+    //         }
+    //         return updatedData;
+    //     });
+    // };
 
     const handleMove = ({ dragIds, parentId, index }) => {
-        setData(prevData => {
-            const updatedData = JSON.parse(JSON.stringify(prevData));
-            const nodesToMove = dragIds.map(id => {
-                const node = findNodeById(updatedData, id);
-                removeNodeById(updatedData, id);
-                return node;
-            });
-            const parent = parentId ? findNodeById(updatedData, parentId) : { children: updatedData };
-            parent.children.splice(index, 0, ...nodesToMove);
-            return updatedData;
-        });
+        const updates = dragIds.map(id => ({
+            id: id,
+            parent_id: parentId
+        }));
+
+        // Get all files with the same parent_id
+        const siblingFiles = filesData.files.filter(file => file.parent_id === parentId);
+
+        // Insert the moved files at the specified index
+        const updatedSiblings = [
+            ...siblingFiles.slice(0, index),
+            ...updates,
+            ...siblingFiles.slice(index)
+        ];
+
+        // Update the order of all affected files
+        const orderUpdates = updatedSiblings.map((file, i) => ({
+            id: file.id,
+            order: i
+        }));
+
+        // Combine all updates
+        const allUpdates = [...updates, ...orderUpdates];
+
+        // Perform the database transaction
+        db.transact(
+            allUpdates.map(update => 
+                tx.files[update.id].update(update)
+            )
+        );
     };
 
-    const handleDelete = ({ ids }) => {
-        setData(prevData => {
-            const updatedData = JSON.parse(JSON.stringify(prevData));
-            ids.forEach(id => removeNodeById(updatedData, id));
-            return updatedData;
-        });
-    };
+    // const handleDelete = ({ ids }) => {
+    //     setData(prevData => {
+    //         const updatedData = JSON.parse(JSON.stringify(prevData));
+    //         ids.forEach(id => removeNodeById(updatedData, id));
+    //         return updatedData;
+    //     });
+    // };
 
-    const handleToggle = ({ id, isOpen }) => {
-        setData(prevData => {
-            const updatedData = JSON.parse(JSON.stringify(prevData));
-            const node = findNodeById(updatedData, id);
-            if (node && node.children) {
-                node.isOpen = isOpen;
-                if (cursor) {
-                    cursor.active = false;
-                }
-                node.active = true;
-                setCursor(node);
-            }
-            return updatedData;
-        });
-    };
+    // const handleToggle = ({ id, isOpen }) => {
+    //     setData(prevData => {
+    //         const updatedData = JSON.parse(JSON.stringify(prevData));
+    //         const node = findNodeById(updatedData, id);
+    //         if (node && node.children) {
+    //             node.isOpen = isOpen;
+    //             if (cursor) {
+    //                 cursor.active = false;
+    //             }
+    //             node.active = true;
+    //             setCursor(node);
+    //         }
+    //         return updatedData;
+    //     });
+    // };
 
-    const findNodeById = (nodes, id) => {
-        for (let node of nodes) {
-            if (node.id === id) return node;
-            if (node.children) {
-                const found = findNodeById(node.children, id);
-                if (found) return found;
-            }
-        }
-        return null;
-    };
+    // const findNodeById = (nodes, id) => {
+    //     for (let node of nodes) {
+    //         if (node.id === id) return node;
+    //         if (node.children) {
+    //             const found = findNodeById(node.children, id);
+    //             if (found) return found;
+    //         }
+    //     }
+    //     return null;
+    // };
 
-    const removeNodeById = (nodes, id) => {
-        for (let i = 0; i < nodes.length; i++) {
-            if (nodes[i].id === id) {
-                nodes.splice(i, 1);
-                return true;
-            }
-            if (nodes[i].children && removeNodeById(nodes[i].children, id)) {
-                return true;
-            }
-        }
-        return false;
-    };
+    // const removeNodeById = (nodes, id) => {
+    //     for (let i = 0; i < nodes.length; i++) {
+    //         if (nodes[i].id === id) {
+    //             nodes.splice(i, 1);
+    //             return true;
+    //         }
+    //         if (nodes[i].children && removeNodeById(nodes[i].children, id)) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // };
 
   
     useEffect(() => {
@@ -212,16 +226,18 @@ const FileTree = ({ initialData }) => {
         }
     }, []);
 
+    if (isLoading) return <div>Loading...</div>;
+
     return (
         <div ref={treeContainerRef} className="flex grow p-4 h-full shadow-sm w-full">
             <ScrollArea className="flex-grow w-full">
                 <Tree
-                data={data}
-                onCreate={handleCreate}
-                onRename={handleRename}
+                data={transformedData}
+                // onCreate={handleCreate}
+                // onRename={handleRename}
                 onMove={handleMove}
-                onDelete={handleDelete}
-                onToggle={handleToggle}
+                // onDelete={handleDelete}
+                // onToggle={handleToggle}
                 className="text-foreground"
                 width={treeContainer.width}
                 height={treeContainer.height}

@@ -37,7 +37,6 @@ export default function NewDocument() {
     const [selectedTemplate, setSelectedTemplate] = useState<TemplateKey>('blank');
     const [titleError, setTitleError] = useState('');
 
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!title.trim()) {
@@ -46,29 +45,83 @@ export default function NewDocument() {
         }
         setTitleError('');
         const newProjectId = id();
-        const newFileId = id();
+
+        const createFileStructure = () => {
+            const rootId = id();
+            const chaptersId = id();
+            const imagesId = id();
+
+            return [
+                {
+                    id: rootId,
+                    name: 'main.tex',
+                    type: 'file',
+                    parent_id: null,
+                    content: templateContent[selectedTemplate],
+                },
+                {
+                    id: chaptersId,
+                    name: 'chapters',
+                    type: 'folder',
+                    parent_id: null,
+                },
+                {
+                    id: id(),
+                    name: 'chapter1.tex',
+                    type: 'file',
+                    parent_id: chaptersId,
+                    content: '',
+                },
+                {
+                    id: id(),
+                    name: 'chapter2.tex',
+                    type: 'file',
+                    parent_id: chaptersId,
+                    content: '',
+                },
+                {
+                    id: imagesId,
+                    name: 'images',
+                    type: 'folder',
+                    parent_id: null,
+                },
+                {
+                    id: id(),
+                    name: 'image1.png',
+                    type: 'file',
+                    parent_id: imagesId,
+                    content: '',
+                },
+            ];
+        };
+
+        const fileStructure = createFileStructure();
+
         db.transact([
             tx.projects[newProjectId].update({
                 user_id: user?.id,
                 title: title.trim(),
+                project_content: templateContent[selectedTemplate],
                 template: selectedTemplate,
                 last_compiled: new Date(),
                 word_count: 0,
                 page_count: 0,
                 document_class: selectedTemplate,
                 createdAt: new Date(),
-                project_content: templateContent[selectedTemplate],
             }),
-            tx.files[newFileId].update({
-                user_id: user?.id,
-                projectId: newProjectId,
-                name: 'main.tex',
-                type: 'file',
-                content: templateContent[selectedTemplate],
-                createdAt: new Date(),
-            })
-        ]
-        );
+            ...fileStructure.map(node => 
+                tx.files[node.id].update({
+                    user_id: user?.id,
+                    projectId: newProjectId,
+                    name: node.name,
+                    type: node.type,
+                    parent_id: node.parent_id,
+                    content: node.content || '',
+                    createdAt: new Date(),
+                })
+            )
+        ]);
+
         router.push(`/project/${newProjectId}`);
     };
 
