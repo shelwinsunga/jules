@@ -3,7 +3,6 @@ import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Tree } from 'react-arborist';
 import { File, Folder, FolderOpen, ChevronRight, ChevronDown } from 'lucide-react';
 import { cn } from "@/lib/utils";
-import Image from 'next/image';
 import Tex from '@/public/tex.tsx';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { db } from '@/lib/constants';
@@ -12,6 +11,7 @@ import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+
 const FileTreeNode = ({ node, style, dragHandle }) => {
     const [nodeStyle, setNodeStyle] = useState({ base: style });
     const onMouseOver = () => {
@@ -39,7 +39,7 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
     };
 
     const handleDelete = () => {
-        // Implement delete logic here
+        node.tree.props.onDelete({ ids: [node.id], type: node.data.type });
     };
 
     const handleAddFile = () => {
@@ -213,13 +213,14 @@ const FileTree = ({ projectId }) => {
         );
     };
 
-    // const handleDelete = ({ ids }) => {
-    //     setData(prevData => {
-    //         const updatedData = JSON.parse(JSON.stringify(prevData));
-    //         ids.forEach(id => removeNodeById(updatedData, id));
-    //         return updatedData;
-    //     });
-    // };
+    const handleDelete = ({ ids, type }) => {
+        console.log(ids, type);
+        // setData(prevData => {
+        //     const updatedData = JSON.parse(JSON.stringify(prevData));
+        //     ids.forEach(id => removeNodeById(updatedData, id));
+        //     return updatedData;
+        // });
+    };
 
     const handleToggle = ({ id, isExpanded }) => {
         console.log(isExpanded);
@@ -319,6 +320,7 @@ const FileTree = ({ projectId }) => {
                     data={transformedData}
                     onMove={handleMove}
                     onToggle={handleToggle}
+                    onDelete={handleDelete}
                     className="text-foreground"
                     width={treeContainer.width}
                     height={treeContainer.height}
