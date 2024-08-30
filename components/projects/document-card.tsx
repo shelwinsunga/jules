@@ -38,6 +38,7 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
   const [imageURL, setImageURL] = useState('');
   const [imageError, setImageError] = useState(false);
   const { email, id: userId } = db.useAuth().user || {};
+  const [downloadURL, setDownloadURL] = useState('');
 
   useEffect(() => {
     if (email && userId) {
@@ -46,6 +47,13 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
       db.storage
         .getDownloadUrl(pathname + 'preview.webp')
         .then((signedUrl) => setImageURL(signedUrl))
+        .catch((err) => {
+          console.error('Failed to get file URL', err);
+          setImageError(true);
+        });
+
+      db.storage.getDownloadUrl(pathname + 'main.pdf')
+        .then((signedUrl) => setDownloadURL(signedUrl))
         .catch((err) => {
           console.error('Failed to get file URL', err);
           setImageError(true);
@@ -83,6 +91,29 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
         page_count: 0
       })
     ]);
+    setIsDropdownOpen(false);
+  }
+
+  const handleDownload = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (downloadURL) {
+      fetch(downloadURL)
+        .then(response => response.blob())
+        .then(blob => {
+          const blobUrl = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = blobUrl;
+          link.download = `${doc.title}.pdf`;
+          link.click();
+          window.URL.revokeObjectURL(blobUrl);
+        })
+        .catch(error => {
+          console.error('Error downloading file:', error);
+        });
+    } else {
+      console.error('Download URL is not available');
+    } 
     setIsDropdownOpen(false);
   }
 
@@ -142,12 +173,7 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
                     <CopyIcon className="mr-2 h-4 w-4" />
                     <span>Duplicate</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    // Add download functionality here
-                    setIsDropdownOpen(false);
-                  }}>
+                  <DropdownMenuItem onClick={handleDownload}>
                     <DownloadIcon className="mr-2 h-4 w-4" />
                     <span>Download</span>
                   </DropdownMenuItem>
