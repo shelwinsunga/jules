@@ -80,7 +80,7 @@ export default function NewDocument() {
                                         <Button
                                             variant="ghost"
                                             className="w-full h-full p-0 hover:bg-transparent"
-                                            onClick={() => setSelectedTemplate(template.id)}
+                                            onClick={() => setSelectedTemplate(template.id as TemplateKey)}
                                         >
                                             <div className="space-y-2">
                                                 <div className="relative aspect-[4/5] w-full">
@@ -125,7 +125,10 @@ export default function NewDocument() {
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="template">Template</Label>
-                                    <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
+                                    <Select 
+                                        value={selectedTemplate} 
+                                        onValueChange={(value: TemplateKey) => setSelectedTemplate(value)}
+                                    >
                                         <SelectTrigger className="w-full">
                                             <SelectValue placeholder="Select a template" />
                                         </SelectTrigger>
