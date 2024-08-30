@@ -30,6 +30,7 @@ import { useState } from 'react';
 import { Input } from "@/components/ui/input"
 import { id } from "@instantdb/react";
 import Image from 'next/image';
+import { templateContent } from '@/lib/constants';
 
 export default function DocumentCard({ doc, detailed = false }: { doc: any, detailed?: boolean }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);

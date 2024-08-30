@@ -16,9 +16,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { defaultContent } from "@/lib/constants"
 import { useRouter } from "next/navigation";
-  
+import { templateContent } from '@/lib/constants';
+
 const templates = [
   { id: "blank", title: "Blank", image: "/blank_preview.webp" },
   { id: "article", title: "Article", image: "/article_preview.webp" },
@@ -28,11 +28,13 @@ const templates = [
   { id: "proposal", title: "Proposal", image: "/proposal_preview.webp" },
 ];
 
+type TemplateKey = keyof typeof templateContent;
+
 export default function NewDocument() {
     const { user } = db.useAuth();
     const router = useRouter();
     const [title, setTitle] = useState('');
-    const [selectedTemplate, setSelectedTemplate] = useState('blank');
+    const [selectedTemplate, setSelectedTemplate] = useState<TemplateKey>('blank');
     const [titleError, setTitleError] = useState('');
 
 
@@ -54,7 +56,7 @@ export default function NewDocument() {
                 page_count: 0,
                 document_class: selectedTemplate,
                 createdAt: new Date(),
-                project_content: defaultContent,
+                project_content: templateContent[selectedTemplate],
             })
         );
         router.push(`/project/${newProjectId}`);
