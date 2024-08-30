@@ -287,7 +287,7 @@ const FileTree = ({ projectId }) => {
         <div ref={treeContainerRef} className="flex flex-col grow h-full shadow-sm w-full">
             <div className="flex items-center justify-between  px-4 border-b py-2">
                 <div className="text-sm font-medium">Files</div>
-                <div className="flex items-center gap-2 ">
+                <div className="flex items-center">
                     <Tooltip delayDuration={0}>
                         <TooltipTrigger asChild>
                             <Button variant="ghost" size="sm">
