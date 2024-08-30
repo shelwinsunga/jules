@@ -1,4 +1,5 @@
 'use client'
+import { useEffect } from 'react';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -30,11 +31,26 @@ import { useState } from 'react';
 import { Input } from "@/components/ui/input"
 import { DialogFooter } from "@/components/ui/dialog";
 import { id } from "@instantdb/react";
+import Image from 'next/image';
+import { generateProjectPathname } from '@/lib/client-utils';
 
 export default function DocumentCard({ doc, detailed = false }: { doc: any, detailed?: boolean }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newTitle, setNewTitle] = useState(doc.title);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [imageURL, setImageURL] = useState('');
+  const { email, id: userId } = db.useAuth().user || {};
+
+  useEffect(() => {
+    if (email && userId) {
+      const pathname = generateProjectPathname(email, userId, doc.title, doc.id);
+      
+      db.storage
+        .getDownloadUrl(pathname + 'preview.webp')
+        .then((signedUrl) => setImageURL(signedUrl))
+        .catch((err) => console.error('Failed to get file URL', err));
+    }
+  }, [doc.id, doc.title, email, userId]);
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -131,7 +147,15 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
             {detailed ? (
               <div className="flex space-x-4">
                 <div className="flex-shrink-0">
-                  <img src="/placeholder.svg?height=100&width=80" alt={`Preview of ${doc.title}`} className="w-20 h-25 object-cover rounded" />
+                  <Image 
+                    src={imageURL || "/placeholder.svg"} 
+                    alt={`Preview of ${doc.title}`} 
+                    className="w-20 h-25 object-cover rounded" 
+                    width={100} 
+                    height={80} 
+                    loader={({ src }) => src} // Add this line
+                    unoptimized // Add this line if you want to bypass Next.js image optimization
+                  />
                 </div>
                 <div>
                   <h3 className="font-semibold truncate">{doc.title}</h3>
