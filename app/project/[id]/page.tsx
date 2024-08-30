@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <main className="flex flex-col h-screen">
       <ResizablePanelGroup direction="horizontal">
-        <ResizablePanel defaultSize={12} collapsible={true}>
+        <ResizablePanel defaultSize={16} collapsible={true}>
           <SideNav />
         </ResizablePanel>
         <ResizableHandle />

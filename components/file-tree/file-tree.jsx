@@ -8,6 +8,15 @@ import Tex from '@/public/tex.tsx';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { db } from '@/lib/constants';
 import { tx } from '@instantdb/react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const FileTreeNode = ({ node, style, dragHandle }) => {
 
@@ -220,28 +229,64 @@ const FileTree = ({ projectId }) => {
 
   
     useEffect(() => {
+        console.log("Effect running");
+
         const resizeObserver = new ResizeObserver(([entry]) => {
-            // contentRect excludes padding/scrollbars/etc, unlike offsetWidth/Height and getBoundingClientRect
             const { width, height } = entry.contentRect;
             setTreeContainer({
-                width: width,
+                width: width - 32,
                 height: height 
             });
         });
 
-        if (treeContainerRef.current) {
-            resizeObserver.observe(treeContainerRef.current);
-        }
+        const observeElement = () => {
+            if (treeContainerRef.current) {
+                resizeObserver.observe(treeContainerRef.current);
+            } else {
+                setTimeout(observeElement, 100); 
+            }
+        };
 
-        return () => resizeObserver.disconnect();
+        observeElement();
+
+        return () => {
+            console.log("Cleanup: disconnecting ResizeObserver");
+            resizeObserver.disconnect();
+        };
     }, []);
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
 
     return (
-        <div ref={treeContainerRef} className="flex grow p-4 h-full shadow-sm w-full">
-            <ScrollArea className="flex-grow w-full">
+        <div ref={treeContainerRef} className="flex flex-col grow h-full shadow-sm w-full">
+            <div className="flex items-center justify-end p-2">
+                <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                            <Plus className="h-4 w-4" />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Add</TooltipContent>
+                </Tooltip>
+                <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                            <Edit className="h-4 w-4" />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Edit</TooltipContent>
+                </Tooltip>
+                <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                            <Trash2 className="h-4 w-4" />
+                        </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Delete</TooltipContent>
+                </Tooltip>
+            </div>
+            <ScrollArea className="flex-grow w-full px-4">
                 <Tree
                     data={transformedData}
                     onMove={handleMove}

@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { FrontendProvider } from "@/contexts/FrontendContext";
-import { ThemeProvider } from "@/components/theme-provider"
+import { ThemeProvider } from "@/components/theme-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -23,9 +25,11 @@ export default function RootLayout({
           defaultTheme="system"
           disableTransitionOnChange
         >
-          <FrontendProvider>
-            {children}
-          </FrontendProvider>
+          <TooltipProvider>
+            <FrontendProvider>
+              {children}
+            </FrontendProvider>
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>
