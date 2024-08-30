@@ -10,6 +10,7 @@ import { db } from '@/lib/constants';
 import { tx } from '@instantdb/react';
 
 const FileTreeNode = ({ node, style, dragHandle }) => {
+
     const [nodeStyle, setNodeStyle] = useState({ base: style });
     const onMouseOver = () => {
         if (node.data.hover) {
@@ -25,16 +26,24 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
         }
     };
 
+    const handleToggleClick = (e) => {
+        e.stopPropagation();
+        node.toggle();
+        node.tree.props.onToggle({ id: node.id, isExpanded: !node.data.isExpanded });
+    };
+
     return (
         <div 
             className={cn(
                 "flex items-center gap-2 p-1 rounded-md",
-                node.isSelected && "bg-accent"
+                node.isSelected && "bg-accent",
+                !node.isLeaf && "cursor-pointer"
             )}
             style={nodeStyle.base} 
             ref={dragHandle}
             onMouseOver={onMouseOver}
             onMouseLeave={onMouseLeave}
+            onClick={!node.isLeaf ? handleToggleClick : undefined}
         >
             <div className="flex items-center justify-between w-full p-1 rounded-md text-foreground">
                 <div className="flex items-center gap-2">
@@ -44,7 +53,7 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
                         ) : (
                             <File className="w-4 h-4" />
                         )
-                    ) : node.isOpen ? (
+                    ) : node.data.isExpanded ? (
                         <FolderOpen className="w-4 h-4" />
                     ) : (
                         <Folder className="w-4 h-4" />
@@ -52,9 +61,9 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
                     <span className="text-sm">{node.data.name}</span>
                 </div>
                 {!node.isLeaf && (
-                    <button onClick={() => node.toggle()} className="focus:outline-none">
-                        {node.isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                    </button>
+                    <div className="focus:outline-none">
+                        {node.data.isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                    </div>
                 )}
             </div>
         </div>
@@ -72,7 +81,6 @@ const FileTree = ({ projectId }) => {
         }
     });
 
-
     const transformedData = useMemo(() => {
         if (!filesData?.files) return [];
 
@@ -82,7 +90,9 @@ const FileTree = ({ projectId }) => {
                 .map(file => ({
                     id: file.id,
                     name: file.name,
+                    type: file.type,
                     hover: true,
+                    isExpanded: file.isExpanded ?? false,
                     ...(file.type === 'folder' && {
                         children: buildTree(file.id)
                     })
@@ -92,12 +102,20 @@ const FileTree = ({ projectId }) => {
         return buildTree();
     }, [filesData]);
 
+    const initialOpenState = useMemo(() => {
+        if (!filesData?.files) return {};
+        
+        return filesData.files.reduce((acc, file) => {
+            acc[file.id] = file.isExpanded ?? false;
+            return acc;
+        }, {});
+    }, [filesData]);
+
     const treeContainerRef = useRef(null);
     const [treeContainer, setTreeContainer] = useState({
         width: 256,
         height: 735
     });
-    const [cursor, setCursor] = useState(false);
 
     // const handleCreate = ({ parentId, index, type }) => {
     //     setData(prevData => {
@@ -170,21 +188,12 @@ const FileTree = ({ projectId }) => {
     //     });
     // };
 
-    // const handleToggle = ({ id, isOpen }) => {
-    //     setData(prevData => {
-    //         const updatedData = JSON.parse(JSON.stringify(prevData));
-    //         const node = findNodeById(updatedData, id);
-    //         if (node && node.children) {
-    //             node.isOpen = isOpen;
-    //             if (cursor) {
-    //                 cursor.active = false;
-    //             }
-    //             node.active = true;
-    //             setCursor(node);
-    //         }
-    //         return updatedData;
-    //     });
-    // };
+    const handleToggle = ({ id, isExpanded }) => {
+        console.log(isExpanded);
+        db.transact([
+            tx.files[id].update({ isExpanded: isExpanded })
+        ]);
+    };
 
     // const findNodeById = (nodes, id) => {
     //     for (let node of nodes) {
@@ -224,25 +233,26 @@ const FileTree = ({ projectId }) => {
         if (treeContainerRef.current) {
             resizeObserver.observe(treeContainerRef.current);
         }
+
+        return () => resizeObserver.disconnect();
     }, []);
 
     if (isLoading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error.message}</div>;
 
     return (
         <div ref={treeContainerRef} className="flex grow p-4 h-full shadow-sm w-full">
             <ScrollArea className="flex-grow w-full">
                 <Tree
-                data={transformedData}
-                // onCreate={handleCreate}
-                // onRename={handleRename}
-                onMove={handleMove}
-                // onDelete={handleDelete}
-                // onToggle={handleToggle}
-                className="text-foreground"
-                width={treeContainer.width}
-                height={treeContainer.height}
-                rowHeight={36}
-            >
+                    data={transformedData}
+                    onMove={handleMove}
+                    onToggle={handleToggle}
+                    className="text-foreground"
+                    width={treeContainer.width}
+                    height={treeContainer.height}
+                    rowHeight={36}
+                    initialOpenState={initialOpenState}
+                >
                     {FileTreeNode}
                 </Tree>
             </ScrollArea>

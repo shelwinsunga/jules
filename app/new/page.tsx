@@ -58,12 +58,14 @@ export default function NewDocument() {
                     type: 'file',
                     parent_id: null,
                     content: templateContent[selectedTemplate],
+                    isExpanded: null,
                 },
                 {
                     id: chaptersId,
                     name: 'chapters',
                     type: 'folder',
                     parent_id: null,
+                    isExpanded: true,
                 },
                 {
                     id: id(),
@@ -71,6 +73,7 @@ export default function NewDocument() {
                     type: 'file',
                     parent_id: chaptersId,
                     content: '',
+                    isExpanded: null,
                 },
                 {
                     id: id(),
@@ -78,12 +81,14 @@ export default function NewDocument() {
                     type: 'file',
                     parent_id: chaptersId,
                     content: '',
+                    isExpanded: null,
                 },
                 {
                     id: imagesId,
                     name: 'images',
                     type: 'folder',
                     parent_id: null,
+                    isExpanded: true,
                 },
                 {
                     id: id(),
@@ -91,6 +96,7 @@ export default function NewDocument() {
                     type: 'file',
                     parent_id: imagesId,
                     content: '',
+                    isExpanded: null,
                 },
             ];
         };
@@ -101,7 +107,7 @@ export default function NewDocument() {
             tx.projects[newProjectId].update({
                 user_id: user?.id,
                 title: title.trim(),
-                project_content: templateContent[selectedTemplate],
+                project_content: templateContent[selectedTemplate], // remove later because its stored in files table
                 template: selectedTemplate,
                 last_compiled: new Date(),
                 word_count: 0,
@@ -118,6 +124,7 @@ export default function NewDocument() {
                     parent_id: node.parent_id,
                     content: node.content || '',
                     createdAt: new Date(),
+                    isExpanded: node.isExpanded,
                 })
             )
         ]);
