@@ -20,7 +20,8 @@ pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs';
 
 const LatexRenderer = () => {
     const { id } = useParams<{ id: string }>();
-    const { data } = db.useQuery({
+    const { user } = db.useAuth();
+    const { data, isLoading: isDataLoading } = db.useQuery({
         projects: {
             $: {
                 where: {
@@ -41,6 +42,8 @@ const LatexRenderer = () => {
     const [scale, setScale] = useState(1.0);
 
     const fetchPdf = async () => {
+        if (isDataLoading || !user) return;
+
         setIsLoading(true);
         setError(null);
         setIsDocumentReady(false);
@@ -57,8 +60,11 @@ const LatexRenderer = () => {
                 throw new Error(`${errorData.error}: ${errorData.message}\n\nDetails: ${errorData.details}`);
             }
             const blob = await response.blob();
-            savePdfToStorage(blob, id);
-            savePreviewToStorage(blob, id);
+            
+            const pathname = `${user.email.replace(/[^a-zA-Z0-9]/g, '_')}-${user.id}/${data?.projects[0].title.replace(/[^a-zA-Z0-9]/g, '_')}-${id}/`;
+
+            await savePdfToStorage(blob, pathname + 'main.pdf');
+            await savePreviewToStorage(blob, pathname + 'preview.webp');
             const url = URL.createObjectURL(blob);
             setPdfUrl(url);
         } catch (error) {
@@ -84,7 +90,7 @@ const LatexRenderer = () => {
         resetTimer();
 
         return () => clearTimeout(debounceTimer);
-    }, [latex, autoFetch]);
+    }, [latex, autoFetch, isDataLoading, user]);
 
     const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
         setNumPages(numPages);
@@ -107,6 +113,7 @@ const LatexRenderer = () => {
     const handleResetZoom = () => {
         setScale(1.0);
     };
+    
 
     return (
         <div className="w-full h-full flex flex-col">
