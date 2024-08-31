@@ -125,6 +125,7 @@ export default function NewDocument() {
                     content: node.content || '',
                     createdAt: new Date(),
                     isExpanded: node.isExpanded,
+                    isOpen: node.name === 'main.tex' ? true : false,
                 })
             )
         ]);

@@ -12,8 +12,14 @@ import Profile from '@/components/profile/profile'
 
 export default function SideNav() {
     const { user } = db.useAuth();
-    const { id } = useParams<{ id: string }>();
-    const { data } = db.useQuery({
+    const params = useParams<{ id: string }>();
+    const id = params?.id; 
+
+    if (!id) {
+        throw new Error("Project ID is required"); 
+    }
+
+    const { data, isLoading } = db.useQuery({
         projects: {
             $: {
                 where: {
@@ -24,6 +30,10 @@ export default function SideNav() {
     });
 
     const projectTitle = data?.projects[0]?.title;
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="w-full h-full flex flex-col  bg-muted/25">

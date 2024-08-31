@@ -19,7 +19,13 @@ pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs';
 
 
 const LatexRenderer = () => {
-    const { id } = useParams<{ id: string }>();
+    const params = useParams<{ id: string }>();
+    const id = params?.id; 
+
+    if (!id) {
+        throw new Error("Project ID is required"); 
+    }
+
     const { user } = db.useAuth();
     const { data, isLoading: isDataLoading } = db.useQuery({
         projects: {
