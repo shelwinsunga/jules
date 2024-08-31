@@ -36,8 +36,12 @@ const LatexRenderer = () => {
             }
         }
     });
+    const { data:files } = db.useQuery({ files: { $: { where: { projectId: id } } } });
+    const currentlyOpen = files?.files?.find((file) => file.isOpen === true);
+    const latex = currentlyOpen?.content;
+    console.log(latex);
 
-    const latex = data?.projects[0]?.project_content;
+    // const latex = data?.projects[0]?.project_content;
     
     const [numPages, setNumPages] = useState<number>(0);
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);

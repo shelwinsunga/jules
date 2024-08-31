@@ -32,6 +32,7 @@ const FileTree = ({ projectId }) => {
                     name: file.name,
                     type: file.type,
                     hover: true,
+                    isOpen: file.isOpen ?? false,
                     isExpanded: file.isExpanded ?? false,
                     ...(file.type === 'folder' && {
                         children: buildTree(file.id)
@@ -121,6 +122,8 @@ const FileTree = ({ projectId }) => {
         );
     };
 
+    
+
     const handleDelete = ({ ids, type }) => {
         if(type === 'file') {
             db.transact([
@@ -147,11 +150,21 @@ const FileTree = ({ projectId }) => {
         }
     };
 
-    const handleToggle = ({ id, isExpanded }) => {
-        console.log(isExpanded);
-        db.transact([
-            tx.files[id].update({ isExpanded: isExpanded })
-        ]);
+    const handleToggle = ({ id, isExpanded, type, isOpen }) => {
+        if (type === 'folder') {
+            db.transact([
+                tx.files[id].update({ isExpanded: isExpanded })
+            ]);
+        } else if (type === 'file') {
+            const previouslyOpenFile = filesData.files.find(file => file.isOpen);
+            const updates = [
+                tx.files[id].update({ isOpen: true })
+            ];
+            if (previouslyOpenFile) {
+                updates.push(tx.files[previouslyOpenFile.id].update({ isOpen: false }));
+            }
+            db.transact(updates);
+        }
     };
 
   

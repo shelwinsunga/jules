@@ -26,6 +26,10 @@ const EditorContainer = () => {
         }
     });
 
+    const { data:files } = db.useQuery({ files: { $: { where: { projectId: id } } } });
+    const currentlyOpen = files?.files?.find((file) => file.isOpen === true);
+    const latex = currentlyOpen?.content ?? '';
+
     const debouncedUpdateDb = useDebounce((newCode: string) => {
         db.transact([tx.projects[id].update({ project_content: newCode })])
     }, 250);
@@ -55,7 +59,7 @@ const EditorContainer = () => {
             </div>
             <CodeEditor
                 onChange={handleCodeChange}
-                value={localContent || data?.projects[0]?.project_content}
+                value={latex}
                 key={theme || systemTheme}
             />
         </div>

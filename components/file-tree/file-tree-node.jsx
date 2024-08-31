@@ -29,7 +29,7 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
     const handleToggleClick = (e) => {
         e.stopPropagation();
         node.toggle();
-        node.tree.props.onToggle({ id: node.id, isExpanded: !node.data.isExpanded });
+        node.tree.props.onToggle({ id: node.id, isExpanded: !node.data.isExpanded, type: node.data.type, isOpen: node.data.isOpen });
     };
 
     const handleRenameClick = (e) => {
@@ -120,7 +120,7 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
                     ref={dragHandle}
                     onMouseOver={onMouseOver}
                     onMouseLeave={onMouseLeave}
-                    onClick={!node.isLeaf ? handleToggleClick : undefined}
+                    onClick={handleToggleClick}
                 >
                     <div className="flex items-center justify-between w-full p-1 rounded-md text-foreground">
                         <div className="flex items-center gap-2">
