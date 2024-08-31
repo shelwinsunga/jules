@@ -28,12 +28,14 @@ const EditorContainer = () => {
 
     const { data:files, isLoading: isFilesLoading } = db.useQuery({ files: { $: { where: { projectId: id } } } });
     const currentlyOpen = files?.files?.find((file) => file.isOpen === true);
-    console.log(currentlyOpen);
+
+    
     const latex = currentlyOpen?.content ?? '';
 
     const debouncedUpdateDb = useDebounce((newCode: string) => {
-        console.log(currentlyOpen?.id);
-        // db.transact([tx.files[currentlyOpen.id].update({ content: newCode })])
+        // if (currentlyOpen?.id) {
+        //     db.transact([tx.files[currentlyOpen.id].update({ content: newCode })]);
+        // }
     }, 250);
 
     const handleCodeChange = useCallback((newCode: string) => {
