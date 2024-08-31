@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { db } from '@/lib/constants'
 import Profile from '@/components/profile/profile'
+import LoadingSideNav from '@/components/nav/loading-side-nav'
 
 export default function SideNav() {
     const { user } = db.useAuth();
@@ -31,8 +32,10 @@ export default function SideNav() {
 
     const projectTitle = data?.projects[0]?.title;
 
+
+    
     if (isLoading) {
-        return <div>Loading...</div>;
+        return <LoadingSideNav />;
     }
 
     return (

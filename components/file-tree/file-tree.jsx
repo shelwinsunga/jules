@@ -9,7 +9,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { FilePlus2, FolderPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import FileTreeNode from './file-tree-node';
-
+import FileTreeSkeleton from './file-tree-loading';
 const FileTree = ({ projectId }) => {
     const { data: filesData, error, isLoading} = db.useQuery({
         files: {
@@ -195,7 +195,8 @@ const FileTree = ({ projectId }) => {
         };
     }, []);
 
-    if (isLoading) return <div>Loading...</div>;
+    
+    if (isLoading) return <FileTreeSkeleton />;
     if (error) return <div>Error: {error.message}</div>;
 
     return (
