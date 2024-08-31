@@ -13,15 +13,17 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
     const [isNewItem, setIsNewItem] = useState(false);
 
     const onMouseOver = () => {
-        if (node.data.hover) {
+        if (node.data.hover && !node.data.isOpen) {
             setNodeStyle(() => ({
                 base: { ...style, ...{ backgroundColor: "hsl(var(--muted))" } }
             }));
         }
     };
 
+    
+
     const onMouseLeave = () => {
-        if (node.data.hover) {
+        if (node.data.hover && !node.data.isOpen) {
             setNodeStyle(() => ({ base: style }));
         }
     };
@@ -37,6 +39,16 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
         setIsRenaming(true);
         setNewName(node.data.name);
     };
+
+    useEffect(() => {
+        if (node.data.isOpen) {
+            setNodeStyle(() => ({
+                base: { ...style, ...{ backgroundColor: "hsl(var(--accent))" } }
+            }));
+        } else {
+            setNodeStyle(() => ({ base: style }));
+        }
+    }, [node.data.isOpen, style]);
 
     useEffect(() => {
         if (isRenaming) {
@@ -115,12 +127,14 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
                     className={cn(
                         "flex items-center gap-2 p-1 rounded-md cursor-pointer",
                         node.isSelected && "bg-accent",
+                        node.data.isOpen && "bg-red-500"
                     )}
                     style={nodeStyle.base} 
                     ref={dragHandle}
                     onMouseOver={onMouseOver}
                     onMouseLeave={onMouseLeave}
                     onClick={handleToggleClick}
+
                 >
                     <div className="flex items-center justify-between w-full p-1 rounded-md text-foreground">
                         <div className="flex items-center gap-2">
