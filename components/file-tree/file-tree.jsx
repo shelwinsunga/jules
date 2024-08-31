@@ -39,11 +39,24 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
         node.tree.props.onToggle({ id: node.id, isExpanded: !node.data.isExpanded });
     };
 
-    const handleRename = () => {
+    const handleRenameClick = (e) => {
+        e.stopPropagation();
         setIsRenaming(true);
         setNewName(node.data.name);
-        setTimeout(() => inputRef.current?.focus(), 0);  
     };
+
+    useEffect(() => {
+        if (isRenaming) {
+            const timeoutId = setTimeout(() => {
+                if (inputRef.current) {
+                    inputRef.current.focus();
+                    inputRef.current.setSelectionRange(newName.length, newName.length);
+                }
+            }, 50);
+
+            return () => clearTimeout(timeoutId);
+        }
+    }, [isRenaming, newName]);
 
     const handleRenameSubmit = () => {
         if (newName.trim() !== '') {
@@ -59,6 +72,29 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
     const handleAddFile = () => {
         // Implement add file logic here
     };
+
+    if (isRenaming) {
+        return (
+            <div
+                onClick={(e) => e.stopPropagation()}
+                style={style}
+                className="flex items-center gap-2 p-1 rounded-md"
+            >
+                <Input
+                    ref={inputRef}
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
+                    onBlur={handleRenameSubmit}
+                    onKeyDown={(e) => {
+                        e.stopPropagation(); // Add this line
+                        if (e.key === 'Enter') handleRenameSubmit();
+                        if (e.key === 'Escape') setIsRenaming(false);
+                    }}
+                    className="h-6 py-0 px-1 text-sm"
+                />
+            </div>
+        );
+    }
 
     return (
         <ContextMenu>
@@ -92,10 +128,13 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
                                     ref={inputRef}
                                     value={newName}
                                     onChange={(e) => setNewName(e.target.value)}
+                                    onBlur={handleRenameSubmit}
                                     onKeyDown={(e) => {
+                                        e.stopPropagation(); // Add this line
                                         if (e.key === 'Enter') handleRenameSubmit();
                                         if (e.key === 'Escape') setIsRenaming(false);
                                     }}
+                                    onClick={(e) => e.stopPropagation()} // Add this line
                                     className="h-6 py-0 px-1 text-sm"
                                 />
                             ) : (
@@ -111,7 +150,7 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
                 </div>
             </ContextMenuTrigger>
             <ContextMenuContent>
-                <ContextMenuItem onClick={handleRename}>
+                <ContextMenuItem onClick={handleRenameClick}>
                     <Edit className="w-4 h-4 mr-2" />
                     Rename
                 </ContextMenuItem>
