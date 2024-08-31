@@ -11,9 +11,14 @@ import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 const FileTreeNode = ({ node, style, dragHandle }) => {
     const [nodeStyle, setNodeStyle] = useState({ base: style });
+    const [isRenaming, setIsRenaming] = useState(false);
+    const [newName, setNewName] = useState(node.data.name);
+    const inputRef = useRef(null);
+
     const onMouseOver = () => {
         if (node.data.hover) {
             setNodeStyle(() => ({
@@ -35,7 +40,16 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
     };
 
     const handleRename = () => {
-        // Implement rename logic here
+        setIsRenaming(true);
+        setNewName(node.data.name);
+        setTimeout(() => inputRef.current?.focus(), 0);  
+    };
+
+    const handleRenameSubmit = () => {
+        if (newName.trim() !== '') {
+            node.tree.props.onRename({ id: node.id, name: newName.trim() });
+        }
+        setIsRenaming(false);
     };
 
     const handleDelete = () => {
@@ -63,7 +77,7 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
                     <div className="flex items-center justify-between w-full p-1 rounded-md text-foreground">
                         <div className="flex items-center gap-2">
                             {node.isLeaf ? (
-                                node.data.name.endsWith('.tex') ? (
+                                node.data.name && node.data.name.endsWith('.tex') ? (
                                     <Tex />
                                 ) : (
                                     <File className="w-4 h-4" />
@@ -73,7 +87,20 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
                             ) : (
                                 <Folder className="w-4 h-4" />
                             )}
-                            <span className="text-sm">{node.data.name}</span>
+                            {isRenaming ? (
+                                <Input
+                                    ref={inputRef}
+                                    value={newName}
+                                    onChange={(e) => setNewName(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') handleRenameSubmit();
+                                        if (e.key === 'Escape') setIsRenaming(false);
+                                    }}
+                                    className="h-6 py-0 px-1 text-sm"
+                                />
+                            ) : (
+                                <span className="text-sm">{node.data.name}</span>
+                            )}
                         </div>
                         {!node.isLeaf && (
                             <div className="focus:outline-none">
@@ -169,16 +196,12 @@ const FileTree = ({ projectId }) => {
     //     });
     // };
 
-    // const handleRename = ({ id, name }) => {
-    //     setData(prevData => {
-    //         const updatedData = JSON.parse(JSON.stringify(prevData));
-    //         const node = findNodeById(updatedData, id);
-    //         if (node) {
-    //             node.name = name;
-    //         }
-    //         return updatedData;
-    //     });
-    // };
+    const handleRename = ({ id, name }) => {
+        console.log(name);
+        db.transact([
+            tx.files[id].update({ name: name })
+        ]);
+    };
 
     const handleMove = ({ dragIds, parentId, index }) => {
         const updates = dragIds.map(id => ({
@@ -338,6 +361,7 @@ const FileTree = ({ projectId }) => {
                     onMove={handleMove}
                     onToggle={handleToggle}
                     onDelete={handleDelete}
+                    onRename={handleRename}
                     className="text-foreground"
                     width={treeContainer.width}
                     height={treeContainer.height}
