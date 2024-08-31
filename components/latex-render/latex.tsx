@@ -46,7 +46,7 @@ const LatexRenderer = () => {
     const [error, setError] = useState<string | null>(null);
     const [autoFetch, setAutoFetch] = useState(true);
     const [isDocumentReady, setIsDocumentReady] = useState(false);
-    const [scale, setScale] = useState(1.0);
+    const [scale, setScale] = useState(0.9);
 
     const fetchPdf = async () => {
         if (isDataLoading || !user) return;
@@ -118,7 +118,7 @@ const LatexRenderer = () => {
     };
 
     const handleResetZoom = () => {
-        setScale(1.0);
+        setScale(0.9);
     };
 
     const handleDownload = () => {

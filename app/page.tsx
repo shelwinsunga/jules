@@ -33,7 +33,7 @@ export default function Home() {
               AI-Powered LaTeX Editing
             </h1>
             <p className="max-w-[600px] text-muted-foreground md:text-xl mb-8 animate-fade-in animation-delay-200">
-              Elevate your LaTeX game with Yomi. AI-powered tools for faster, smarter academic and professional writing.
+              Yomi is a collaborative LaTeX editor that allows you to write and edit LaTeX documents with ease.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in animation-delay-300">
               <Button asChild>
