@@ -5,6 +5,8 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
 import SideNav from "@/components/nav/side-nav"
+import LatexRenderer from "@/components/latex-render/latex"
+import EditorContainer from "@/components/editor/editor-container"
 
 export const maxDuration = 30;
 
@@ -20,15 +22,11 @@ export default function Home() {
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel defaultSize={44}>
-          <div className="w-full h-full bg-background flex items-center justify-center">
-            <p className="text-foreground">Editor Container Placeholder</p>
-          </div>
+          <EditorContainer />
         </ResizablePanel>
         <ResizableHandle />
         <ResizablePanel defaultSize={44}>
-          <div className="w-full h-full bg-background flex items-center justify-center">
-            <p className="text-foreground">LaTeX Renderer Placeholder</p>
-          </div>
+          <LatexRenderer />
         </ResizablePanel>
       </ResizablePanelGroup>
     </main>
