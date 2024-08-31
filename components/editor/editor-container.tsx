@@ -26,7 +26,7 @@ const EditorContainer = () => {
         }
     });
 
-    const { data:files } = db.useQuery({ files: { $: { where: { projectId: id } } } });
+    const { data:files, isLoading: isFilesLoading } = db.useQuery({ files: { $: { where: { projectId: id } } } });
     const currentlyOpen = files?.files?.find((file) => file.isOpen === true);
     const latex = currentlyOpen?.content ?? '';
 
@@ -39,7 +39,7 @@ const EditorContainer = () => {
         debouncedUpdateDb(newCode);
     }, [debouncedUpdateDb]);
 
-    if (isLoading) {
+    if (isLoading || isFilesLoading) {
         return (
             <div className="flex flex-col w-full h-full">
                 <div className="flex justify-end items-center border-b shadow-sm p-2">
