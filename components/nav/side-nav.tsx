@@ -45,10 +45,13 @@ export default function SideNav() {
                     <Search className="h-4 w-4" />
                 </Button>
             </div>
+            <div className="flex-grow overflow-auto">
+                <FileTree projectId={id} />
+            </div>
 
-            <FileTree projectId={id} />
-
-            <Profile />
+            <div className="mt-auto">
+                <Profile />
+            </div>
         </div>
     );
 };

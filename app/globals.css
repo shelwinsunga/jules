@@ -88,3 +88,28 @@
   background-color: #142a14; 
 }
 
+.tree-overflow {
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border)) transparent;
+}
+
+.tree-overflow::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.tree-overflow::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tree-overflow::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--border));
+  border-radius: 9999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+.tree-overflow::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(var(--border) / 0.8);
+}

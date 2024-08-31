@@ -161,7 +161,7 @@ const FileTree = ({ projectId }) => {
         const resizeObserver = new ResizeObserver(([entry]) => {
             const { width, height } = entry.contentRect;
             setTreeContainer({
-                width: width - 32,
+                width: width,
                 height: height 
             });
         });
@@ -208,17 +208,18 @@ const FileTree = ({ projectId }) => {
                     </Tooltip>
                 </div>
             </div>
-            <ScrollArea className="flex-grow w-full px-4 py-2">
+            <div className="flex-grow w-full overflow-hidden">
                 <Tree
                     data={transformedData}
                     onMove={handleMove}
                     onToggle={handleToggle}
                     onDelete={handleDelete}
                     onRename={handleRename}
-                    className="text-foreground"
+                    className="text-foreground tree-overflow"
                     width={treeContainer.width}
                     height={treeContainer.height}
                     rowHeight={36}
+                    
                     initialOpenState={initialOpenState}
                     newItemType={newItemType}
                     newItemParentId={newItemParentId}
@@ -226,7 +227,7 @@ const FileTree = ({ projectId }) => {
                 >
                     {FileTreeNode}
                 </Tree>
-            </ScrollArea>
+            </div>
         </div>
     );
 };
