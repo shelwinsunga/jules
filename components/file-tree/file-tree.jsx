@@ -1,12 +1,12 @@
 'use client'
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { Tree } from 'react-arborist';
 import { File, Folder, FolderOpen, ChevronRight, ChevronDown } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import Tex from '@/public/tex.tsx';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { db } from '@/lib/constants';
-import { tx } from '@instantdb/react';
+import { tx, id } from '@instantdb/react';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Plus, Edit, Trash2 } from 'lucide-react';
@@ -20,6 +20,7 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
     const [isRenaming, setIsRenaming] = useState(false);
     const [newName, setNewName] = useState(node.data.name);
     const inputRef = useRef(null);
+    const [isNewItem, setIsNewItem] = useState(false);
 
     const onMouseOver = () => {
         if (node.data.hover) {
@@ -60,9 +61,25 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
         }
     }, [isRenaming, newName]);
 
+    useEffect(() => {
+        if (node.tree.props.newItemType && node.id === node.tree.props.newItemParentId) {
+            const newItemIndex = node.children.findIndex(child => !child.data.id);
+            if (newItemIndex !== -1) {
+                setIsNewItem(true);
+                setIsRenaming(true);
+                setNewName(node.children[newItemIndex].data.name);
+            }
+        }
+    }, [node, node.tree.props.newItemType, node.tree.props.newItemParentId]);
+
     const handleRenameSubmit = () => {
         if (newName.trim() !== '') {
-            node.tree.props.onRename({ id: node.id, name: newName.trim() });
+            if (isNewItem) {
+                node.tree.props.onRename({ id: node.children[node.children.length - 1].id, name: newName.trim() });
+                setIsNewItem(false);
+            } else {
+                node.tree.props.onRename({ id: node.id, name: newName.trim() });
+            }
         }
         setIsRenaming(false);
     };
@@ -72,7 +89,7 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
     };
 
     const handleAddFile = () => {
-        // Implement add file logic here
+        node.tree.props.onAddItem('file', node.id);
     };
 
     if (isRenaming) {
@@ -161,10 +178,16 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
                     Delete
                 </ContextMenuItem>
                 {!node.isLeaf && (
-                    <ContextMenuItem onClick={handleAddFile}>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add File
-                    </ContextMenuItem>
+                    <>
+                        <ContextMenuItem onClick={handleAddFile}>
+                            <FilePlus2 className="w-4 h-4 mr-2" />
+                            Add File
+                        </ContextMenuItem>
+                        <ContextMenuItem onClick={() => node.tree.props.onAddItem('folder', node.id)}>
+                            <FolderPlus className="w-4 h-4 mr-2" />
+                            Add Folder
+                        </ContextMenuItem>
+                    </>
                 )}
             </ContextMenuContent>
         </ContextMenu>
@@ -218,24 +241,29 @@ const FileTree = ({ projectId }) => {
         height: 735
     });
 
-    // const handleCreate = ({ parentId, index, type }) => {
-    //     setData(prevData => {
-    //         const newNode = {
-    //             id: Date.now().toString(),
-    //             name: type === 'file' ? 'New File' : 'New Folder',
-    //             children: type === 'folder' ? [] : undefined,
-    //             hover: true
-    //         };
-    //         const updatedData = JSON.parse(JSON.stringify(prevData));
-    //         const parent = findNodeById(updatedData, parentId);
-    //         if (parent) {
-    //             parent.children.splice(index, 0, newNode);
-    //         } else {
-    //             updatedData.splice(index, 0, newNode);
-    //         }
-    //         return updatedData;
-    //     });
-    // };
+    const [newItemType, setNewItemType] = useState(null);
+    const [newItemParentId, setNewItemParentId] = useState(null);
+
+    const handleAddItem = useCallback((type, parentId = null) => {
+        const newItemId = id();
+        const newItem = {
+            id: newItemId,
+            name: type === 'file' ? 'untitled.tex' : 'Untitled Folder',
+            type: type,
+            parent_id: parentId,
+            projectId: projectId,
+            isExpanded: type === 'folder' ? true : null,
+            content: '',
+            createdAt: new Date(),
+        };
+
+        db.transact([
+            tx.files[newItemId].update(newItem)
+        ]);
+
+        setNewItemType(type);
+        setNewItemParentId(parentId);
+    }, [projectId]);
 
     const handleRename = ({ id, name }) => {
         console.log(name);
@@ -310,30 +338,6 @@ const FileTree = ({ projectId }) => {
         ]);
     };
 
-    // const findNodeById = (nodes, id) => {
-    //     for (let node of nodes) {
-    //         if (node.id === id) return node;
-    //         if (node.children) {
-    //             const found = findNodeById(node.children, id);
-    //             if (found) return found;
-    //         }
-    //     }
-    //     return null;
-    // };
-
-    // const removeNodeById = (nodes, id) => {
-    //     for (let i = 0; i < nodes.length; i++) {
-    //         if (nodes[i].id === id) {
-    //             nodes.splice(i, 1);
-    //             return true;
-    //         }
-    //         if (nodes[i].children && removeNodeById(nodes[i].children, id)) {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // };
-
   
     useEffect(() => {
         console.log("Effect running");
@@ -372,7 +376,7 @@ const FileTree = ({ projectId }) => {
                 <div className="flex items-center">
                     <Tooltip delayDuration={0}>
                         <TooltipTrigger asChild>
-                            <Button variant="ghost" size="sm">
+                            <Button variant="ghost" size="sm" onClick={() => handleAddItem('file')}>
                                 <FilePlus2 className="w-4 h-4" />
                             </Button>
                         </TooltipTrigger>
@@ -380,7 +384,7 @@ const FileTree = ({ projectId }) => {
                     </Tooltip>
                     <Tooltip delayDuration={0}>
                         <TooltipTrigger asChild>
-                            <Button variant="ghost" size="sm">
+                            <Button variant="ghost" size="sm" onClick={() => handleAddItem('folder')}>
                                 <FolderPlus className="w-4 h-4" />
                             </Button>
                         </TooltipTrigger>
@@ -400,6 +404,9 @@ const FileTree = ({ projectId }) => {
                     height={treeContainer.height}
                     rowHeight={36}
                     initialOpenState={initialOpenState}
+                    newItemType={newItemType}
+                    newItemParentId={newItemParentId}
+                    onAddItem={handleAddItem}
                 >
                     {FileTreeNode}
                 </Tree>
