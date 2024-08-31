@@ -30,7 +30,7 @@ import { useState } from 'react';
 import { Input } from "@/components/ui/input"
 import { id } from "@instantdb/react";
 import Image from 'next/image';
-import { savePdfToStorage, savePreviewToStorage } from '@/lib/db-utils';
+import { savePdfToStorage, savePreviewToStorage } from '@/lib/utils/db-utils';
 
 export default function DocumentCard({ doc, detailed = false }: { doc: any, detailed?: boolean }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);

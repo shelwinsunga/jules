@@ -13,7 +13,7 @@ import { ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 import { db } from '@/lib/constants';
 import { tx} from '@instantdb/react'
 import { useParams } from 'next/navigation'
-import { savePdfToStorage, savePreviewToStorage } from '@/lib/db-utils';
+import { savePdfToStorage, savePreviewToStorage } from '@/lib/utils/db-utils';
 import { Download } from 'lucide-react';
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs';
 

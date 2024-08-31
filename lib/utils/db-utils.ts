@@ -1,6 +1,6 @@
 'use client'
 import { db } from '@/lib/constants';
-import { createPreview } from '@/lib/pdf-utils';
+import { createPreview } from '@/lib/utils/pdf-utils';
 import { pdfjs } from 'react-pdf';
 
 // Set the worker source
