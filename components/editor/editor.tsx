@@ -3,11 +3,13 @@ import Editor from '@monaco-editor/react';
 import { useEditorSetup } from './hooks/useEditorSetup';
 import { useAIAssist } from './hooks/useAIAssist';
 import { editorDefaultOptions } from './constants/editorDefaults';
-
+import { Loader2 } from 'lucide-react';
 interface CodeEditorProps {
     onChange: (value: string) => void;
     value: string;
 }
+
+const EditorLoading = () => null;
 
 export const CodeEditor = ({ onChange, value }: CodeEditorProps) => {
     const { editorRef, handleEditorDidMount } = useEditorSetup(onChange, value);
@@ -26,6 +28,7 @@ export const CodeEditor = ({ onChange, value }: CodeEditorProps) => {
                 handleAIAssist(editor, monaco);
             }}
             options={editorDefaultOptions}
+            loading={<EditorLoading />}
         />
     );
 };
