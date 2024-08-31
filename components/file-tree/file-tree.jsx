@@ -214,12 +214,29 @@ const FileTree = ({ projectId }) => {
     };
 
     const handleDelete = ({ ids, type }) => {
-        console.log(ids, type);
-        // setData(prevData => {
-        //     const updatedData = JSON.parse(JSON.stringify(prevData));
-        //     ids.forEach(id => removeNodeById(updatedData, id));
-        //     return updatedData;
-        // });
+        if(type === 'file') {
+            db.transact([
+                tx.files[ids[0]].delete()
+            ]);
+        } else if (type === 'folder') {
+            // Recursive function to collect all child files and folders
+            const collectChildren = (folderId) => {
+                return filesData.files.filter(file => file.parent_id === folderId).flatMap(child => {
+                    if (child.type === 'folder') {
+                        return [child.id, ...collectChildren(child.id)];
+                    }
+                    return child.id;
+                });
+            };
+
+            const childrenIds = collectChildren(ids[0]);
+
+            // Delete the folder and all its children
+            db.transact([
+                ...childrenIds.map(id => tx.files[id].delete()),
+                tx.files[ids[0]].delete()
+            ]);
+        }
     };
 
     const handleToggle = ({ id, isExpanded }) => {
