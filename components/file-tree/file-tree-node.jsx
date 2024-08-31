@@ -84,6 +84,7 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
 
     if (isRenaming) {
         return (
+            <div className="px-4">
             <div
                 onClick={(e) => e.stopPropagation()}
                 style={style}
@@ -102,12 +103,14 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
                     className="h-6 py-0 px-1 text-sm"
                 />
             </div>
+            </div>
         );
     }
 
     return (
         <ContextMenu>
             <ContextMenuTrigger>
+                <div className="px-4">
                 <div 
                     className={cn(
                         "flex items-center gap-2 p-1 rounded-md cursor-pointer",
@@ -156,6 +159,7 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
                             </div>
                         )}
                     </div>
+                </div>
                 </div>
             </ContextMenuTrigger>
             <ContextMenuContent>

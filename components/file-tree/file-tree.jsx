@@ -162,7 +162,7 @@ const FileTree = ({ projectId }) => {
             const { width, height } = entry.contentRect;
             setTreeContainer({
                 width: width,
-                height: height 
+                height: height - 65
             });
         });
 
@@ -208,7 +208,7 @@ const FileTree = ({ projectId }) => {
                     </Tooltip>
                 </div>
             </div>
-            <div className="flex-grow w-full overflow-hidden">
+            <div className="flex-grow w-full overflow-hidden py-1">
                 <Tree
                     data={transformedData}
                     onMove={handleMove}
