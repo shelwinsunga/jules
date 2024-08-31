@@ -40,7 +40,9 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
   const [imageError, setImageError] = useState(false);
   const { email, id: userId } = db.useAuth().user || {};
   const [downloadURL, setDownloadURL] = useState('');
-
+  const { data:files } = db.useQuery({ files: { $: { where: { projectId: doc.id } } } });
+  
+  
   useEffect(() => {
     if (email && userId) {
       const pathname = `${userId}/${doc.id}/`;
@@ -65,7 +67,12 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    db.transact([tx.projects[doc.id].delete()])
+    db.transact([tx.projects[doc.id].delete()]);
+    if(files && files.files) {
+      files.files.map((file) =>
+        db.transact([tx.files[file.id].delete()])
+      )
+    }
     setIsDropdownOpen(false);
   }
 
