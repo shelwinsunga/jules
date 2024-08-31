@@ -50,6 +50,25 @@ export default function NewDocument() {
             const rootId = id();
             const chaptersId = id();
             const imagesId = id();
+            const chapterStarterContent = `
+            \\chapter{Introduction}
+            This is the introduction chapter. Here you can write the introduction of your document.
+
+            \\chapter{Literature Review}
+            This chapter is for the literature review. Summarize the existing research and literature here.
+
+            \\chapter{Methodology}
+            Describe the methodology used in your research in this chapter.
+
+            \\chapter{Results}
+            Present the results of your research in this chapter.
+
+            \\chapter{Discussion}
+            Discuss the implications of your results in this chapter.
+
+            \\chapter{Conclusion}
+            Conclude your document with a summary of your findings and future work.
+            `;
 
             return [
                 {
@@ -72,7 +91,7 @@ export default function NewDocument() {
                     name: 'chapter1.tex',
                     type: 'file',
                     parent_id: chaptersId,
-                    content: '',
+                    content: chapterStarterContent,
                     isExpanded: null,
                 },
                 {
@@ -80,7 +99,7 @@ export default function NewDocument() {
                     name: 'chapter2.tex',
                     type: 'file',
                     parent_id: chaptersId,
-                    content: '',
+                    content: chapterStarterContent,
                     isExpanded: null,
                 },
                 {
@@ -95,7 +114,7 @@ export default function NewDocument() {
                     name: 'image1.png',
                     type: 'file',
                     parent_id: imagesId,
-                    content: '',
+                    content: 'ImageData',
                     isExpanded: null,
                 },
             ];
