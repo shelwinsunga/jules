@@ -36,7 +36,7 @@ const LatexRenderer = () => {
             }
         }
     });
-    const { data:files } = db.useQuery({ files: { $: { where: { projectId: id } } } });
+    const { data:files, isLoading: isFilesLoading } = db.useQuery({ files: { $: { where: { projectId: id } } } });
     const currentlyOpen = files?.files?.find((file) => file.isOpen === true);
     const latex = currentlyOpen?.content;
     
@@ -49,23 +49,36 @@ const LatexRenderer = () => {
     const [scale, setScale] = useState(1.0);
 
     const fetchPdf = async () => {
-        if (isDataLoading || !user) return;
+        if (isDataLoading || isFilesLoading || !user || !files) return;
 
         setIsLoading(true);
         setError(null);
         setIsDocumentReady(false);
+
         try {
-            const response = await fetch('https://fastapi-production-6904.up.railway.app/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ latex: latex }),
+            const formData = new FormData();
+            
+            // Find the main.tex file
+            const mainFile = files.files.find(file => file.name === 'main.tex');
+            if (!mainFile) {
+                throw new Error('main.tex file not found');
+            }
+
+            // Add all files to formData
+            files.files.forEach(file => {
+                formData.append('files', new Blob([file.content], { type: 'text/plain' }), file.name);
             });
+
+            const response = await fetch('http://127.0.0.1:8000/', {
+                method: 'POST',
+                body: formData,
+            });
+
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(`${errorData.error}: ${errorData.message}\n\nDetails: ${errorData.details}`);
             }
+
             const blob = await response.blob();
             
             const pathname = `${user.id}/${id}/`;
