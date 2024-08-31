@@ -12,6 +12,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { FilePlus2 } from 'lucide-react';
+import { FolderPlus } from 'lucide-react';
 
 const FileTreeNode = ({ node, style, dragHandle }) => {
     const [nodeStyle, setNodeStyle] = useState({ base: style });
@@ -371,26 +373,18 @@ const FileTree = ({ projectId }) => {
                     <Tooltip delayDuration={0}>
                         <TooltipTrigger asChild>
                             <Button variant="ghost" size="sm">
-                                <Plus className="h-4 w-4" />
+                                <FilePlus2 className="w-4 h-4" />
                             </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Add</TooltipContent>
+                        <TooltipContent>Add file</TooltipContent>
                     </Tooltip>
                     <Tooltip delayDuration={0}>
                         <TooltipTrigger asChild>
                             <Button variant="ghost" size="sm">
-                                <Edit className="h-4 w-4" />
+                                <FolderPlus className="w-4 h-4" />
                             </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Edit</TooltipContent>
-                    </Tooltip>
-                    <Tooltip delayDuration={0}>
-                        <TooltipTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                                <Trash2 className="h-4 w-4" />
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>Delete</TooltipContent>
+                        <TooltipContent>Add folder</TooltipContent>
                     </Tooltip>
                 </div>
             </div>
