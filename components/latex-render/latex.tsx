@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label"
 import { ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 import { db } from '@/lib/constants';
 import { tx} from '@instantdb/react'
+import '@ungap/with-resolvers';
 import { useParams } from 'next/navigation'
 import { savePdfToStorage, savePreviewToStorage } from '@/lib/utils/db-utils';
 import { Download } from 'lucide-react';

@@ -25,8 +25,10 @@ export const useEditorTheme = () => {
             return acc;
         }, {} as Record<string, string>);
 
-        const base = theme === 'dark' ? 'vs-dark' : 'vs';
-
+        const base = theme === 'system' 
+            ? (systemTheme === 'dark' ? 'vs-dark' : 'vs') 
+            : (theme === 'dark' ? 'vs-dark' : 'vs');
+            
         monacoInstance.editor.defineTheme('myDarkTheme', {
             base: base,
             inherit: true,
