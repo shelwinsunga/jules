@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "engines": {
-    "node": "22.7.0"
+    "node": "20.x"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^0.0.47",
