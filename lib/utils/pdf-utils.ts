@@ -1,4 +1,5 @@
 'use client'
+import '@ungap/with-resolvers';
 import { PDFDocumentProxy } from 'pdfjs-dist';
 
 export async function createPreview(pdfDocument: PDFDocumentProxy, id: string): Promise<{ previewFile: File, previewPathname: string }> {

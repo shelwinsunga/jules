@@ -14,6 +14,7 @@ import { db } from '@/lib/constants';
 import { tx} from '@instantdb/react'
 import { useParams } from 'next/navigation'
 import { savePdfToStorage, savePreviewToStorage } from '@/lib/utils/db-utils';
+import '@ungap/with-resolvers';
 import { Download } from 'lucide-react';
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs';
 
