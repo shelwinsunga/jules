@@ -55,7 +55,7 @@ const LatexRenderer = () => {
         setError(null);
         setIsDocumentReady(false);
         try {
-            const response = await fetch('https://fastapi-production-6904.up.railway.app/', {
+            const response = await fetch('http://127.0.0.1:8000/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
