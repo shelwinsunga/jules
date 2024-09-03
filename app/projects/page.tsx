@@ -1,47 +1,47 @@
-"use client"
-import { useState } from "react"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { SearchIcon, PlusIcon } from "lucide-react"
-import ProjectNav from "@/components/projects/project-nav"
-import Link from "next/link"
-import { db } from "@/lib/constants"
-import ProjectSkeleton from "@/components/projects/project-skeleton"
-import ProjectCard from "@/components/projects/project-card"
-import { useFrontend } from "@/contexts/FrontendContext"
+'use client'
+import { useState } from 'react'
+import { Card, CardContent, CardFooter } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { SearchIcon, PlusIcon } from 'lucide-react'
+import ProjectNav from '@/components/projects/project-nav'
+import Link from 'next/link'
+import { db } from '@/lib/constants'
+import ProjectSkeleton from '@/components/projects/project-skeleton'
+import ProjectCard from '@/components/projects/project-card'
+import { useFrontend } from '@/contexts/FrontendContext'
 
 export default function Projects() {
-  const { user } = useFrontend();
-  const [searchTerm, setSearchTerm] = useState('');
-  
-  const { isLoading, error, data } = db.useQuery({ projects: {
-    $: {
-      where: {
-        user_id: user?.id || ''
-      }
-    }
-  } });
+  const { user } = useFrontend()
+  const [searchTerm, setSearchTerm] = useState('')
+
+  const { isLoading, error, data } = db.useQuery({
+    projects: {
+      $: {
+        where: {
+          user_id: user?.id || '',
+        },
+      },
+    },
+  })
 
   if (isLoading) return <ProjectSkeleton />
 
-  const projects = data?.projects || [];
-  const filteredProjects = projects.filter(project => 
-    project.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  const recentProjects = projects.slice(0, 3);
-  const allProjects = projects;
+  const projects = data?.projects || []
+  const filteredProjects = projects.filter((project) => project.title.toLowerCase().includes(searchTerm.toLowerCase()))
+  const recentProjects = projects.slice(0, 3)
+  const allProjects = projects
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-        <ProjectNav />
+      <ProjectNav />
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="mb-8 flex justify-between items-center">
           <div className="relative flex-grow mr-4">
             <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input 
-              className="pl-10 py-5 text-sm w-full" 
-              placeholder="Search LaTeX projects..." 
+            <Input
+              className="pl-10 py-5 text-sm w-full"
+              placeholder="Search LaTeX projects..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />

@@ -1,4 +1,3 @@
-
 const blankContent = `\\documentclass{article}
 \\usepackage[utf8]{inputenc}
 \\usepackage[T1]{fontenc}
@@ -205,7 +204,6 @@ const resumeContent = `\\documentclass[letterpaper,11pt]{article}
 
 \\end{document}`
 
-
 const reportContent = `\\documentclass[12pt,a4paper]{report}
 \\usepackage[utf8]{inputenc}
 \\usepackage[T1]{fontenc}
@@ -311,7 +309,6 @@ Othertown, State 67890}
 
 \\end{document}`
 
-
 const proposalContent = `\\documentclass[12pt]{article}
 \\usepackage[margin=1in]{geometry}
 \\usepackage{titlesec}
@@ -357,12 +354,11 @@ const proposalContent = `\\documentclass[12pt]{article}
 
 \\end{document}`
 
-
 export const templateContent = {
-    "article": blankContent,
-    "report": reportContent,
-    "resume": resumeContent,
-    "letter": letterContent,
-    "proposal": proposalContent,
-    "blank": blankContent
+  article: blankContent,
+  report: reportContent,
+  resume: resumeContent,
+  letter: letterContent,
+  proposal: proposalContent,
+  blank: blankContent,
 }

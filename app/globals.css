@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -60,7 +59,6 @@
   }
 }
 
-
 @layer base {
   * {
     @apply border-border;
@@ -69,23 +67,23 @@
     @apply bg-background text-foreground;
   }
 
-  .monaco-editor .scroll-decoration{
+  .monaco-editor .scroll-decoration {
     box-shadow: none !important;
   }
 }
 
-.diff-old-content { 
-  background-color: #ffeeee; 
+.diff-old-content {
+  background-color: #ffeeee;
 }
-.diff-new-content { 
-  background-color: #eeffee; 
+.diff-new-content {
+  background-color: #eeffee;
 }
 
-.dark .diff-old-content { 
-  background-color: #2a1414; 
+.dark .diff-old-content {
+  background-color: #2a1414;
 }
-.dark .diff-new-content { 
-  background-color: #142a14; 
+.dark .diff-new-content {
+  background-color: #142a14;
 }
 
 .tree-overflow {

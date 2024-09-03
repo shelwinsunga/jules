@@ -1,29 +1,30 @@
-'use server';
+'use server'
 
-import { streamText } from 'ai';
-import { openai } from '@ai-sdk/openai';
-import { createStreamableValue } from 'ai/rsc';
-import { anthropic } from '@ai-sdk/anthropic';
+import { streamText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createStreamableValue } from 'ai/rsc'
+import { anthropic } from '@ai-sdk/anthropic'
 export async function generate(input: string) {
-  const stream = createStreamableValue({content: '', isComplete: false});
+  const stream = createStreamableValue({ content: '', isComplete: false })
 
-  (async () => {
+  ;(async () => {
     const { textStream } = await streamText({
       model: anthropic('claude-3-5-sonnet-20240620'),
-      system: 'Imagine you are embedded in a latex editor. You only write latex. You do not write anything else or converse; you only write latex.'
-      + 'Do not write in backticks like this: ```latex ...```. Write your latex directly. You must consider the context of where you\'re starting from and ending from. For example, if you start in the middle of the document, would not write \documentclass{article} or \begin{document} and add packages. You must consider the context of where you\'re starting from and ending from.',
+      system:
+        'Imagine you are embedded in a latex editor. You only write latex. You do not write anything else or converse; you only write latex.' +
+        "Do not write in backticks like this: ```latex ...```. Write your latex directly. You must consider the context of where you're starting from and ending from. For example, if you start in the middle of the document, would not write documentclass{article} or \begin{document} and add packages. You must consider the context of where you're starting from and ending from.",
       prompt: input,
-    });
+    })
 
     for await (const delta of textStream) {
-      stream.update({content: delta, isComplete: false});
+      stream.update({ content: delta, isComplete: false })
     }
 
-    stream.update({content: '', isComplete: true});
-    stream.done();
-  })();
+    stream.update({ content: '', isComplete: true })
+    stream.done()
+  })()
 
-  return { output: stream.value };
+  return { output: stream.value }
 }
 
 // 'use server';
@@ -32,7 +33,6 @@ export async function generate(input: string) {
 
 // export async function generate(input: string) {
 //   const stream = createStreamableValue({content: '', isComplete: false});
-
 
 //   (async () => {
 //     const fakeLatexContent = `section{Introduction}
