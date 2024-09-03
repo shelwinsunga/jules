@@ -1,12 +1,22 @@
 'use client'
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { db } from '@/lib/constants'
 
 // TODO: Add types
 const FrontendContext = createContext<any>(undefined)
 
 export function FrontendProvider({ children }: { children: ReactNode }) {
-  const { user } = db.useAuth()
+  const { user, isLoading } = db.useAuth()
+  const router = useRouter()
+  const pathname = usePathname()
+
+  useEffect(() => {
+    if (!isLoading && user === null && pathname !== '/') {
+      router.push('/login')
+    }
+  }, [isLoading, user, router, pathname])
 
   const value = {
     user,

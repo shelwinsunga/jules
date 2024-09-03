@@ -11,7 +11,7 @@ export default function Login() {
   const router = useRouter()
   const { isLoading, user, error } = db.useAuth()
   if (isLoading) {
-    return <div>Loading...</div>
+    return null
   }
   if (error) {
     return <div>Uh oh! {error.message}</div>
