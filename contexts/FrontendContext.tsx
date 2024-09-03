@@ -1,41 +1,18 @@
 'use client'
-
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-import { useParams } from 'next/navigation'
-import { db } from '@/lib/constants';
+import { useProjectData, useProjectFiles } from '@/hooks/data';
 
 interface FrontendContextType {
-    latex: string;
-    setLatex: (latex: string) => void;
-    isLoading: boolean;
+  
 }
 
 const FrontendContext = createContext<FrontendContextType | undefined>(undefined);
 
-export const FrontendProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [latex, setLatex] = useState<string>('');
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const { id } = useParams<{ id: string }>();
+export function FrontendProvider({children}: {children: ReactNode}) {
 
-    const { isLoading: dbLoading, error, data } = db.useQuery({
-        projects: {
-            $: {
-                where: {
-                    id: id
-                }
-            }
-        }
-    });
-
-    useEffect(() => {
-        if (!dbLoading && data) {
-            setLatex(data.projects[0]?.project_content);
-            setIsLoading(false);
-        }
-    }, [dbLoading, data]);
-
+    const value = {}
     return (
-        <FrontendContext.Provider value={{ latex, setLatex, isLoading }}>
+        <FrontendContext.Provider value={value}>
             {children}
         </FrontendContext.Provider>
     );
