@@ -14,30 +14,16 @@ import { db } from '@/lib/constants';
 import { useParams } from 'next/navigation'
 import { savePdfToStorage, savePreviewToStorage } from '@/lib/utils/db-utils';
 import { Download } from 'lucide-react';
+import { useProject } from '@/contexts/ProjectContext';
+import { createPathname } from '@/lib/utils/client-utils';
+
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs';
 
 
 const LatexRenderer = () => {
-    const params = useParams<{ id: string }>();
-    const id = params?.id; 
-
-    if (!id) {
-        throw new Error("Project ID is required"); 
-    }
-
     const { user } = db.useAuth();
-    const { data, isLoading: isDataLoading } = db.useQuery({
-        projects: {
-            $: {
-                where: {
-                    id: id
-                }
-            }
-        }
-    });
-    const { data:files } = db.useQuery({ files: { $: { where: { projectId: id } } } });
-    const currentlyOpen = files?.files?.find((file) => file.isOpen === true);
-    const latex = currentlyOpen?.content;
+    const { project: data, isLoading: isDataLoading, editorContent, projectId } = useProject();
+    const latex = editorContent;
     
     const [numPages, setNumPages] = useState<number>(0);
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
@@ -66,9 +52,7 @@ const LatexRenderer = () => {
                 throw new Error(`${errorData.error}: ${errorData.message}\n\nDetails: ${errorData.details}`);
             }
             const blob = await response.blob();
-            
-            const pathname = `${user.id}/${id}/`;
-
+            const pathname = createPathname(user.id, projectId);
             await savePdfToStorage(blob, pathname + 'main.pdf');
             await savePreviewToStorage(blob, pathname + 'preview.webp');
             const url = URL.createObjectURL(blob);
