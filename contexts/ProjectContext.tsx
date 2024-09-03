@@ -15,7 +15,6 @@ export function ProjectProvider({ children, projectId }: { children: ReactNode; 
   const { data: projectData, isLoading: isProjectLoading, error: projectError } = useProjectData(projectId)
   const { data: filesData, isLoading: isFilesLoading, error: filesError } = useProjectFiles(projectId)
   const currentlyOpen = filesData?.files?.find((file) => file.isOpen === true)
-  const editorContent = currentlyOpen?.content
 
   const value = {
     projectId,
@@ -24,7 +23,6 @@ export function ProjectProvider({ children, projectId }: { children: ReactNode; 
     isProjectLoading,
     isFilesLoading,
     currentlyOpen,
-    editorContent,
     error: projectError || filesError,
   }
 

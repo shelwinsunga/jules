@@ -21,8 +21,8 @@ pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs'
 
 function LatexRenderer() {
   const { user } = useFrontend();
-  const { project: data, isLoading: isDataLoading, editorContent, projectId } = useProject()
-  const latex = editorContent
+  const { project: data, isLoading: isDataLoading, projectId, currentlyOpen } = useProject()
+  const latex = currentlyOpen?.content
 
   const [numPages, setNumPages] = useState<number>(0)
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
