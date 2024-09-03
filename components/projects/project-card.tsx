@@ -15,6 +15,7 @@ import { id } from '@instantdb/react'
 import Image from 'next/image'
 import { savePdfToStorage, savePreviewToStorage } from '@/lib/utils/db-utils'
 import { createPathname } from '@/lib/utils/client-utils'
+import { getAllProjectFiles } from '@/hooks/data'
 
 export default function ProjectCard({ project, detailed = false }: { project: any; detailed?: boolean }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -24,7 +25,7 @@ export default function ProjectCard({ project, detailed = false }: { project: an
   const [imageError, setImageError] = useState(false)
   const { email, id: userId } = db.useAuth().user || {}
   const [downloadURL, setDownloadURL] = useState('')
-  const { data: files } = db.useQuery({ files: { $: { where: { projectId: project.id } } } }) // really bad, we shouldn't need every file when displaying doc cards
+  const { data: files } = getAllProjectFiles(project.id)
 
   useEffect(() => {
     if (email && userId) {
