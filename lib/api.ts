@@ -1,5 +1,6 @@
 import { RAILWAY_ENDPOINT_URL } from '@/lib/constants'  
 export async function fetchPdf(latex: string) {
+  console.log(RAILWAY_ENDPOINT_URL)
     const response = await fetch(RAILWAY_ENDPOINT_URL, {
       method: 'POST',
       headers: {
