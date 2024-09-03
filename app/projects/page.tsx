@@ -9,9 +9,10 @@ import Link from "next/link"
 import { db } from "@/lib/constants"
 import ProjectSkeleton from "@/components/projects/project-skeleton"
 import ProjectCard from "@/components/projects/project-card"
+import { useFrontend } from "@/contexts/FrontendContext"
 
 export default function Projects() {
-  const { user } = db.useAuth();
+  const { user } = useFrontend();
   const [searchTerm, setSearchTerm] = useState('');
   
   const { isLoading, error, data } = db.useQuery({ projects: {
