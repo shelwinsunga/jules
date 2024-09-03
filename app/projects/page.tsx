@@ -8,7 +8,7 @@ import ProjectNav from "@/components/projects/project-nav"
 import Link from "next/link"
 import { db } from "@/lib/constants"
 import ProjectSkeleton from "@/components/projects/project-skeleton"
-import DocumentCard from "@/components/projects/document-card"
+import ProjectCard from "@/components/projects/project-card"
 
 export default function Projects() {
   const { user } = db.useAuth();
@@ -28,8 +28,8 @@ export default function Projects() {
   const filteredProjects = projects.filter(project => 
     project.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  const recentDocuments = projects.slice(0, 3);
-  const allDocuments = projects;
+  const recentProjects = projects.slice(0, 3);
+  const allProjects = projects;
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -40,7 +40,7 @@ export default function Projects() {
             <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input 
               className="pl-10 py-5 text-sm w-full" 
-              placeholder="Search LaTeX documents..." 
+              placeholder="Search LaTeX projects..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -48,19 +48,19 @@ export default function Projects() {
           <Button className="whitespace-nowrap" asChild>
             <Link href="/new">
               <PlusIcon className="mr-2 h-4 w-4" />
-              Add Document
+              Add Project
             </Link>
           </Button>
         </div>
 
-        {allDocuments.length === 0 ? (
+        {allProjects.length === 0 ? (
           <Card className="p-12 text-center">
-            <h2 className="text-xl font-semibold mb-4">No Documents Yet</h2>
-            <p className="text-muted-foreground mb-4">Get started by creating your first LaTeX document.</p>
+            <h2 className="text-xl font-semibold mb-4">No Projects Yet</h2>
+            <p className="text-muted-foreground mb-4">Get started by creating your first LaTeX project.</p>
             <Button asChild>
               <Link href="/new">
                 <PlusIcon className="mr-2 h-4 w-4" />
-                Add Your First Document
+                Add Your First Project
               </Link>
             </Button>
           </Card>
@@ -68,8 +68,8 @@ export default function Projects() {
           <section>
             <h2 className="text-xl font-semibold mb-4">Results</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {filteredProjects.map((doc) => (
-                <DocumentCard key={doc.id} doc={doc} />
+              {filteredProjects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
               ))}
             </div>
           </section>
@@ -78,17 +78,17 @@ export default function Projects() {
             <section className="mb-12">
               <h2 className="text-xl font-semibold mb-4">Recents</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {recentDocuments.map((doc) => (
-                  <DocumentCard key={doc.id} doc={doc} detailed={true} />
+                {recentProjects.map((project) => (
+                  <ProjectCard key={project.id} project={project} detailed={true} />
                 ))}
               </div>
             </section>
 
             <section>
-              <h2 className="text-xl font-semibold mb-4">All Documents</h2>
+              <h2 className="text-xl font-semibold mb-4">All Projects</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {allDocuments.map((doc) => (
-                  <DocumentCard key={doc.id} doc={doc} />
+                {allProjects.map((project) => (
+                  <ProjectCard key={project.id} project={project} />
                 ))}
               </div>
             </section>

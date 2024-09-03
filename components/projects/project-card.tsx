@@ -33,20 +33,19 @@ import Image from 'next/image';
 import { savePdfToStorage, savePreviewToStorage } from '@/lib/utils/db-utils';
 import { createPathname } from '@/lib/utils/client-utils';
 
-export default function DocumentCard({ doc, detailed = false }: { doc: any, detailed?: boolean }) {
+export default function ProjectCard({ project, detailed = false }: { project: any, detailed?: boolean }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [newTitle, setNewTitle] = useState(doc.title);
+  const [newTitle, setNewTitle] = useState(project.title);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [imageURL, setImageURL] = useState('');
   const [imageError, setImageError] = useState(false);
   const { email, id: userId } = db.useAuth().user || {};
   const [downloadURL, setDownloadURL] = useState('');
-  const { data:files } = db.useQuery({ files: { $: { where: { projectId: doc.id } } } });
-  
+  const { data:files } = db.useQuery({ files: { $: { where: { projectId: project.id } } } }); // really bad, we shouldn't need every file when displaying doc cards
   
   useEffect(() => {
     if (email && userId) {
-      const pathname = createPathname(userId, doc.id);
+      const pathname = createPathname(userId, project.id);
       
       db.storage
         .getDownloadUrl(pathname + 'preview.webp')
@@ -63,12 +62,12 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
           setImageError(true);
         });
     }
-  }, [doc.id, doc.title, email, userId]);
+  }, [project.id, project.title, email, userId]);
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    db.transact([tx.projects[doc.id].delete()]);
+    db.transact([tx.projects[project.id].delete()]);
     if(files && files.files) {
       files.files.map((file) =>
         db.transact([tx.files[file.id].delete()])
@@ -103,11 +102,11 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
 
     db.transact([
       tx.projects[newProjectId].update({
-        title: `${doc.title} (Copy)`,
-        project_content: doc.project_content,
-        document_class: doc.document_class,
-        template: doc.template,
-        user_id: doc.user_id,
+        title: `${project.title} (Copy)`,
+        project_content: project.project_content,
+        document_class: project.document_class,
+        template: project.template,
+        user_id: project.user_id,
         created_at: new Date(),
         last_compiled: new Date(),
         word_count: 0,
@@ -126,7 +125,7 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
           const blobUrl = window.URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = blobUrl;
-          link.download = `${doc.title}.pdf`;
+          link.download = `${project.title}.pdf`;
           link.click();
           window.URL.revokeObjectURL(blobUrl);
         })
@@ -148,12 +147,12 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
 
   return (
     <>
-      <Link href={`/project/${doc.id}`} passHref>
+      <Link href={`/project/${project.id}`} passHref>
         <Card className="flex flex-col overflow-hidden">
           <div className="relative">
             <Image 
               src={!imageError && imageURL ? imageURL : "/placeholder.svg"} 
-              alt={`Preview of ${doc.title}`} 
+              alt={`Preview of ${project.title}`} 
               className="w-full h-40 object-cover" 
               width={300} 
               height={160} 
@@ -205,11 +204,11 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
           </div>
           <CardContent className="flex-grow p-4">
             <div className="flex items-center justify-between mb-2">
-              <Badge variant="secondary" className="bg-primary text-foreground dark:bg-secondary dark:text-primary">{doc.document_class || doc.template}</Badge>
+              <Badge variant="secondary" className="bg-primary text-foreground dark:bg-secondary dark:text-primary">{project.document_class || project.template}</Badge>
             </div>
-            <h3 className="font-semibold truncate text-lg mb-1">{doc.title}</h3>
-            <p className="text-sm text-muted-foreground mb-1">Last compiled: {new Date(doc.last_compiled).toLocaleString()}</p>
-            <p className="text-sm text-muted-foreground">{doc.word_count} words | {doc.page_count} pages</p>
+            <h3 className="font-semibold truncate text-lg mb-1">{project.title}</h3>
+            <p className="text-sm text-muted-foreground mb-1">Last compiled: {new Date(project.last_compiled).toLocaleString()}</p>
+            <p className="text-sm text-muted-foreground">{project.word_count} words | {project.page_count} pages</p>
           </CardContent>
           {detailed && (
             <CardFooter className="p-4 pt-0">
@@ -233,7 +232,7 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
           <DialogFooter>
             <Button onClick={() => handleDialogOpenChange(false)}>Cancel</Button>
             <Button onClick={() => {
-              db.transact([tx.projects[doc.id].update({ title: newTitle })]);
+              db.transact([tx.projects[project.id].update({ title: newTitle })]);
               handleDialogOpenChange(false);
             }}>Save</Button>
           </DialogFooter>
