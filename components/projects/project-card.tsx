@@ -16,6 +16,7 @@ import Image from 'next/image'
 import { savePdfToStorage, savePreviewToStorage } from '@/lib/utils/db-utils'
 import { createPathname } from '@/lib/utils/client-utils'
 import { getAllProjectFiles } from '@/hooks/data'
+import { useFrontend } from '@/contexts/FrontendContext'
 
 export default function ProjectCard({ project, detailed = false }: { project: any; detailed?: boolean }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -23,7 +24,8 @@ export default function ProjectCard({ project, detailed = false }: { project: an
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [imageURL, setImageURL] = useState('')
   const [imageError, setImageError] = useState(false)
-  const { email, id: userId } = db.useAuth().user || {}
+  const { user } = useFrontend()
+  const { email, id: userId } = user
   const [downloadURL, setDownloadURL] = useState('')
   const { data: files } = getAllProjectFiles(project.id)
 
