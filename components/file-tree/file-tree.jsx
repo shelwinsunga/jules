@@ -4,10 +4,11 @@ import { Tree } from 'react-arborist'
 import { db } from '@/lib/constants'
 import { tx, id } from '@instantdb/react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { FilePlus2, FolderPlus } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import FileTreeNode from './file-tree-node'
-import FileTreeSkeleton from './file-tree-loading'
+import { FilePlus2, FolderPlus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import FileTreeNode from './file-tree-node';
+import FileTreeSkeleton from './file-tree-loading';
+
 const FileTree = ({ projectId }) => {
   const {
     data: filesData,
