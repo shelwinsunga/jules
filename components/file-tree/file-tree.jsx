@@ -1,8 +1,6 @@
 'use client'
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { Tree } from 'react-arborist'
-import { cn } from '@/lib/utils'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { db } from '@/lib/constants'
 import { tx, id } from '@instantdb/react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
