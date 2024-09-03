@@ -4,7 +4,7 @@ import { PDFDocumentProxy } from 'pdfjs-dist'
 
 export async function createPreview(
   pdfDocument: PDFDocumentProxy,
-  id: string
+  pathname: string
 ): Promise<{ previewFile: File; previewPathname: string }> {
   const page = await pdfDocument.getPage(1)
   const viewport = page.getViewport({ scale: 1.0 })
@@ -31,7 +31,7 @@ export async function createPreview(
   })
 
   const previewFile = new File([previewBlob], 'preview.webp', { type: 'image/webp' })
-  const previewPathname = `${id}/preview.webp`
+  const previewPathname = `${pathname}/preview.webp`
 
   return { previewFile, previewPathname }
 }
