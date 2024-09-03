@@ -15,10 +15,12 @@ import { Download } from 'lucide-react'
 import { useProject } from '@/contexts/ProjectContext'
 import { createPathname } from '@/lib/utils/client-utils'
 import { useFrontend } from '@/contexts/FrontendContext'
+import { fetchPdf } from '@/lib/api'
+
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs'
 
-const LatexRenderer = () => {
-  const { user } = useFrontend()
+function LatexRenderer() {
+  const { user } = useFrontend();
   const { project: data, isLoading: isDataLoading, editorContent, projectId } = useProject()
   const latex = editorContent
 
@@ -30,25 +32,13 @@ const LatexRenderer = () => {
   const [isDocumentReady, setIsDocumentReady] = useState(false)
   const [scale, setScale] = useState(0.9)
 
-  const fetchPdf = async () => {
+  const handlePdf = async () => {
     if (isDataLoading || !user) return
-
     setIsLoading(true)
     setError(null)
     setIsDocumentReady(false)
     try {
-      const response = await fetch('http://127.0.0.1:8000/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ latex: latex }),
-      })
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(`${errorData.error}: ${errorData.message}\n\nDetails: ${errorData.details}`)
-      }
-      const blob = await response.blob()
+      const blob = await fetchPdf(latex);
       const pathname = createPathname(user.id, projectId)
       await savePdfToStorage(blob, pathname + 'main.pdf')
       await savePreviewToStorage(blob, pathname + 'preview.webp')
@@ -69,7 +59,7 @@ const LatexRenderer = () => {
       clearTimeout(debounceTimer)
       debounceTimer = setTimeout(() => {
         if (autoFetch && latex && latex.trim() !== '') {
-          fetchPdf()
+          handlePdf()
         }
       }, 1000)
     }
@@ -119,7 +109,7 @@ const LatexRenderer = () => {
     <div className="w-full h-full flex flex-col">
       <div className="flex justify-between items-center border-b shadow-sm p-2 gap-4">
         <div className="flex items-center gap-4">
-          <Button variant="outline" onClick={fetchPdf}>
+          <Button variant="outline" onClick={handlePdf}>
             Generate PDF
           </Button>
           <Switch checked={autoFetch} onCheckedChange={setAutoFetch} />

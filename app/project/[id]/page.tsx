@@ -5,6 +5,7 @@ import LatexRenderer from '@/components/latex-render/latex'
 import EditorContainer from '@/components/editor/editor-container'
 import { ProjectProvider } from '@/contexts/ProjectContext'
 import { useParams } from 'next/navigation'
+import { useFrontend } from '@/contexts/FrontendContext'
 export const maxDuration = 30
 
 export default function Home() {
