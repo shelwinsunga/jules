@@ -12,4 +12,4 @@ export async function fetchPdf(latex: string) {
       throw new Error(`${errorData.error}: ${errorData.message}\n\nDetails: ${errorData.details}`);
     }
     return response.blob();
-  }
+}

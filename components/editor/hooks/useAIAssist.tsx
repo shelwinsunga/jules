@@ -1,5 +1,4 @@
 'use client'
-import { useState } from 'react'
 import { generate } from '@/app/actions'
 import { readStreamableValue } from 'ai/rsc'
 import { calculateDiff } from '../utils/calculateDiff'
@@ -10,7 +9,11 @@ import * as monaco from 'monaco-editor'
 import type { editor } from 'monaco-editor'
 
 export const useAIAssist = () => {
-  const handleAIAssist = (editor: editor.IStandaloneCodeEditor, monacoInstance: typeof monaco) => {
+  const handleAIAssist = (
+    editor: editor.IStandaloneCodeEditor, 
+    monacoInstance: typeof monaco,
+    setIsLLMStreaming: (isStreaming: boolean) => void
+  ) => {
     editor.addCommand(monacoInstance.KeyMod.CtrlCmd | monacoInstance.KeyCode.KeyK, async () => {
       const selection = editor.getSelection()
       const model = editor.getModel()
@@ -31,11 +34,13 @@ export const useAIAssist = () => {
       const { output } = await generate(
         `File content:\n${initialText}\n\nContext: ${context}\n\nUser input: ${userInput}`
       )
+      setIsLLMStreaming(true);
 
       let newText = ''
       let oldDecorations: string[] = []
       let currentLine = selection.startLineNumber
       let buffer = ''
+
 
       for await (const delta of readStreamableValue(output)) {
         if (!delta) continue
@@ -53,6 +58,7 @@ export const useAIAssist = () => {
           buffer = ''
         }
       }
+      setIsLLMStreaming(false);
 
       const contentWidget = createContentWidget(
         editor,
