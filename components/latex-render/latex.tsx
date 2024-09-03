@@ -16,6 +16,7 @@ import { useProject } from '@/contexts/ProjectContext'
 import { createPathname } from '@/lib/utils/client-utils'
 import { useFrontend } from '@/contexts/FrontendContext'
 import { fetchPdf } from '@/lib/api'
+import '@ungap/with-resolvers';
 
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs'
 
