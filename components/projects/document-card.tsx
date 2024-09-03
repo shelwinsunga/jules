@@ -31,6 +31,7 @@ import { Input } from "@/components/ui/input"
 import { id } from "@instantdb/react";
 import Image from 'next/image';
 import { savePdfToStorage, savePreviewToStorage } from '@/lib/utils/db-utils';
+import { createPathname } from '@/lib/utils/client-utils';
 
 export default function DocumentCard({ doc, detailed = false }: { doc: any, detailed?: boolean }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -45,7 +46,7 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
   
   useEffect(() => {
     if (email && userId) {
-      const pathname = `${userId}/${doc.id}/`;
+      const pathname = createPathname(userId, doc.id);
       
       db.storage
         .getDownloadUrl(pathname + 'preview.webp')
@@ -87,12 +88,12 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
     e.preventDefault();
     e.stopPropagation();
     setIsDropdownOpen(false);
-    const doc_id = id();
+    const newProjectId = id();
     if (downloadURL) {
       try {
         const response = await fetch(downloadURL);
         const blob = await response.blob();
-        const pathname = `${userId}/${doc_id}/`;
+        const pathname = createPathname(userId, newProjectId);
         await savePreviewToStorage(blob, pathname + 'preview.webp');
         savePdfToStorage(blob, pathname + 'main.pdf');
       } catch (error) {
@@ -101,7 +102,7 @@ export default function DocumentCard({ doc, detailed = false }: { doc: any, deta
     } 
 
     db.transact([
-      tx.projects[doc_id].update({
+      tx.projects[newProjectId].update({
         title: `${doc.title} (Copy)`,
         project_content: doc.project_content,
         document_class: doc.document_class,
