@@ -10,10 +10,10 @@ import LoadingSideNav from '@/components/nav/loading-side-nav'
 import { useProject } from '@/contexts/ProjectContext'
 
 export default function SideNav() {
-  const { project, projectIsLoading, projectId } = useProject()
+  const { project, isProjectLoading, projectId } = useProject()
   const projectTitle = project?.title
 
-  if (projectIsLoading) {
+  if (isProjectLoading) {
     return <LoadingSideNav />
   }
 
@@ -35,7 +35,6 @@ export default function SideNav() {
         </Link>
         <ModeToggle />
       </div>
-
       <div className="p-4 flex space-x-2">
         <Input placeholder="Search files..." className="flex-grow" />
         <Button>
@@ -45,7 +44,6 @@ export default function SideNav() {
       <div className="flex-grow overflow-auto">
         <FileTree projectId={projectId} />
       </div>
-
       <div className="mt-auto">
         <Profile />
       </div>

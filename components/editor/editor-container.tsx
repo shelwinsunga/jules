@@ -10,25 +10,13 @@ import { useParams } from 'next/navigation'
 import { tx } from '@instantdb/react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useDebounce } from '@/hooks/useDebounce'
+import { useProject } from '@/contexts/ProjectContext'
 
 const EditorContainer = () => {
   const { theme, systemTheme } = useTheme()
-  const { id } = useParams<{ id: string }>()
   const [localContent, setLocalContent] = useState('')
   const [openFile, setOpenFile] = useState<any>(null)
-
-  const { isLoading, error, data } = db.useQuery({
-    projects: {
-      $: {
-        where: {
-          id: id,
-        },
-      },
-    },
-  })
-
-  const { data: files, isLoading: isFilesLoading } = db.useQuery({ files: { $: { where: { projectId: id } } } })
-  const currentlyOpen = files?.files?.find((file) => file.isOpen === true)
+  const { currentlyOpen, isFilesLoading, isProjectLoading } = useProject()
 
   useEffect(() => {
     if (currentlyOpen && currentlyOpen.content !== localContent) {
@@ -36,8 +24,6 @@ const EditorContainer = () => {
       setLocalContent(currentlyOpen.content)
     }
   }, [currentlyOpen])
-
-  const latex = currentlyOpen?.content ?? ''
 
   const debouncedUpdateDb = useDebounce((newCode: string, prevOpenFile: any) => {
     if (prevOpenFile?.id) {
@@ -55,7 +41,7 @@ const EditorContainer = () => {
     [debouncedUpdateDb, openFile, localContent]
   )
 
-  if (isLoading || isFilesLoading) {
+  if (isProjectLoading || isFilesLoading) {
     return (
       <div className="flex flex-col w-full h-full">
         <div className="flex justify-end items-center border-b shadow-sm p-2">

@@ -7,6 +7,7 @@ const FrontendContext = createContext<any>(undefined)
 
 export function FrontendProvider({ children }: { children: ReactNode }) {
   const { user } = db.useAuth()
+
   const value = {
     user,
   }

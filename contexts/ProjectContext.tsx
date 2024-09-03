@@ -12,8 +12,8 @@ interface ProjectContextType {
 const ProjectContext = createContext<any>(undefined)
 
 export function ProjectProvider({ children, projectId }: { children: ReactNode; projectId: string }) {
-  const { data: projectData, isLoading: projectIsLoading, error: projectError } = useProjectData(projectId)
-  const { data: filesData, isLoading: filesIsLoading, error: filesError } = useProjectFiles(projectId)
+  const { data: projectData, isLoading: isProjectLoading, error: projectError } = useProjectData(projectId)
+  const { data: filesData, isLoading: isFilesLoading, error: filesError } = useProjectFiles(projectId)
   const currentlyOpen = filesData?.files?.find((file) => file.isOpen === true)
   const editorContent = currentlyOpen?.content
 
@@ -21,8 +21,8 @@ export function ProjectProvider({ children, projectId }: { children: ReactNode; 
     projectId,
     project: projectData?.projects[0],
     files: filesData?.files,
-    projectIsLoading,
-    filesIsLoading,
+    isProjectLoading,
+    isFilesLoading,
     currentlyOpen,
     editorContent,
     error: projectError || filesError,
