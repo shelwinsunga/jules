@@ -3,38 +3,18 @@ import FileTree from '@/components/file-tree/file-tree'
 import { ModeToggle } from '@/components/ui/mode-toggle'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Search, HelpCircle } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Search } from 'lucide-react'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
-import { db } from '@/lib/constants'
 import Profile from '@/components/profile/profile'
 import LoadingSideNav from '@/components/nav/loading-side-nav'
+import { useFrontend } from '@/contexts/FrontendContext'
+import { useProject } from '@/contexts/ProjectContext'
 
 export default function SideNav() {
-    const { user } = db.useAuth();
-    const params = useParams<{ id: string }>();
-    const id = params?.id; 
+    const { project, projectIsLoading, projectId } = useProject();
+    const projectTitle = project?.title;
 
-    if (!id) {
-        throw new Error("Project ID is required"); 
-    }
-
-    const { data, isLoading } = db.useQuery({
-        projects: {
-            $: {
-                where: {
-                    id: id
-                }
-            }
-        }
-    });
-
-    const projectTitle = data?.projects[0]?.title;
-
-
-    
-    if (isLoading) {
+    if (projectIsLoading) {
         return <LoadingSideNav />;
     }
 
@@ -59,7 +39,7 @@ export default function SideNav() {
                 </Button>
             </div>
             <div className="flex-grow overflow-auto">
-                <FileTree projectId={id} />
+                <FileTree projectId={projectId} />
             </div>
 
             <div className="mt-auto">
