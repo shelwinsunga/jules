@@ -48,6 +48,7 @@
 /******/
 /************************************************************************/
 var __webpack_exports__ = (globalThis.pdfjsWorker = {})
+import '@ungap/with-resolvers';
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
