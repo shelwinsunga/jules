@@ -1,16 +1,15 @@
 'use client'
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
-import { useProjectData, useProjectFiles } from '@/hooks/data';
+import { db } from '@/lib/constants';
 
-interface FrontendContextType {
-  
-}
-
-const FrontendContext = createContext<FrontendContextType | undefined>(undefined);
+// TODO: Add types
+const FrontendContext = createContext<any>(undefined);
 
 export function FrontendProvider({children}: {children: ReactNode}) {
-
-    const value = {}
+    const { user } = db.useAuth();
+    const value = {
+        user
+    }
     return (
         <FrontendContext.Provider value={value}>
             {children}

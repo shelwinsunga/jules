@@ -10,21 +10,19 @@ import { Switch } from "@/components/ui/switch";
 import LatexError from './latex-error';
 import { Label } from "@/components/ui/label"
 import { ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
-import { db } from '@/lib/constants';
-import { useParams } from 'next/navigation'
 import { savePdfToStorage, savePreviewToStorage } from '@/lib/utils/db-utils';
 import { Download } from 'lucide-react';
 import { useProject } from '@/contexts/ProjectContext';
 import { createPathname } from '@/lib/utils/client-utils';
-
+import { useFrontend } from '@/contexts/FrontendContext';
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs';
 
 
 const LatexRenderer = () => {
-    const { user } = db.useAuth();
+    const { user } = useFrontend();
     const { project: data, isLoading: isDataLoading, editorContent, projectId } = useProject();
     const latex = editorContent;
-    
+
     const [numPages, setNumPages] = useState<number>(0);
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
