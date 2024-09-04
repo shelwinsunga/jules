@@ -98,7 +98,7 @@ function LatexRenderer() {
     if (pdfUrl) {
       const link = document.createElement('a')
       link.href = pdfUrl
-      link.download = `${data?.projects[0]?.title || 'document'}.pdf`
+      link.download = `${data?.title || 'document'}.pdf`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
