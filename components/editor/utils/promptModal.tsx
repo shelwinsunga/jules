@@ -11,7 +11,7 @@ export const promptModal = async (
 ) => {
   return new Promise((resolve, reject) => {
     const inputContainer = document.createElement('div')
-    inputContainer.style.position = 'absolute'
+    inputContainer.style.position = 'fixed'
     inputContainer.style.width = '400px'
     inputContainer.style.height = '150px'
     inputContainer.style.zIndex = '1000'
@@ -80,20 +80,31 @@ export const promptModal = async (
       const lineHeight = editor.getOption(monacoInstance.editor.EditorOption.lineHeight)
       const lineTop = editor.getTopForLineNumber(selection.startLineNumber)
 
+      const modalHeight = 150 // Set this to the actual height of your modal
+      const modalWidth = 400 // Set this to the actual width of your modal
+
       let top = rect.top + lineTop - lineHeight
       let left = rect.left
 
       if (window) {
-        if (top + inputContainer.offsetHeight > window.innerHeight) {
-          top = window.innerHeight - inputContainer.offsetHeight
-        }
-        if (left + inputContainer.offsetWidth > window.innerWidth) {
-          left = window.innerWidth - inputContainer.offsetWidth
-        }
-      }
+        const viewportHeight = window.innerHeight
+        const viewportWidth = window.innerWidth
 
-      top = Math.max(0, top)
-      left = Math.max(0, left)
+        // Adjust vertical position
+        if (top + modalHeight > viewportHeight) {
+          // If modal would overflow bottom, position it above the cursor
+          top = Math.max(0, top - modalHeight)
+        }
+
+        // Adjust horizontal position
+        if (left + modalWidth > viewportWidth) {
+          left = Math.max(0, viewportWidth - modalWidth)
+        }
+
+        // Ensure the modal is fully visible
+        top = Math.min(Math.max(0, top), viewportHeight - modalHeight)
+        left = Math.min(Math.max(0, left), viewportWidth - modalWidth)
+      }
 
       inputContainer.style.top = `${top}px`
       inputContainer.style.left = `${left}px`
