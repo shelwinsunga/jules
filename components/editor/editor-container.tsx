@@ -1,51 +1,50 @@
 'use client'
 
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useEffect, useRef } from 'react'
 import { CodeEditor } from './editor'
 import { Button } from '@/components/ui/button'
 import { useTheme } from 'next-themes'
 import { db } from '@/lib/constants'
 import { tx } from '@instantdb/react'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useDebounce } from '@/hooks/useDebounce'
 import { useProject } from '@/contexts/ProjectContext'
 
 const EditorContainer = () => {
-  console.log('EditorContainer rerendered')
-
   const { theme, systemTheme } = useTheme()
   const [localContent, setLocalContent] = useState('')
   const [openFile, setOpenFile] = useState<any>(null)
   const { currentlyOpen, isFilesLoading, isProjectLoading } = useProject()
+  const contentRef = useRef(localContent)
 
   useEffect(() => {
-    console.log('useEffect for currentlyOpen rerendered')
     if (currentlyOpen && currentlyOpen.content !== localContent) {
       setOpenFile(currentlyOpen)
       setLocalContent(currentlyOpen.content)
+      contentRef.current = currentlyOpen.content
     }
   }, [currentlyOpen])
 
-  const debouncedUpdateDb = useDebounce((newCode: string, prevOpenFile: any) => {
-    console.log('debouncedUpdateDb called')
-    if (prevOpenFile?.id) {
-      db.transact([tx.files[prevOpenFile.id].update({ content: newCode })])
-    }
-  }, 250)
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (openFile?.id && contentRef.current !== localContent) {
+        db.transact([tx.files[openFile.id].update({ content: localContent })])
+        contentRef.current = localContent
+      }
+    }, 3000)
+
+    return () => clearInterval(intervalId)
+  }, [openFile, localContent])
 
   const handleCodeChange = useCallback(
     (newCode: string) => {
-      console.log('handleCodeChange called')
       if (newCode !== localContent) {
         setLocalContent(newCode)
-        debouncedUpdateDb(newCode, openFile)
       }
     },
-    [debouncedUpdateDb, openFile, localContent]
+    [localContent]
   )
 
   if (isProjectLoading || isFilesLoading) {
-    console.log('Rendering loading state')
     return (
       <div className="flex flex-col w-full h-full">
         <div className="flex justify-end items-center border-b shadow-sm p-2">
@@ -56,7 +55,6 @@ const EditorContainer = () => {
     )
   }
 
-  console.log('Rendering main editor')
   return (
     <div className="flex flex-col w-full h-full">
       <div className="flex justify-end items-center border-b shadow-sm p-2">
