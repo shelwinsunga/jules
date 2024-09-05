@@ -6,18 +6,32 @@ import { Input } from '@/components/ui/input'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { useRouter } from 'next/navigation'
 import { db } from '@/lib/constants'
+import { useEffect } from 'react'
+import { tx } from '@instantdb/react'
 
 export default function Login() {
   const router = useRouter()
   const { isLoading, user, error } = db.useAuth()
+
+  useEffect(() => {
+    if (user) {
+      const userProperties = Object.entries(user).reduce((acc, [key, value]) => {
+        if (key !== 'id') {
+          acc[key] = value;
+        }
+        return acc;
+      }, {} as Record<string, any>);
+
+      db.transact(tx.users[user.id].update(userProperties));
+      router.push('/projects')
+    }
+  }, [user, router]);
+
   if (isLoading) {
     return null
   }
   if (error) {
     return <div>Uh oh! {error.message}</div>
-  }
-  if (user) {
-    router.push('/projects')
   }
   return <LoginForm />
 }
@@ -63,10 +77,10 @@ function Email({ setSentEmail }: { setSentEmail: (email: string) => void }) {
 
 function MagicCode({ sentEmail }: { sentEmail: string }) {
   const [code, setCode] = useState('')
-
+  
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    db.auth.signInWithMagicCode({ email: sentEmail, code }).catch((err) => {
+    const user = db.auth.signInWithMagicCode({ email: sentEmail, code }).catch((err) => {
       alert('Uh oh :' + err.body?.message)
       setCode('')
     })

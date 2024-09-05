@@ -3,14 +3,27 @@ import React, { createContext, useState, useContext, ReactNode, useEffect } from
 import { useRouter } from 'next/navigation'
 import { usePathname } from 'next/navigation'
 import { db } from '@/lib/constants'
-
+import { tx } from '@instantdb/react'
 // TODO: Add types
 const FrontendContext = createContext<any>(undefined)
 
 export function FrontendProvider({ children }: { children: ReactNode }) {
   const { user, isLoading } = db.useAuth()
   const router = useRouter()
-  const pathname = usePathname()
+  const pathname = usePathname();
+  
+  // useEffect(() => {
+  //   if (user) {
+  //     const userProperties = Object.entries(user).reduce((acc, [key, value]) => {
+  //       if (key !== 'id') {
+  //         acc[key] = value;
+  //       }
+  //       return acc;
+  //     }, {} as Record<string, any>);
+
+  //     db.transact(tx.users[user.id].update(userProperties));
+  //   }
+  // }, [user]);
 
   useEffect(() => {
     if (!isLoading && user === null && pathname !== '/') {
