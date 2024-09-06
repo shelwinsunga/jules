@@ -42,27 +42,6 @@ export default function NewDocument() {
 
     const createFileStructure = () => {
       const rootId = id()
-      const chaptersId = id()
-      const imagesId = id()
-      const chapterStarterContent = `
-            \\chapter{Introduction}
-            This is the introduction chapter. Here you can write the introduction of your document.
-
-            \\chapter{Literature Review}
-            This chapter is for the literature review. Summarize the existing research and literature here.
-
-            \\chapter{Methodology}
-            Describe the methodology used in your research in this chapter.
-
-            \\chapter{Results}
-            Present the results of your research in this chapter.
-
-            \\chapter{Discussion}
-            Discuss the implications of your results in this chapter.
-
-            \\chapter{Conclusion}
-            Conclude your document with a summary of your findings and future work.
-            `
 
       return [
         {
@@ -71,44 +50,6 @@ export default function NewDocument() {
           type: 'file',
           parent_id: null,
           content: templateContent[selectedTemplate],
-          isExpanded: null,
-        },
-        {
-          id: chaptersId,
-          name: 'chapters',
-          type: 'folder',
-          parent_id: null,
-          isExpanded: true,
-        },
-        {
-          id: id(),
-          name: 'chapter1.tex',
-          type: 'file',
-          parent_id: chaptersId,
-          content: chapterStarterContent,
-          isExpanded: null,
-        },
-        {
-          id: id(),
-          name: 'chapter2.tex',
-          type: 'file',
-          parent_id: chaptersId,
-          content: chapterStarterContent,
-          isExpanded: null,
-        },
-        {
-          id: imagesId,
-          name: 'images',
-          type: 'folder',
-          parent_id: null,
-          isExpanded: true,
-        },
-        {
-          id: id(),
-          name: 'image1.png',
-          type: 'file',
-          parent_id: imagesId,
-          content: 'ImageData',
           isExpanded: null,
         },
       ]
