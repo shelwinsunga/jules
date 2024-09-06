@@ -30,7 +30,7 @@ const EditorContainer = () => {
         db.transact([tx.files[openFile.id].update({ content: localContent })])
         contentRef.current = localContent
       }
-    }, 3000)
+    }, 500)
 
     return () => clearInterval(intervalId)
   }, [openFile, localContent])
