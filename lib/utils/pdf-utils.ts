@@ -1,6 +1,7 @@
 'use client'
 import '@ungap/with-resolvers';
 import { PDFDocumentProxy } from 'pdfjs-dist'
+import { RAILWAY_ENDPOINT_URL } from '@/lib/constants'  
 
 export async function createPreview(
   pdfDocument: PDFDocumentProxy,
@@ -34,4 +35,34 @@ export async function createPreview(
   const previewPathname = `${pathname}/preview.webp`
 
   return { previewFile, previewPathname }
+}
+
+interface EditorFiles {
+  [key: string]: any;
+}
+
+export async function fetchPdf(files: EditorFiles) {
+    const fileArray: File[] = [];
+    files.forEach((file: EditorFiles) => {
+        if (file.type === 'file') {
+            const extension = file.name.split('.').pop();
+            const mimeType = extension === 'tex' ? 'text/plain' : 'application/octet-stream';
+            const blob = new Blob([file.content], { type: mimeType });
+            const fileObject = new File([blob], file.name, { type: mimeType });
+            fileArray.push(fileObject);
+        }
+    });
+
+    console.log(fileArray);
+
+    // TODO: Update the fetch call to use the fileArray instead of formData
+    // const response = await fetch(RAILWAY_ENDPOINT_URL, {
+    //     method: 'POST',
+    //     body: JSON.stringify(fileArray),
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //     },
+    // });
+
+    // ... rest of the function
 }

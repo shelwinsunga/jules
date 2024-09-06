@@ -21,7 +21,8 @@ pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs'
 
 function LatexRenderer() {
   const { user } = useFrontend();
-  const { project: data, isLoading: isDataLoading, projectId, currentlyOpen } = useProject()
+  const { project: data, isLoading: isDataLoading, projectId, currentlyOpen, files } = useProject();
+
   const latex = currentlyOpen?.content
 
   const [numPages, setNumPages] = useState<number>(0)
@@ -38,12 +39,13 @@ function LatexRenderer() {
     setError(null)
     setIsDocumentReady(false)
     try {
-      const blob = await fetchPdf(latex);
-      const pathname = createPathname(user.id, projectId)
-      await savePdfToStorage(blob, pathname + 'main.pdf')
-      await savePreviewToStorage(blob, pathname + 'preview.webp')
-      const url = URL.createObjectURL(blob)
-      setPdfUrl(url)
+        const res = await fetchPdf(files);
+    //   const blob = await fetchPdf(files);
+    //   const pathname = createPathname(user.id, projectId)
+    //   await savePdfToStorage(blob, pathname + 'main.pdf')
+    //   await savePreviewToStorage(blob, pathname + 'preview.webp')
+    //   const url = URL.createObjectURL(blob)
+    //   setPdfUrl(url)
     } catch (error) {
       console.error('Error fetching PDF:', error)
       setError(error instanceof Error ? error.message : String(error))
