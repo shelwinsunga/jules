@@ -51,6 +51,7 @@ export default function NewDocument() {
           parent_id: null,
           content: templateContent[selectedTemplate],
           isExpanded: null,
+          pathname: 'main.tex',
         },
       ]
     }
@@ -81,6 +82,7 @@ export default function NewDocument() {
           isExpanded: node.isExpanded,
           isOpen: node.name === 'main.tex' ? true : false,
           main_file: node.name === 'main.tex' ? true : false,
+          pathname: node.pathname,
         })
       ),
     ])

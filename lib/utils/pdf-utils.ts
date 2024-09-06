@@ -48,12 +48,13 @@ export async function fetchPdf(files: EditorFiles) {
         if (file.type === 'file') {
             const extension = file.name.split('.').pop();
             const mimeType = extension === 'tex' ? 'text/plain' : 'application/octet-stream';
+            const pathname = file.pathname
             const blob = new Blob([file.content], { type: mimeType });
-            formData.append(file.name, blob);
+            formData.append(pathname, blob);
         }
     });
 
-
+    
 
     const response = await fetch('http://127.0.0.1:8000', {
         method: 'POST',

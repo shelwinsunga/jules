@@ -31,7 +31,7 @@ const FileTree = ({ projectId }) => {
       return filesData.files
         .filter((file) => file.parent_id === parentId)
         .map((file) => {
-          const currentPath = `${parentPath}/${file.name}`
+          const currentPath = parentPath ? `${parentPath}/${file.name}` : file.name
           return {
             id: file.id,
             name: file.name,
@@ -72,7 +72,7 @@ const FileTree = ({ projectId }) => {
     (type, parentId = null) => {
       const newItemId = id()
       const parentPath = filesData.files.find((file) => file.id === parentId)?.pathname || ''
-      const newItemPath = `${parentPath}/${type === 'file' ? 'untitled.tex' : 'Untitled Folder'}`
+      const newItemPath = parentPath ? `${parentPath}/${type === 'file' ? 'untitled.tex' : 'Untitled Folder'}` : (type === 'file' ? 'untitled.tex' : 'Untitled Folder')
       const newItem = {
         id: newItemId,
         name: type === 'file' ? 'untitled.tex' : 'Untitled Folder',
@@ -103,7 +103,7 @@ const FileTree = ({ projectId }) => {
     const updates = dragIds.map((id) => {
       const file = filesData.files.find((file) => file.id === id)
       const parentPath = filesData.files.find((file) => file.id === parentId)?.pathname || ''
-      const newPathname = `${parentPath}/${file.name}`
+      const newPathname = parentPath ? `${parentPath}/${file.name}` : file.name
       return {
         id: id,
         parent_id: parentId,
