@@ -21,24 +21,46 @@ This is a section in our document.
 This is a subsection with some math: $E = mc^2$
 \end{document}
 """
-
 @app.route('/', methods=['POST'])
 def latex_to_pdf():
-    latex_content = request.json.get('latex')
+    print("Received a request to convert LaTeX to PDF.")
+    files = request.files
+
+    if 'main.tex' not in files:
+        print("No main.tex file provided in the request.")
+        return {
+            "error": "No main.tex file provided",
+            "message": "Please upload a main.tex file."
+        }, 400
+
     with tempfile.TemporaryDirectory() as temp_dir:
-        input_file = os.path.join(temp_dir, 'input.tex')
-        with open(input_file, 'w') as f:
-            f.write(latex_content)
+        print(f"Created a temporary directory at {temp_dir}.")
+        for filename, file in files.items():
+            file_path = os.path.join(temp_dir, filename)
+            file.save(file_path)
+            print(f"Saved file {filename} to {file_path}.")
+        
+        input_file = os.path.join(temp_dir, 'main.tex')
+        print(f"Input file path set to {input_file}.")
         
         try:
-            # Run pdflatex using texlive-latex-base
+            print("Running pdflatex to generate PDF.")
             result = subprocess.run(['pdflatex', '-output-directory', temp_dir, input_file], 
                                     check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                     env=dict(os.environ, PATH=f"{os.environ['PATH']}:/usr/bin"),
                                     text=True)
+            print("pdflatex command executed successfully.")
             
+            pdf_path = os.path.join(temp_dir, 'main.pdf')
+            print(f"Generated PDF located at {pdf_path}.")
+            # Save the generated PDF locally
+            # local_pdf_path = os.path.join(os.getcwd(), 'output.pdf')
+            # with open(pdf_path, 'rb') as pdf_file:
+            #     with open(local_pdf_path, 'wb') as local_file:
+            #         local_file.write(pdf_file.read())
+            # print(f"Saved the generated PDF locally at {local_pdf_path}.")
             # Send the generated PDF
-            return send_file(os.path.join(temp_dir, 'input.pdf'), 
+            return send_file(pdf_path, 
                              mimetype='application/pdf',
                              as_attachment=True,
                              download_name='output.pdf')
@@ -47,6 +69,7 @@ def latex_to_pdf():
             output = e.stdout + e.stderr
             # Log the full error
             app.logger.error(f"Error generating PDF: {e}\nOutput: {output}")
+            print(f"Error generating PDF: {e}\nOutput: {output}")
             # Return a more detailed error message
             return {
                 "error": "Error generating PDF",
@@ -55,4 +78,5 @@ def latex_to_pdf():
             }, 500
 
 if __name__ == '__main__':
+    print("Starting the Flask application.")
     app.run(debug=True)

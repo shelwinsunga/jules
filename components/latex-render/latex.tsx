@@ -39,13 +39,12 @@ function LatexRenderer() {
     setError(null)
     setIsDocumentReady(false)
     try {
-        const res = await fetchPdf(files);
-    //   const blob = await fetchPdf(files);
-    //   const pathname = createPathname(user.id, projectId)
-    //   await savePdfToStorage(blob, pathname + 'main.pdf')
-    //   await savePreviewToStorage(blob, pathname + 'preview.webp')
-    //   const url = URL.createObjectURL(blob)
-    //   setPdfUrl(url)
+      const blob = await fetchPdf(files);
+      const pathname = createPathname(user.id, projectId)
+      await savePdfToStorage(blob, pathname + 'main.pdf')
+      await savePreviewToStorage(blob, pathname + 'preview.webp')
+      const url = URL.createObjectURL(blob)
+      setPdfUrl(url)
     } catch (error) {
       console.error('Error fetching PDF:', error)
       setError(error instanceof Error ? error.message : String(error))

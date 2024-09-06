@@ -42,27 +42,28 @@ interface EditorFiles {
 }
 
 export async function fetchPdf(files: EditorFiles) {
-    const fileArray: File[] = [];
+    const formData = new FormData();
+    
     files.forEach((file: EditorFiles) => {
         if (file.type === 'file') {
             const extension = file.name.split('.').pop();
             const mimeType = extension === 'tex' ? 'text/plain' : 'application/octet-stream';
             const blob = new Blob([file.content], { type: mimeType });
-            const fileObject = new File([blob], file.name, { type: mimeType });
-            fileArray.push(fileObject);
+            formData.append(file.name, blob);
         }
     });
 
-    console.log(fileArray);
 
-    // TODO: Update the fetch call to use the fileArray instead of formData
-    // const response = await fetch(RAILWAY_ENDPOINT_URL, {
-    //     method: 'POST',
-    //     body: JSON.stringify(fileArray),
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    // });
 
-    // ... rest of the function
+    const response = await fetch('http://127.0.0.1:8000', {
+        method: 'POST',
+        body: formData,
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`${errorData.error}: ${errorData.message}\n\nDetails: ${errorData.details}`);
+    }
+    
+    return response.blob();
 }
