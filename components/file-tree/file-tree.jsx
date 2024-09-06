@@ -27,20 +27,24 @@ const FileTree = ({ projectId }) => {
   const transformedData = useMemo(() => {
     if (!filesData?.files) return []
 
-    const buildTree = (parentId = null) => {
+    const buildTree = (parentId = null, parentPath = '') => {
       return filesData.files
         .filter((file) => file.parent_id === parentId)
-        .map((file) => ({
-          id: file.id,
-          name: file.name,
-          type: file.type,
-          hover: true,
-          isOpen: file.isOpen ?? false,
-          isExpanded: file.isExpanded ?? false,
-          ...(file.type === 'folder' && {
-            children: buildTree(file.id),
-          }),
-        }))
+        .map((file) => {
+          const currentPath = `${parentPath}/${file.name}`
+          return {
+            id: file.id,
+            name: file.name,
+            type: file.type,
+            hover: true,
+            isOpen: file.isOpen ?? false,
+            isExpanded: file.isExpanded ?? false,
+            pathname: currentPath,
+            ...(file.type === 'folder' && {
+              children: buildTree(file.id, currentPath),
+            }),
+          }
+        })
     }
 
     return buildTree()
@@ -67,6 +71,8 @@ const FileTree = ({ projectId }) => {
   const handleAddItem = useCallback(
     (type, parentId = null) => {
       const newItemId = id()
+      const parentPath = filesData.files.find((file) => file.id === parentId)?.pathname || ''
+      const newItemPath = `${parentPath}/${type === 'file' ? 'untitled.tex' : 'Untitled Folder'}`
       const newItem = {
         id: newItemId,
         name: type === 'file' ? 'untitled.tex' : 'Untitled Folder',
@@ -76,6 +82,7 @@ const FileTree = ({ projectId }) => {
         isExpanded: type === 'folder' ? true : null,
         content: '',
         createdAt: new Date(),
+        pathname: newItemPath,
       }
 
       db.transact([tx.files[newItemId].update(newItem)])
@@ -83,19 +90,26 @@ const FileTree = ({ projectId }) => {
       setNewItemType(type)
       setNewItemParentId(parentId)
     },
-    [projectId]
+    [projectId, filesData]
   )
 
   const handleRename = ({ id, name }) => {
-    console.log(name)
-    db.transact([tx.files[id].update({ name: name })])
+    const file = filesData.files.find((file) => file.id === id)
+    const newPathname = file.pathname.replace(/[^/]+$/, name)
+    db.transact([tx.files[id].update({ name: name, pathname: newPathname })])
   }
 
   const handleMove = ({ dragIds, parentId, index }) => {
-    const updates = dragIds.map((id) => ({
-      id: id,
-      parent_id: parentId,
-    }))
+    const updates = dragIds.map((id) => {
+      const file = filesData.files.find((file) => file.id === id)
+      const parentPath = filesData.files.find((file) => file.id === parentId)?.pathname || ''
+      const newPathname = `${parentPath}/${file.name}`
+      return {
+        id: id,
+        parent_id: parentId,
+        pathname: newPathname,
+      }
+    })
 
     // Get all files with the same parent_id
     const siblingFiles = filesData.files.filter((file) => file.parent_id === parentId)
