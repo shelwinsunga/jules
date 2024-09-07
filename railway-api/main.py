@@ -7,7 +7,6 @@ from flask_cors import CORS
 app = Flask(__name__)
 
 CORS(app)
-
 @app.route('/', methods=['POST'])
 def latex_to_pdf():
     files = request.files
@@ -21,9 +20,15 @@ def latex_to_pdf():
     with tempfile.TemporaryDirectory() as temp_dir:
         for filename, file in files.items():
             file_path = os.path.join(temp_dir, filename)
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
             file.save(file_path)
         
         input_file = os.path.join(temp_dir, 'main.tex')
+        
+        # Print the directory structure for debugging
+        # for root, dirs, files in os.walk(temp_dir):
+        #     for name in files:
+        #         print(os.path.join(root, name))
         
         try:
             result = subprocess.run(['pdflatex', '-output-directory', temp_dir, input_file], 
@@ -32,12 +37,6 @@ def latex_to_pdf():
                                     text=True)
             
             pdf_path = os.path.join(temp_dir, 'main.pdf')
-            # Save the generated PDF locally
-            # local_pdf_path = os.path.join(os.getcwd(), 'output.pdf')
-            # with open(pdf_path, 'rb') as pdf_file:
-            #     with open(local_pdf_path, 'wb') as local_file:
-            #         local_file.write(pdf_file.read())
-            # print(f"Saved the generated PDF locally at {local_pdf_path}.")
             # Send the generated PDF
             return send_file(pdf_path, 
                              mimetype='application/pdf',
