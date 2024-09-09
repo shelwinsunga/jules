@@ -3,6 +3,7 @@ import { db } from '@/lib/constants'
 import { Button } from '@/components/ui/button'
 import { LayoutGrid } from 'lucide-react'
 import Link from 'next/link'
+import { ModeToggle } from '@/components/ui/mode-toggle';
 
 export default function AuthButtons() {
   const { user } = db.useAuth()
@@ -25,6 +26,7 @@ export default function AuthButtons() {
           <Link href="/login">Log In</Link>
         </Button>
       )}
+      <ModeToggle />
     </div>
   )
 }

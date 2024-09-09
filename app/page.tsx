@@ -1,7 +1,8 @@
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
-import AuthButtons from '@/components/projects/auth-buttons'
+import AuthButtons from '@/components/projects/auth-buttons';
+import { ModeToggle } from '@/components/ui/mode-toggle';
 
 export default function Home() {
   return (
