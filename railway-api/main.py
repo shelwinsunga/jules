@@ -31,11 +31,11 @@ def latex_to_pdf():
         #         print(os.path.join(root, name))
         
         try:
-            result = subprocess.run(['pdflatex', '-output-directory', temp_dir, input_file], 
+            result = subprocess.run(['pdflatex', '-shell-escape', '-output-directory', temp_dir, input_file], 
                                     check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                     env=dict(os.environ, PATH=f"{os.environ['PATH']}:/usr/bin"),
                                     text=True)
-            
+                                    
             pdf_path = os.path.join(temp_dir, 'main.pdf')
             # Send the generated PDF
             return send_file(pdf_path, 
