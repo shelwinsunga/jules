@@ -8,6 +8,7 @@ import { FilePlus2, FolderPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import FileTreeNode from './file-tree-node';
 import FileTreeSkeleton from './file-tree-loading';
+import { Upload } from 'lucide-react';
 
 const FileTree = ({ projectId, query = '' }) => {
   const {
@@ -167,6 +168,39 @@ const FileTree = ({ projectId, query = '' }) => {
     }
   }
 
+  const handleUpload = async () => {
+    try {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.tex,.sty,.bib,.png,.jpg,.jpeg';
+      input.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = async (event) => {
+            const content = event.target.result;
+            const newFileId = id();
+            const newFile = {
+              name: file.name,
+              type: 'file',
+              content: content,
+              parent_id: null,
+              projectId: projectId,
+              isExpanded: null,
+              created_at: new Date(),
+              pathname: file.name,
+            };
+            db.transact([tx.files[newFileId].update(newFile)]);
+          };
+          reader.readAsText(file);
+        }
+      };
+      input.click();
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    }
+  };
+
   useEffect(() => {
     console.log('Effect running')
 
@@ -217,6 +251,14 @@ const FileTree = ({ projectId, query = '' }) => {
               </Button>
             </TooltipTrigger>
             <TooltipContent>Add folder</TooltipContent>
+          </Tooltip>
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <Button variant="ghost" size="sm" onClick={() => handleUpload()}>
+                <Upload className="w-4 h-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Upload file</TooltipContent>
           </Tooltip>
         </div>
       </div>
