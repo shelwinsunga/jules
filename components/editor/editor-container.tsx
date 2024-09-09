@@ -13,36 +13,46 @@ const EditorContainer = () => {
   const { theme, systemTheme } = useTheme()
   const [localContent, setLocalContent] = useState('')
   const [openFile, setOpenFile] = useState<any>(null)
-  const { currentlyOpen, isFilesLoading, isProjectLoading } = useProject()
-  const contentRef = useRef(localContent)
+  const { currentlyOpen, isFilesLoading, isProjectLoading } = useProject();
+  const [isStreaming, setIsStreaming] = useState(false);
+  const isStreamingRef = useRef(false);
 
   useEffect(() => {
     if (currentlyOpen && currentlyOpen.content !== localContent) {
       setOpenFile(currentlyOpen)
       setLocalContent(currentlyOpen.content)
-      contentRef.current = currentlyOpen.content
+      // contentRef.current = currentlyOpen.content
     }
   }, [currentlyOpen])
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      if (openFile?.id && contentRef.current !== localContent) {
-        db.transact([tx.files[openFile.id].update({ content: localContent })])
-        contentRef.current = localContent
-      }
-    }, 3000)
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     if (openFile?.id && contentRef.current !== localContent) {
+  //       db.transact([tx.files[openFile.id].update({ content: localContent })])
+  //       contentRef.current = localContent
+  //     }
+  //   }, 3000)
 
-    return () => clearInterval(intervalId)
-  }, [openFile, localContent])
+  //   return () => clearInterval(intervalId)
+  // }, [openFile, localContent])
 
   const handleCodeChange = useCallback(
     (newCode: string) => {
       if (newCode !== localContent) {
-        setLocalContent(newCode)
+        if (!isStreamingRef.current) {
+          console.log("saving");
+          setLocalContent(newCode);
+          db.transact([tx.files[openFile.id].update({ content: newCode })])
+        }
       }
     },
-    [localContent]
+    [localContent, openFile]
   )
+
+  const handleIsStreamingChange = useCallback((streaming: boolean) => {
+    setIsStreaming(streaming);
+    isStreamingRef.current = streaming;
+  }, []);
 
   if (isProjectLoading || isFilesLoading) {
     return (
@@ -60,7 +70,7 @@ const EditorContainer = () => {
       <div className="flex justify-end items-center border-b shadow-sm p-2">
         <Button variant="outline">Assist</Button>
       </div>
-      <CodeEditor onChange={handleCodeChange} value={localContent} key={`${theme || systemTheme}-${openFile?.id}`} />
+      <CodeEditor onChange={handleCodeChange} setIsStreaming={handleIsStreamingChange} value={localContent} key={`${theme || systemTheme}-${openFile?.id}`} />
     </div>
   )
 }

@@ -10,7 +10,7 @@ import * as monaco from 'monaco-editor'
 import type { editor } from 'monaco-editor'
 
 export const useAIAssist = () => {
-  const handleAIAssist = (editor: editor.IStandaloneCodeEditor, monacoInstance: typeof monaco) => {
+  const handleAIAssist = (editor: editor.IStandaloneCodeEditor, monacoInstance: typeof monaco, setIsStreaming: (isStreaming: boolean) => void) => {
     editor.addCommand(monacoInstance.KeyMod.CtrlCmd | monacoInstance.KeyCode.KeyK, async () => {
       const selection = editor.getSelection()
       const model = editor.getModel()
@@ -36,6 +36,8 @@ export const useAIAssist = () => {
       let oldDecorations: string[] = []
       let currentLine = selection.startLineNumber
       let buffer = ''
+      setIsStreaming(true)
+
 
       for await (const delta of readStreamableValue(output)) {
         if (!delta) continue
@@ -54,6 +56,8 @@ export const useAIAssist = () => {
         }
       }
 
+      setIsStreaming(false)
+      
       const contentWidget = createContentWidget(
         editor,
         monacoInstance,

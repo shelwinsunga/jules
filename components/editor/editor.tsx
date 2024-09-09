@@ -4,14 +4,16 @@ import { useEditorSetup } from './hooks/useEditorSetup'
 import { useAIAssist } from './hooks/useAIAssist'
 import { editorDefaultOptions } from './constants/editorDefaults'
 import { Loader2 } from 'lucide-react'
+
 interface CodeEditorProps {
   onChange: (value: string) => void
   value: string
+  setIsStreaming: (isStreaming: boolean) => void
 }
 
 const EditorLoading = () => null
 
-export const CodeEditor = ({ onChange, value }: CodeEditorProps) => {
+export const CodeEditor = ({ onChange, value, setIsStreaming }: CodeEditorProps) => {
   const { editorRef, handleEditorDidMount } = useEditorSetup(onChange, value)
   const { handleAIAssist } = useAIAssist()
 
@@ -25,7 +27,7 @@ export const CodeEditor = ({ onChange, value }: CodeEditorProps) => {
       className="pt-2 bg-background"
       onMount={(editor, monaco) => {
         handleEditorDidMount(editor, monaco)
-        handleAIAssist(editor, monaco)
+        handleAIAssist(editor, monaco, setIsStreaming)
       }}
       options={editorDefaultOptions}
       loading={<EditorLoading />}
