@@ -56,7 +56,7 @@ export async function fetchPdf(files: EditorFiles) {
 
     
 
-    const response = await fetch('http://127.0.0.1:8000', {
+    const response = await fetch(RAILWAY_ENDPOINT_URL, {
         method: 'POST',
         body: formData,
     });
