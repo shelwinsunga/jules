@@ -172,10 +172,11 @@ const FileTree = ({ projectId, query = '' }) => {
     try {
       const input = document.createElement('input');
       input.type = 'file';
-      input.accept = '.tex,.sty,.bib,.png,.jpg,.jpeg';
+      input.accept = '*';
+      input.multiple = true;
       input.onchange = async (e) => {
-        const file = e.target.files[0];
-        if (file) {
+        const files = Array.from(e.target.files);
+        for (const file of files) {
           const reader = new FileReader();
           reader.onload = async (event) => {
             const content = event.target.result;
@@ -197,7 +198,7 @@ const FileTree = ({ projectId, query = '' }) => {
       };
       input.click();
     } catch (error) {
-      console.error('Error uploading file:', error);
+      console.error('Error uploading files:', error);
     }
   };
 
