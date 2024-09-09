@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import FileTreeNode from './file-tree-node';
 import FileTreeSkeleton from './file-tree-loading';
 import { Upload } from 'lucide-react';
+import { getFileExtension } from '@/lib/utils/client-utils';
 
 const FileTree = ({ projectId, query = '' }) => {
   const {
@@ -172,19 +173,25 @@ const FileTree = ({ projectId, query = '' }) => {
     try {
       const input = document.createElement('input');
       input.type = 'file';
-      input.accept = '*';
+      input.accept = 'image/*,.tex'; // Accept images and .tex files
       input.multiple = true;
       input.onchange = async (e) => {
         const files = Array.from(e.target.files);
         for (const file of files) {
-          const reader = new FileReader();
-          reader.onload = async (event) => {
-            const content = event.target.result;
-            const newFileId = id();
+          const newFileId = id();
+          const isImage = file.type.startsWith('image/');
+          
+          if (isImage) {
+            // Handle image file
+            const pathname = `images/${newFileId}-${file.name}`;
+            await db.storage.put(pathname, file);
+            const imageUrl = await db.storage.getDownloadUrl(pathname);
+            
             const newFile = {
+              id: newFileId,
               name: file.name,
               type: 'file',
-              content: content,
+              content: imageUrl,
               parent_id: null,
               projectId: projectId,
               isExpanded: null,
@@ -192,8 +199,26 @@ const FileTree = ({ projectId, query = '' }) => {
               pathname: file.name,
             };
             db.transact([tx.files[newFileId].update(newFile)]);
-          };
-          reader.readAsText(file);
+          } else {
+            // Handle non-image file (e.g., .tex)
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+              const content = event.target.result;
+              const newFile = {
+                id: newFileId,
+                name: file.name,
+                type: 'file',
+                content: content,
+                parent_id: null,
+                projectId: projectId,
+                isExpanded: null,
+                created_at: new Date(),
+                pathname: file.name,
+              };
+              db.transact([tx.files[newFileId].update(newFile)]);
+            };
+            reader.readAsText(file);
+          }
         }
       };
       input.click();

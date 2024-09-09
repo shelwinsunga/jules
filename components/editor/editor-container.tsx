@@ -8,6 +8,8 @@ import { db } from '@/lib/constants'
 import { tx } from '@instantdb/react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useProject } from '@/contexts/ProjectContext'
+import { getFileExtension } from '@/lib/utils/client-utils';
+import ImageViewer from './image-viewer'
 
 const EditorContainer = () => {
   const { theme, systemTheme } = useTheme()
@@ -16,25 +18,16 @@ const EditorContainer = () => {
   const { currentlyOpen, isFilesLoading, isProjectLoading } = useProject();
   const [isStreaming, setIsStreaming] = useState(false);
   const isStreamingRef = useRef(false);
+  const fileType = getFileExtension(currentlyOpen?.name || '');
+
+  const isImageFile = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'].includes(fileType.toLowerCase());
 
   useEffect(() => {
     if (currentlyOpen && currentlyOpen.content !== localContent) {
       setOpenFile(currentlyOpen)
       setLocalContent(currentlyOpen.content)
-      // contentRef.current = currentlyOpen.content
     }
   }, [currentlyOpen])
-
-  // useEffect(() => {
-  //   const intervalId = setInterval(() => {
-  //     if (openFile?.id && contentRef.current !== localContent) {
-  //       db.transact([tx.files[openFile.id].update({ content: localContent })])
-  //       contentRef.current = localContent
-  //     }
-  //   }, 3000)
-
-  //   return () => clearInterval(intervalId)
-  // }, [openFile, localContent])
 
   const handleCodeChange = useCallback(
     (newCode: string) => {
@@ -64,13 +57,29 @@ const EditorContainer = () => {
       </div>
     )
   }
-
   return (
     <div className="flex flex-col w-full h-full">
       <div className="flex justify-end items-center border-b shadow-sm p-2">
         <Button variant="outline">Assist</Button>
       </div>
-      <CodeEditor onChange={handleCodeChange} setIsStreaming={handleIsStreamingChange} value={localContent} key={`${theme || systemTheme}-${openFile?.id}`} />
+      {isImageFile ? (
+        <div className="flex-grow flex items-center justify-center bg-background">
+          <div className="relative w-full h-full" style={{
+            backgroundImage: `
+              linear-gradient(to right, hsl(var(--border) / 0.5) 1px, transparent 1px),
+              linear-gradient(to bottom, hsl(var(--border) / 0.5) 1px, transparent 1px)
+            `,
+            backgroundSize: '20px 20px'
+          }}>
+            <ImageViewer
+              src={currentlyOpen?.content || ''}
+              alt={currentlyOpen?.name || 'Image'}
+            />
+          </div>
+        </div>
+      ) : (
+        <CodeEditor onChange={handleCodeChange} setIsStreaming={handleIsStreamingChange} value={localContent} key={`${theme || systemTheme}-${openFile?.id}`} />
+      )}
     </div>
   )
 }
