@@ -41,11 +41,9 @@ export default function NewDocument() {
     const newProjectId = id()
 
     const createFileStructure = () => {
-      const rootId = id()
 
       return [
         {
-          id: rootId,
           name: 'main.tex',
           type: 'file',
           parent_id: null,
@@ -71,7 +69,7 @@ export default function NewDocument() {
         createdAt: new Date(),
       }),
       ...fileStructure.map((node) =>
-        tx.files[node.id].update({
+        tx.files[id()].update({
           user_id: user?.id,
           projectId: newProjectId,
           name: node.name,

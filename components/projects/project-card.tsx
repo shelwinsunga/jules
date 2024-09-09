@@ -71,8 +71,36 @@ export default function ProjectCard({ project, detailed = false }: { project: an
   const handleDuplicate = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    setIsDropdownOpen(false)
-    const newProjectId = id()
+    setIsDropdownOpen(false);
+    if (!files) {
+      return;
+    }
+
+    const newProjectId = id();
+
+    // Create a mapping of old file IDs to new file IDs
+    const fileIdMapping = new Map();
+    files.files.forEach((file) => {
+      fileIdMapping.set(file.id, id());
+    });
+
+    const fileContents = files.files.map((file) => {
+      return {
+        id: fileIdMapping.get(file.id),
+        name: file.name,
+        content: file.content,
+        pathname: file.pathname,
+        project_id: newProjectId,
+        created_at: new Date(),
+        parent_id: file.parent_id ? fileIdMapping.get(file.parent_id) : null,
+        updated_at: new Date(),
+        isOpen: file.isOpen,
+        isExpanded: file.isExpanded,
+        type: file.type,
+        main_file: file.main_file,
+      }
+    })
+    
     if (downloadURL) {
       try {
         const response = await fetch(downloadURL)
@@ -97,6 +125,22 @@ export default function ProjectCard({ project, detailed = false }: { project: an
         word_count: 0,
         page_count: 0,
       }),
+      ...fileContents.map((file) =>
+        tx.files[file.id].update({
+          user_id: userId,
+          projectId: newProjectId,
+          name: file.name,
+          pathname: file.pathname,
+          content: file.content,
+          created_at: new Date(),
+          updated_at: new Date(),
+          isOpen: file.isOpen,
+          isExpanded: file.isExpanded,
+          type: file.type,
+          main_file: file.main_file,
+          parent_id: file.parent_id,
+        })
+      )
     ])
   }
 
