@@ -66,7 +66,7 @@ export default function NewDocument() {
         word_count: 0,
         page_count: 0,
         document_class: selectedTemplate,
-        createdAt: new Date(),
+        created_at: new Date(),
       }),
       ...fileStructure.map((node) =>
         tx.files[id()].update({
@@ -76,7 +76,7 @@ export default function NewDocument() {
           type: node.type,
           parent_id: node.parent_id,
           content: node.content || '',
-          createdAt: new Date(),
+          created_at: new Date(),
           isExpanded: node.isExpanded,
           isOpen: node.name === 'main.tex' ? true : false,
           main_file: node.name === 'main.tex' ? true : false,

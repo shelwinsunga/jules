@@ -82,7 +82,7 @@ const FileTree = ({ projectId, query = '' }) => {
         projectId: projectId,
         isExpanded: type === 'folder' ? true : null,
         content: '',
-        createdAt: new Date(),
+        created_at: new Date(),
         pathname: newItemPath,
       }
 
