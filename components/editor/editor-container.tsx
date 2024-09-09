@@ -62,7 +62,11 @@ const EditorContainer = () => {
       <div className="flex justify-end items-center border-b shadow-sm p-2">
         <Button variant="outline">Assist</Button>
       </div>
-      {isImageFile ? (
+      {!currentlyOpen ? (
+        <div className="flex-grow flex items-center justify-center text-muted-foreground">
+          No file open
+        </div>
+      ) : isImageFile ? (
         <div className="flex-grow flex items-center justify-center bg-background">
           <div className="relative w-full h-full" style={{
             backgroundImage: `
