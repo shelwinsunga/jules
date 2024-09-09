@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import FileTreeNode from './file-tree-node';
 import FileTreeSkeleton from './file-tree-loading';
 
-const FileTree = ({ projectId }) => {
+const FileTree = ({ projectId, query = '' }) => {
   const {
     data: filesData,
     error,
@@ -30,6 +30,7 @@ const FileTree = ({ projectId }) => {
     const buildTree = (parentId = null, parentPath = '') => {
       return filesData.files
         .filter((file) => file.parent_id === parentId)
+        .filter((file) => file.name.toLowerCase().includes(query.toLowerCase()))
         .map((file) => {
           const currentPath = parentPath ? `${parentPath}/${file.name}` : file.name
           return {
@@ -48,7 +49,7 @@ const FileTree = ({ projectId }) => {
     }
 
     return buildTree()
-  }, [filesData])
+  }, [filesData, query])
 
   const initialOpenState = useMemo(() => {
     if (!filesData?.files) return {}

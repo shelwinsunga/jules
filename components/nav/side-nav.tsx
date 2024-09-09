@@ -1,6 +1,7 @@
 'use client'
 import FileTree from '@/components/file-tree/file-tree'
 import { ModeToggle } from '@/components/ui/mode-toggle'
+import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Search } from 'lucide-react'
@@ -10,9 +11,9 @@ import LoadingSideNav from '@/components/nav/loading-side-nav'
 import { useProject } from '@/contexts/ProjectContext'
 
 export default function SideNav() {
-  const { project, isProjectLoading, projectId } = useProject()
+  const { project, isProjectLoading, projectId } = useProject();
   const projectTitle = project?.title
-
+  const [query, setQuery] = useState('')
   if (isProjectLoading) {
     return <LoadingSideNav />
   }
@@ -36,13 +37,10 @@ export default function SideNav() {
         <ModeToggle />
       </div>
       <div className="p-4 flex space-x-2">
-        <Input placeholder="Search files..." className="flex-grow" />
-        <Button>
-          <Search className="h-4 w-4" />
-        </Button>
+        <Input placeholder="Search files..." className="flex-grow" value={query} onChange={(e) => setQuery(e.target.value)} />
       </div>
       <div className="flex-grow overflow-auto">
-        <FileTree projectId={projectId} />
+        <FileTree projectId={projectId} query={query} />
       </div>
       <div className="mt-auto">
         <Profile />
