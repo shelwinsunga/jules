@@ -29,7 +29,7 @@ function LatexRenderer() {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [autoFetch, setAutoFetch] = useState(true)
+  const [autoFetch, setAutoFetch] = useState(false)
   const [isDocumentReady, setIsDocumentReady] = useState(false)
   const [scale, setScale] = useState(0.9)
 
