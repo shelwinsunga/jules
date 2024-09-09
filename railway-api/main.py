@@ -31,9 +31,16 @@ def latex_to_pdf():
         #         print(os.path.join(root, name))
         
         try:
+            # First run: Generate Pygments output
+            subprocess.run(['pdflatex', '-shell-escape', '-output-directory', temp_dir, input_file], 
+                           check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                           env=dict(os.environ, PATH=f"{os.environ['PATH']}:/usr/bin:/usr/local/bin"),
+                           text=True)
+            
+            # Second run: Generate PDF with Pygments output
             result = subprocess.run(['pdflatex', '-shell-escape', '-output-directory', temp_dir, input_file], 
                                     check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                    env=dict(os.environ, PATH=f"{os.environ['PATH']}:/usr/bin"),
+                                    env=dict(os.environ, PATH=f"{os.environ['PATH']}:/usr/bin:/usr/local/bin"),
                                     text=True)
                                     
             pdf_path = os.path.join(temp_dir, 'main.pdf')
