@@ -3,7 +3,7 @@ import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import AuthButtons from '@/components/projects/auth-buttons';
 import Spline from '@splinetool/react-spline/next';
-import GridTexture from '@/components/landing-page/grid-texture';
+import GridTexture from '@/components/page-utils/grid-texture';
 
 export default function Home() {
   return (
@@ -24,7 +24,7 @@ export default function Home() {
               AI-Powered LaTeX Editing
             </h1>
             <p className="max-w-[600px] text-muted-foreground md:text-xl mb-8 animate-fade-in animation-delay-200">
-              Yomi is a collaborative LaTeX editor that allows you to write and edit LaTeX documents with ease.
+              Yomi is inspired by Cursor and Overleaf. It is a LaTeX editor that gives you the power of autocomplete.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in animation-delay-300">
               <Button asChild>
