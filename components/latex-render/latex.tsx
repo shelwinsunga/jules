@@ -16,6 +16,7 @@ import { useProject } from '@/contexts/ProjectContext'
 import { createPathname } from '@/lib/utils/client-utils'
 import { useFrontend } from '@/contexts/FrontendContext'
 import { fetchPdf } from '@/lib/utils/pdf-utils'
+import { Loader2 } from 'lucide-react'
 
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs'
 
@@ -110,8 +111,15 @@ function LatexRenderer() {
     <div className="w-full h-full flex flex-col">
       <div className="flex justify-between items-center border-b shadow-sm p-2 gap-4">
         <div className="flex items-center gap-4">
-          <Button variant="outline" onClick={handlePdf}>
-            Generate PDF
+          <Button variant="outline" onClick={handlePdf} disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              'Generate PDF'
+            )}
           </Button>
           <Switch checked={autoFetch} onCheckedChange={setAutoFetch} />
           <Label htmlFor="auto-fetch">Auto Compile</Label>
