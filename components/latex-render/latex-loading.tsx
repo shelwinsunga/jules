@@ -6,7 +6,7 @@ export default function LatexLoading() {
   const pageCount = 5 // Simulating 3 pages of a PDF
 
   return (
-    <div className="w-full h-full p-4 bg-background">
+    <div className="w-full h-full p-2.5 bg-background">
       <div className="mb-4 flex items-center justify-between">
         <motion.div
           className="h-8 w-40 bg-gray-200 dark:bg-muted rounded"
