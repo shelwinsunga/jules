@@ -17,6 +17,7 @@ import { createPathname } from '@/lib/utils/client-utils'
 import { useFrontend } from '@/contexts/FrontendContext'
 import { fetchPdf } from '@/lib/utils/pdf-utils'
 import { Loader2 } from 'lucide-react'
+import LatexLoading from './latex-loading'
 
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs'
 
@@ -142,7 +143,7 @@ function LatexRenderer() {
       <ScrollArea className="flex-grow w-full h-full bg-foreground/5">
         {isLoading ? (
           <div className="flex justify-center items-center w-full h-full">
-            <Skeleton className="w-full h-full max-w-4xl" />
+            <LatexLoading />
           </div>
         ) : error ? (
           <LatexError error={error} />
