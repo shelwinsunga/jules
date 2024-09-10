@@ -9,7 +9,7 @@ export default function AuthButtons() {
   const { user } = db.useAuth()
 
   return (
-    <div className="flex items-center gap-4 border-l border-border pl-6">
+    <div className="flex items-center gap-4">
       {user ? (
         <Button
           size="sm"

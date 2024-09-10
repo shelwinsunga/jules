@@ -1,31 +1,9 @@
-'use client'
-
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import AuthButtons from '@/components/projects/auth-buttons';
-import { ModeToggle } from '@/components/ui/mode-toggle';
 import Spline from '@splinetool/react-spline/next';
-import { motion } from 'framer-motion';
-
-const GridTexture = () => {
-  return (
-    <motion.div
-      className="absolute inset-0 w-full h-full pointer-events-none"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 0.4 }}
-      transition={{ duration: 1 }}
-      style={{
-        backgroundImage: `
-          linear-gradient(to right, hsl(var(--border) / 0.5) 1px, transparent 1px),
-          linear-gradient(to bottom, hsl(var(--border) / 0.5) 1px, transparent 1px)
-        `,
-        backgroundSize: '20px 20px',
-      }}
-    />
-  );
-};
-
+import GridTexture from '@/components/landing-page/grid-texture';
 
 export default function Home() {
   return (
@@ -36,17 +14,6 @@ export default function Home() {
           Yomi
         </Link>
         <nav className="flex items-center">
-          <div className="flex gap-6 mr-6">
-            <Link className="text-sm hover:text-muted-foreground transition-colors" href="#">
-              Features
-            </Link>
-            <Link className="text-sm hover:text-muted-foreground transition-colors" href="#">
-              Pricing
-            </Link>
-            <Link className="text-sm hover:text-muted-foreground transition-colors" href="#">
-              Documentation
-            </Link>
-          </div>
           <AuthButtons />
         </nav>
       </header>
