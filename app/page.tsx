@@ -1,13 +1,36 @@
+'use client'
+
 import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import AuthButtons from '@/components/projects/auth-buttons';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import Spline from '@splinetool/react-spline/next';
+import { motion } from 'framer-motion';
+
+const GridTexture = () => {
+  return (
+    <motion.div
+      className="absolute inset-0 w-full h-full pointer-events-none"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 0.4 }}
+      transition={{ duration: 1 }}
+      style={{
+        backgroundImage: `
+          linear-gradient(to right, hsl(var(--border) / 0.5) 1px, transparent 1px),
+          linear-gradient(to bottom, hsl(var(--border) / 0.5) 1px, transparent 1px)
+        `,
+        backgroundSize: '20px 20px',
+      }}
+    />
+  );
+};
+
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
+    <div className="flex flex-col min-h-screen text-foreground relative">
+      <GridTexture />
       <header className="px-4 lg:px-6 h-14 flex items-center justify-between border-border">
         <Link className="text-lg font-bold" href="#">
           Yomi
