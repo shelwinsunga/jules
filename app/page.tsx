@@ -3,11 +3,12 @@ import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import AuthButtons from '@/components/projects/auth-buttons';
 import { ModeToggle } from '@/components/ui/mode-toggle';
+import Spline from '@splinetool/react-spline/next';
 
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <header className="px-4 lg:px-6 h-14 flex items-center justify-between border-b border-border">
+      <header className="px-4 lg:px-6 h-14 flex items-center justify-between border-border">
         <Link className="text-lg font-bold" href="#">
           Yomi
         </Link>
@@ -26,8 +27,8 @@ export default function Home() {
           <AuthButtons />
         </nav>
       </header>
-      <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 px-4 md:px-6">
+      <main className="flex-1 relative">
+        <section className="w-full py-12 px-4 md:px-6 relative z-10">
           <div className="container mx-auto flex flex-col items-center text-center">
             <h1 className="text-4xl md:text-6xl font-bold tracking-tighter mb-4 animate-fade-in">
               AI-Powered LaTeX Editing
@@ -45,20 +46,13 @@ export default function Home() {
             </div>
           </div>
         </section>
-      </main>
-      <footer className="py-6 w-full px-4 md:px-6 border-t border-border">
-        <div className="container mx-auto flex justify-between items-center">
-          <p className="text-xs text-muted-foreground">© 2024 Yomi. All rights reserved.</p>
-          <nav className="flex gap-4">
-            <Link className="text-xs text-muted-foreground hover:text-foreground transition-colors" href="#">
-              Privacy
-            </Link>
-            <Link className="text-xs text-muted-foreground hover:text-foreground transition-colors" href="#">
-              Terms
-            </Link>
-          </nav>
+        <div className="absolute inset-x-0 bottom-0 w-full h-[90%]">
+          <Spline
+            scene="https://prod.spline.design/gQanJmdg7BDjlCcX/scene.splinecode" 
+            className="w-full h-full object-cover"
+          />
         </div>
-      </footer>
+      </main>
     </div>
   )
 }
