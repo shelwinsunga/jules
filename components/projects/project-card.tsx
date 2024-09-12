@@ -25,30 +25,26 @@ export default function ProjectCard({ project, detailed = false }: { project: an
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [imageURL, setImageURL] = useState('')
   const [imageError, setImageError] = useState(false)
-  const { user } = useFrontend()
+  const { user } = useFrontend();
   const { email, id: userId } = user
-  const [downloadURL, setDownloadURL] = useState('')
+  const [downloadURL, setDownloadURL] = useState('');
   const { data: files} = getAllProjectFiles(project.id)
 
   useEffect(() => {
     if (email && userId) {
       const pathname = createPathname(userId, project.id)
-
-      db.storage
-        .getDownloadUrl(pathname + 'preview.webp')
-        .then((signedUrl) => setImageURL(signedUrl))
-        .catch((err) => {
-          console.error('Failed to get file URL', err)
-          setImageError(true)
+      if (project.cachedPdfExpiresAt < Date.now() || project.cachedPreviewExpiresAt < Date.now()) {
+        const expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000;
+        
+        db.storage.getDownloadUrl(pathname + 'main.pdf').then((url) => {
+          db.transact(tx.projects[project.id].update({ cachedPdfUrl: url, cachedPdfExpiresAt: expiresAt }))
         })
-
-      db.storage
-        .getDownloadUrl(pathname + 'main.pdf')
-        .then((signedUrl) => setDownloadURL(signedUrl))
-        .catch((err) => {
-          console.error('Failed to get file URL', err)
-          setImageError(true)
+        db.storage.getDownloadUrl(pathname + 'preview.webp').then((url) => {
+          db.transact(tx.projects[project.id].update({ cachedPreviewUrl: url, cachedPreviewExpiresAt: expiresAt }))
         })
+      }
+      setImageURL(project.cachedPreviewUrl)
+      setDownloadURL(project.cachedPdfUrl)
     }
   }, [project.id, project.title, email, userId])
 
@@ -110,8 +106,8 @@ export default function ProjectCard({ project, detailed = false }: { project: an
         const response = await fetch(downloadURL)
         const blob = await response.blob()
         const pathname = createPathname(userId, newProjectId)
-        await savePreviewToStorage(blob, pathname + 'preview.webp')
-        savePdfToStorage(blob, pathname + 'main.pdf')
+        await savePreviewToStorage(blob, pathname + 'preview.webp', newProjectId)
+        await savePdfToStorage(blob, pathname + 'main.pdf', newProjectId)
       } catch (error) {
         console.error('Error downloading file:', error)
       }
@@ -282,3 +278,4 @@ export default function ProjectCard({ project, detailed = false }: { project: an
     </>
   )
 }
+

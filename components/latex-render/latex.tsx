@@ -43,8 +43,8 @@ function LatexRenderer() {
     try {
       const blob = await fetchPdf(files);
       const pathname = createPathname(user.id, projectId)
-      await savePdfToStorage(blob, pathname + 'main.pdf')
-      await savePreviewToStorage(blob, pathname + 'preview.webp')
+      await savePdfToStorage(blob, pathname + 'main.pdf', projectId)
+      await savePreviewToStorage(blob, pathname + 'preview.webp', projectId)
       const url = URL.createObjectURL(blob)
       setPdfUrl(url)
     } catch (error) {
