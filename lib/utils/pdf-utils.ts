@@ -40,21 +40,46 @@ export async function createPreview(
 interface EditorFiles {
   [key: string]: any;
 }
-
 export async function fetchPdf(files: EditorFiles) {
     const formData = new FormData();
     
-    files.forEach((file: EditorFiles) => {
+    await Promise.all(files.map(async (file: EditorFiles) => {
         if (file.type === 'file') {
-            const extension = file.name.split('.').pop();
-            const mimeType = extension === 'tex' ? 'text/plain' : 'application/octet-stream';
-            const pathname = file.pathname
-            const blob = new Blob([file.content], { type: mimeType });
+            const extension = file.name.split('.').pop()?.toLowerCase();
+            let mimeType: string;
+            
+            switch (extension) {
+                case 'tex':
+                    mimeType = 'text/plain';
+                    break;
+                case 'png':
+                    mimeType = 'image/png';
+                    break;
+                case 'jpg':
+                case 'jpeg':
+                    mimeType = 'image/jpeg';
+                    break;
+                case 'svg':
+                    mimeType = 'image/svg+xml';
+                    break;
+                default:
+                    throw new Error(`Unsupported file type: ${extension}`);
+            }
+
+            const pathname = file.pathname;
+
+            let blob: Blob;
+            if (extension !== 'tex' && typeof file.content === 'string') {
+                // For images, file.content is a URL
+                const response = await fetch(file.content);
+                blob = await response.blob();
+            } else {
+                // For .tex files, create blob from content
+                blob = new Blob([file.content], { type: mimeType });
+            }
             formData.append(pathname, blob);
         }
-    });
-
-    
+    }));
 
     const response = await fetch(RAILWAY_ENDPOINT_URL, {
         method: 'POST',

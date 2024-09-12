@@ -10,6 +10,17 @@ CORS(app)
 @app.route('/', methods=['POST'])
 def latex_to_pdf():
     files = request.files
+    # print(files)
+    # # Create a local directory to store uploaded files
+    # local_dir = 'uploaded_files'
+    # os.makedirs(local_dir, exist_ok=True)
+
+    # # Write all files to the local folder
+    # for filename, file in files.items():
+    #     file_path = os.path.join(local_dir, filename)
+    #     os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    #     file.save(file_path)
+    #     print(f"Saved {filename} to {file_path}")
 
     if 'main.tex' not in files:
         return {
