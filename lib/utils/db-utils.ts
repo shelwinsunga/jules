@@ -8,6 +8,7 @@ import { tx } from '@instantdb/react'
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs'
 
 export async function savePdfToStorage(blob: Blob, pathname: string, projectId: string): Promise<void> {
+  
   const pdfFile = new File([blob], 'main.pdf', { type: blob.type })
   const expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000; 
   await db.storage.upload(pathname, pdfFile)
@@ -15,7 +16,8 @@ export async function savePdfToStorage(blob: Blob, pathname: string, projectId: 
   db.transact([
     tx.projects[projectId].update({
       cachedPdfUrl: downloadURL,
-      cachedPdfExpiresAt: expiresAt
+      cachedPdfExpiresAt: expiresAt,
+      last_compiled: new Date().toISOString()
     })
   ])
 }
