@@ -11,7 +11,7 @@ export default function Home() {
       <GridTexture />
       <header className="px-4 lg:px-6 h-14 flex items-center justify-between border-border">
         <Link className="text-lg font-bold" href="#">
-          Yomi
+          Jules
         </Link>
         <nav className="flex items-center">
           <AuthButtons />
@@ -24,12 +24,12 @@ export default function Home() {
               AI-Powered LaTeX Editing
             </h1>
             <p className="max-w-[600px] text-muted-foreground md:text-xl mb-8 animate-fade-in animation-delay-200">
-              Yomi is inspired by Cursor and Overleaf. It is a LaTeX editor that gives you the power of autocomplete.
+              Jules is inspired by Cursor and Overleaf. It is a LaTeX editor that gives you the power of autocomplete.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in animation-delay-300">
               <Button asChild>
                 <Link href="/login">
-                  Try Yomi Now
+                  Try Jules Now
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>

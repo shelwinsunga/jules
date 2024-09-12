@@ -96,12 +96,6 @@ export default function Projects() {
           </>
         )}
       </main>
-
-      <footer className="border-t mt-auto">
-        <div className="container mx-auto px-4 py-4 text-center text-sm text-muted-foreground">
-          © 2023 Your LaTeX Editor. All rights reserved.
-        </div>
-      </footer>
     </div>
   )
 }

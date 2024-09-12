@@ -72,12 +72,6 @@ export default function ProjectSkeleton() {
           </div>
         </section>
       </main>
-
-      <footer className="border-t mt-auto">
-        <div className="container mx-auto px-4 py-4 text-center">
-          <Skeleton className="h-4 w-64 mx-auto" />
-        </div>
-      </footer>
     </div>
   )
 }

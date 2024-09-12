@@ -8,7 +8,7 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Yomi',
+  title: 'Jules',
   description: 'AI LaTeX Editor',
 }
 

@@ -24,7 +24,7 @@ export default function ProjectNav() {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center">
           <Link className="text-lg font-bold" href="/">
-            Yomi
+            Jules
           </Link>
         </div>
 
