@@ -16,9 +16,9 @@ export default function LatexError({ error }: { error: string }) {
   return (
     <Alert variant="destructive" className="m-4">
       <AlertCircle className="h-4 w-4" />
-      <AlertTitle>LaTeX Error</AlertTitle>
+      <AlertTitle className="text-red-200">LaTeX Error</AlertTitle>
       <AlertDescription>
-        <pre className="whitespace-pre-wrap font-mono text-sm">{parsedError}</pre>
+        <pre className="whitespace-pre-wrap dark:text-red-500 font-mono text-sm">{parsedError}</pre>
       </AlertDescription>
     </Alert>
   )
