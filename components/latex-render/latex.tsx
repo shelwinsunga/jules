@@ -26,9 +26,10 @@ function LatexRenderer() {
   const { project: data, isLoading: isDataLoading, projectId, currentlyOpen, files } = useProject();
 
   const latex = currentlyOpen?.content
+  const initialPdfUrl = data?.cachedPdfUrl
 
   const [numPages, setNumPages] = useState<number>(0)
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
+  const [pdfUrl, setPdfUrl] = useState<string | null>(initialPdfUrl)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [autoFetch, setAutoFetch] = useState(false)
