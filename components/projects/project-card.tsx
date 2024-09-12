@@ -124,6 +124,10 @@ export default function ProjectCard({ project, detailed = false }: { project: an
         last_compiled: new Date(),
         word_count: 0,
         page_count: 0,
+        cachedPdfUrl: project.cachedPdfUrl,
+        cachedPreviewUrl: project.cachedPreviewUrl,
+        cachedPdfExpiresAt: project.cachedPdfExpiresAt,
+        cachedPreviewExpiresAt: project.cachedPreviewExpiresAt,
       }),
       ...fileContents.map((file) =>
         tx.files[file.id].update({
