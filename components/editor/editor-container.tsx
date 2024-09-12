@@ -10,6 +10,11 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useProject } from '@/contexts/ProjectContext'
 import { getFileExtension } from '@/lib/utils/client-utils';
 import ImageViewer from './image-viewer'
+import { MousePointer2 } from 'lucide-react'
+import { Command } from 'lucide-react' // Add this import for the Command icon
+
+
+const isMac = navigator.userAgent.includes('Macintosh');
 
 const EditorContainer = () => {
   const { theme, systemTheme } = useTheme()
@@ -59,8 +64,19 @@ const EditorContainer = () => {
   }
   return (
     <div className="flex flex-col w-full h-full">
-      <div className="flex justify-end items-center border-b shadow-sm p-2">
-        <Button variant="outline">Assist</Button>
+      <div className="flex justify-center items-center border-b shadow-sm p-2">
+        <div className="flex items-center space-x-2 px-3 h-9 bg-muted rounded-md text-sm text-muted-foreground">
+          <span>Select and</span>
+          {isMac ? (
+            <>
+              <Command className="h-4 w-4" />
+              <kbd className="px-1.5 py-0.5 text-xs font-semibold text-muted-foreground bg-background/50 border rounded">K</kbd>
+            </>
+          ) : (
+            <kbd className="px-1.5 py-0.5 text-xs font-semibold text-muted-foreground bg-background border rounded">Ctrl+K</kbd>
+          )}
+          <span>for AI Autocomplete</span>
+        </div>
       </div>
       {!currentlyOpen ? (
         <div className="flex-grow flex items-center justify-center text-muted-foreground">
@@ -89,3 +105,4 @@ const EditorContainer = () => {
 }
 
 export default EditorContainer
+
