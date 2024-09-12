@@ -24,6 +24,7 @@ const EditorContainer = () => {
   const [isStreaming, setIsStreaming] = useState(false);
   const isStreamingRef = useRef(false);
   const fileType = getFileExtension(currentlyOpen?.name || '');
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const isImageFile = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'].includes(fileType.toLowerCase());
 
@@ -38,9 +39,18 @@ const EditorContainer = () => {
     (newCode: string) => {
       if (newCode !== localContent) {
         if (!isStreamingRef.current) {
-          console.log("saving");
           setLocalContent(newCode);
-          db.transact([tx.files[openFile.id].update({ content: newCode })])
+          
+          // Clear any existing timeout
+          if (saveTimeoutRef.current) {
+            clearTimeout(saveTimeoutRef.current);
+          }
+          
+          // Set a new timeout
+          saveTimeoutRef.current = setTimeout(() => {
+            console.log("saving");
+            db.transact([tx.files[openFile.id].update({ content: newCode })])
+          }, 250);
         }
       }
     },
@@ -105,4 +115,3 @@ const EditorContainer = () => {
 }
 
 export default EditorContainer
-
