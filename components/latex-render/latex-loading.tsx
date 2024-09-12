@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 
 export default function LatexLoading() {
-  const pageCount = 5 // Simulating 3 pages of a PDF
+  const pageCount = 5
 
   return (
     <div className="w-full h-full p-2.5 bg-background">

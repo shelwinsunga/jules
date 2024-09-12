@@ -236,11 +236,6 @@ export default function ProjectCard({ project, detailed = false }: { project: an
             </div>
           </div>
           <CardContent className="flex-grow p-4">
-            <div className="flex items-center justify-between mb-2">
-              <Badge variant="secondary" className="bg-primary text-foreground dark:bg-secondary dark:text-primary">
-                {project.document_class || project.template}
-              </Badge>
-            </div>
             <h3 className="font-semibold truncate text-lg mb-1">{project.title}</h3>
             <p className="text-sm text-muted-foreground mb-1">
               {project.last_compiled 
