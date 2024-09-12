@@ -16,7 +16,8 @@ import Image from 'next/image'
 import { savePdfToStorage, savePreviewToStorage } from '@/lib/utils/db-utils'
 import { createPathname } from '@/lib/utils/client-utils'
 import { getAllProjectFiles } from '@/hooks/data'
-import { useFrontend } from '@/contexts/FrontendContext'
+import { useFrontend } from '@/contexts/FrontendContext';
+import { deleteFileFromStorage } from '@/lib/utils/db-utils';
 
 export default function ProjectCard({ project, detailed = false }: { project: any; detailed?: boolean }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -27,7 +28,7 @@ export default function ProjectCard({ project, detailed = false }: { project: an
   const { user } = useFrontend()
   const { email, id: userId } = user
   const [downloadURL, setDownloadURL] = useState('')
-  const { data: files } = getAllProjectFiles(project.id)
+  const { data: files} = getAllProjectFiles(project.id)
 
   useEffect(() => {
     if (email && userId) {
@@ -53,11 +54,14 @@ export default function ProjectCard({ project, detailed = false }: { project: an
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault()
-    e.stopPropagation()
-    db.transact([tx.projects[project.id].delete()])
+    e.stopPropagation();
+
+    db.transact([tx.projects[project.id].delete()]);
     if (files && files.files) {
       files.files.map((file) => db.transact([tx.files[file.id].delete()]))
     }
+    deleteFileFromStorage(`${userId}/${project.id}/main.pdf`)
+    deleteFileFromStorage(`${userId}/${project.id}/preview.webp`)
     setIsDropdownOpen(false)
   }
 
