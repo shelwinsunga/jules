@@ -24,6 +24,18 @@ export function useProjectFiles(projectId: string) {
   })
 }
 
+export function getAllProjects(userId: string) {
+  return db.useQuery({
+    projects: {
+      $: {
+        where: {
+          user_id: userId,
+        },
+      },
+    },
+  })
+}
+
 export function getAllProjectFiles(projectId: string) {
   return db.useQuery({
     files: {

@@ -8,9 +8,19 @@ import { tx } from '@instantdb/react'
 const FrontendContext = createContext<any>(undefined)
 
 export function FrontendProvider({ children }: { children: ReactNode }) {
-  const { user, isLoading } = db.useAuth()
-  const router = useRouter()
+  const { user, isLoading } = db.useAuth();
+  const router = useRouter();
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (!isLoading && user === null && pathname !== '/') {
+      router.push('/login')
+    }
+  }, [isLoading, user, router, pathname])
+
+  if (isLoading) {
+    return null;
+  }
   
   // useEffect(() => {
   //   if (user) {
@@ -24,12 +34,6 @@ export function FrontendProvider({ children }: { children: ReactNode }) {
   //     db.transact(tx.users[user.id].update(userProperties));
   //   }
   // }, [user]);
-
-  useEffect(() => {
-    if (!isLoading && user === null && pathname !== '/') {
-      router.push('/login')
-    }
-  }, [isLoading, user, router, pathname])
 
   const value = {
     user,

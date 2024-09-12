@@ -10,20 +10,12 @@ import { db } from '@/lib/constants'
 import ProjectSkeleton from '@/components/projects/project-skeleton'
 import ProjectCard from '@/components/projects/project-card'
 import { useFrontend } from '@/contexts/FrontendContext'
+import { getAllProjects } from '@/hooks/data'
 
 export default function Projects() {
-  const { user } = useFrontend()
-  const [searchTerm, setSearchTerm] = useState('')
-
-  const { isLoading, error, data } = db.useQuery({
-    projects: {
-      $: {
-        where: {
-          user_id: user?.id || '',
-        },
-      },
-    },
-  })
+  const { user } = useFrontend();
+  const [searchTerm, setSearchTerm] = useState('');
+  const { isLoading, error, data } = getAllProjects(user.id);
 
   if (isLoading) return <ProjectSkeleton />
 
