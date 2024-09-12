@@ -184,7 +184,7 @@ const FileTree = ({ projectId, query = '' }) => {
           if (isImage) {
             // Handle image file
             const pathname = `images/${newFileId}-${file.name}`;
-            await db.storage.put(pathname, file);
+            await db.storage.upload(pathname, file);
             const imageUrl = await db.storage.getDownloadUrl(pathname);
             
             const newFile = {
