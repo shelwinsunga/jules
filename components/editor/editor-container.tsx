@@ -34,24 +34,12 @@ const EditorContainer = () => {
       setLocalContent(currentlyOpen.content)
     }
   }, [currentlyOpen])
-
+  
   const handleCodeChange = useCallback(
     (newCode: string) => {
-      if (newCode !== localContent) {
-        if (!isStreamingRef.current) {
-          setLocalContent(newCode);
-          
-          // Clear any existing timeout
-          if (saveTimeoutRef.current) {
-            clearTimeout(saveTimeoutRef.current);
-          }
-          
-          // Set a new timeout
-          saveTimeoutRef.current = setTimeout(() => {
-            console.log("saving");
-            db.transact([tx.files[openFile.id].update({ content: newCode })])
-          }, 250);
-        }
+      if (newCode !== localContent && !isStreamingRef.current) {
+        setLocalContent(newCode);
+        db.transact([tx.files[openFile.id].update({ content: newCode })]);
       }
     },
     [localContent, openFile]
