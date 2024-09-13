@@ -29,11 +29,11 @@ const EditorContainer = () => {
   const isImageFile = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'].includes(fileType.toLowerCase());
 
   useEffect(() => {
-    if (currentlyOpen && currentlyOpen.content !== localContent) {
+    if (currentlyOpen && currentlyOpen.id !== openFile?.id) {
       setOpenFile(currentlyOpen)
       setLocalContent(currentlyOpen.content)
     }
-  }, [currentlyOpen])
+  }, [currentlyOpen?.id])
   
   const handleCodeChange = useCallback(
     (newCode: string) => {
