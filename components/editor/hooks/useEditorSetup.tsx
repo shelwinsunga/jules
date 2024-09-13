@@ -4,10 +4,12 @@ import { useEditorTheme } from './useEditorTheme'
 import { editor, languages } from 'monaco-editor'
 import * as monaco from 'monaco-editor'
 import latex from 'monaco-latex'
+import { useLatexSyntaxHighlighting } from './useLatexSyntaxHighlighting'
 
 export function useEditorSetup(onChange: (value: string) => void, value: string) {
   const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null)
   const { setTheme } = useEditorTheme()
+  const { setupLatexSyntaxHighlighting } = useLatexSyntaxHighlighting()
 
   const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor, monacoInstance: typeof monaco) => {
     editorRef.current = editor
@@ -22,7 +24,8 @@ export function useEditorSetup(onChange: (value: string) => void, value: string)
 
     setTheme(monacoInstance)
 
-    
+    setupLatexSyntaxHighlighting(monacoInstance)
+
     languages.register({ id: 'latex' });
     languages.setMonarchTokensProvider('latex', latex);
     
