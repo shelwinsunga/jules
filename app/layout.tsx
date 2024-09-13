@@ -6,10 +6,12 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { TooltipProvider } from '@/components/ui/tooltip'
 
 const inter = Inter({ subsets: ['latin'] })
-
 export const metadata: Metadata = {
   title: 'Jules',
   description: 'AI LaTeX Editor',
+  icons: {
+    icon: '/favicon.ico',
+  },
 }
 
 export default function RootLayout({
