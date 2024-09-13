@@ -62,8 +62,8 @@ const EditorContainer = () => {
   }
   return (
     <div className="flex flex-col w-full h-full">
-      <div className="flex justify-center items-center border-b shadow-sm p-2">
-        <div className="flex items-center space-x-2 px-3 h-9 bg-muted rounded-md text-sm text-muted-foreground">
+      <div className="flex justify-end w-full items-center border-b shadow-sm p-2">
+        <div className="flex items-center border space-x-2 px-3 h-9 rounded-md text-sm text-muted-foreground">
           <span>Select and</span>
           {isMac ? (
             <>
