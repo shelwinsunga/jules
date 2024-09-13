@@ -258,7 +258,17 @@ export default function ProjectCard({ project, detailed = false }: { project: an
             <DialogTitle>Edit Document Title</DialogTitle>
           </DialogHeader>
           <div className="py-4">
-            <Input value={newTitle} onChange={(e) => setNewTitle(e.target.value)} placeholder="Enter new title" />
+            <Input 
+              value={newTitle} 
+              onChange={(e) => setNewTitle(e.target.value)} 
+              placeholder="Enter new title" 
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  db.transact([tx.projects[project.id].update({ title: newTitle })])
+                  handleDialogOpenChange(false)
+                }
+              }} 
+            />
           </div>
           <DialogFooter>
             <Button onClick={() => handleDialogOpenChange(false)}>Cancel</Button>
