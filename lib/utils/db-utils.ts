@@ -10,7 +10,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs'
 export async function savePdfToStorage(blob: Blob, pathname: string, projectId: string): Promise<void> {
   
   const pdfFile = new File([blob], 'main.pdf', { type: blob.type })
-  const expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000; 
+  const expiresAt = Date.now() + 30 * 60 * 1000; // 30 minutes
   await db.storage.upload(pathname, pdfFile)
   const downloadURL = await db.storage.getDownloadUrl(pathname)
   db.transact([
@@ -25,7 +25,7 @@ export async function savePdfToStorage(blob: Blob, pathname: string, projectId: 
 export async function savePreviewToStorage(blob: Blob, pathname: string, projectId: string): Promise<void> {
   const pdfDocument = await pdfjs.getDocument({ data: await blob.arrayBuffer() }).promise
   const { previewFile } = await createPreview(pdfDocument, pathname)
-  const expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000; 
+  const expiresAt = Date.now() + 30 * 60 * 1000; // 30 minutes
   await db.storage.upload(pathname, previewFile)
   const downloadURL = await db.storage.getDownloadUrl(pathname)
   db.transact([

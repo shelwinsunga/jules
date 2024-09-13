@@ -40,6 +40,7 @@ export async function createPreview(
 interface EditorFiles {
   [key: string]: any;
 }
+
 export async function fetchPdf(files: EditorFiles) {
     const formData = new FormData();
     

@@ -34,7 +34,7 @@ export default function ProjectCard({ project, detailed = false }: { project: an
     if (email && userId) {
       const pathname = createPathname(userId, project.id)
       if (project.cachedPdfExpiresAt < Date.now() || project.cachedPreviewExpiresAt < Date.now()) {
-        const expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000;
+        const expiresAt = Date.now() + 30 * 60 * 1000; // 30 minutes
         
         db.storage.getDownloadUrl(pathname + 'main.pdf').then((url) => {
           db.transact(tx.projects[project.id].update({ cachedPdfUrl: url, cachedPdfExpiresAt: expiresAt }))
