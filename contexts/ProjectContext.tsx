@@ -1,5 +1,9 @@
+'use client'
 import React, { createContext, useContext, ReactNode } from 'react'
-import { useProjectData, useProjectFiles } from '@/hooks/data'
+import { useProjectData, useProjectFiles } from '@/hooks/data';
+import { useFrontend } from '@/contexts/FrontendContext';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 // TODO: Add better types
 interface ProjectContextType {
@@ -12,8 +16,17 @@ interface ProjectContextType {
 const ProjectContext = createContext<any>(undefined)
 
 export function ProjectProvider({ children, projectId }: { children: ReactNode; projectId: string }) {
-  const { data: projectData, isLoading: isProjectLoading, error: projectError } = useProjectData(projectId)
-  const { data: filesData, isLoading: isFilesLoading, error: filesError } = useProjectFiles(projectId)
+  const { user } = useFrontend();
+  const { data: projectData, isLoading: isProjectLoading, error: projectError } = useProjectData(projectId, user.id)
+  const { data: filesData, isLoading: isFilesLoading, error: filesError } = useProjectFiles(projectId, user.id)
+
+  const router = useRouter();
+  useEffect(() => {
+    if (!isProjectLoading && !projectData?.projects.length && !isFilesLoading && !filesData?.files.length) {
+      router.push('/404');
+    }
+  }, [isProjectLoading, projectData, isFilesLoading, filesData, router]);
+
   const currentlyOpen = filesData?.files?.find((file) => file.isOpen === true)
 
   const value = {

@@ -28,7 +28,7 @@ export default function ProjectCard({ project, detailed = false }: { project: an
   const { user } = useFrontend();
   const { email, id: userId } = user
   const [downloadURL, setDownloadURL] = useState('');
-  const { data: files} = getAllProjectFiles(project.id)
+  const { data: files} = getAllProjectFiles(project.id, userId)
 
   useEffect(() => {
     if (email && userId) {

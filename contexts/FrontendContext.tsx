@@ -37,6 +37,7 @@ export function FrontendProvider({ children }: { children: ReactNode }) {
 
   const value = {
     user,
+    isLoading,
   }
   return <FrontendContext.Provider value={value}>{children}</FrontendContext.Provider>
 }
