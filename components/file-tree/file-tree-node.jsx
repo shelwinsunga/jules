@@ -88,7 +88,6 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
       }
     }
     setIsRenaming(false)
-    setInputValue(node.data.name) // Reset input value
   }
 
   const handleDelete = () => {
@@ -102,6 +101,7 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
   const handleInputChange = useCallback((e) => {
     setInputValue(e.target.value)
   }, [])
+
 
   if (isRenaming) {
     return (
