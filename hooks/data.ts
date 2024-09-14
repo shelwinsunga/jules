@@ -38,12 +38,13 @@ export function getAllProjects(userId: string) {
   })
 }
 
-export function getAllProjectFiles(projectId: string) {
+export function getAllProjectFiles(projectId: string, userId: string) {
   return db.useQuery({
     files: {
       $: {
         where: {
           projectId: projectId,
+          user_id: userId,
         },
       },
     },
