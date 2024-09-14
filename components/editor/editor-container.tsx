@@ -21,10 +21,9 @@ const EditorContainer = () => {
   const [localContent, setLocalContent] = useState('')
   const [openFile, setOpenFile] = useState<any>(null)
   const { currentlyOpen, isFilesLoading, isProjectLoading } = useProject();
-  const [isStreaming, setIsStreaming] = useState(false);
+  const [setIsStreaming] = useState(false);
   const isStreamingRef = useRef(false);
   const fileType = getFileExtension(currentlyOpen?.name || '');
-  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const isImageFile = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'].includes(fileType.toLowerCase());
 
@@ -60,6 +59,7 @@ const EditorContainer = () => {
       </div>
     )
   }
+
   return (
     <div className="flex flex-col w-full h-full">
       <div className="flex justify-end w-full items-center border-b shadow-sm p-2">

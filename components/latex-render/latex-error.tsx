@@ -3,6 +3,9 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert'
 import { AlertCircle } from 'lucide-react'
 
 function parseLatexError(error: string): string {
+  if (error.includes("Missing File: No main.tex file found")) {
+    return "Missing File: No main.tex file found\n\nDetails: The main.tex file is required for LaTeX compilation.";
+  }
   const lines = error.split('\n')
   const relevantLines = lines.filter(
     (line) => line.startsWith('!') || line.match(/^l\.\d+/) || line.trim().startsWith('?')
@@ -11,7 +14,8 @@ function parseLatexError(error: string): string {
 }
 
 export default function LatexError({ error }: { error: string }) {
-  const parsedError = parseLatexError(error)
+  console.log("LatexError", error)
+  const parsedError = parseLatexError(error);
 
   return (
     <Alert variant="destructive" className="m-4">

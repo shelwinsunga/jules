@@ -42,6 +42,16 @@ interface EditorFiles {
 }
 
 export async function fetchPdf(files: EditorFiles) {
+    if (!files.some((file: EditorFiles) => file.name === 'main.tex')) {
+        const errorData = {
+            error: 'Missing File',
+            message: 'No main.tex file found',
+            details: 'The main.tex file is required for LaTeX compilation.'
+        };
+        console.error('Error fetching PDF:', errorData);
+        throw new Error(`${errorData.error}: ${errorData.message}\n\nDetails: ${errorData.details}`);
+    }
+
     const formData = new FormData();
     
     await Promise.all(files.map(async (file: EditorFiles) => {
@@ -93,4 +103,9 @@ export async function fetchPdf(files: EditorFiles) {
     }
     
     return response.blob();
+}
+
+
+export function containsMainTex(files: File[]): boolean {
+  return files.some(file => file.name === 'main.tex');
 }
