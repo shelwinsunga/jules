@@ -26,15 +26,20 @@ function LatexRenderer() {
   const { project: data, isLoading: isDataLoading, projectId, currentlyOpen, files } = useProject();
 
   const latex = currentlyOpen?.content
-  const initialPdfUrl = data?.cachedPdfUrl
 
   const [numPages, setNumPages] = useState<number>(0)
-  const [pdfUrl, setPdfUrl] = useState<string | null>(initialPdfUrl)
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [autoFetch, setAutoFetch] = useState(false)
   const [isDocumentReady, setIsDocumentReady] = useState(false)
   const [scale, setScale] = useState(0.9)
+
+  useEffect(() => {
+    if (!isDataLoading && data?.cachedPdfUrl) {
+      setPdfUrl(data.cachedPdfUrl)
+    }
+  }, [isDataLoading, data])
 
   const handlePdf = async () => {
     if (isDataLoading || !user) return
@@ -109,8 +114,14 @@ function LatexRenderer() {
     }
   }
 
-  console.log(error);
-  
+  if (isDataLoading) {
+    return (
+      <div className="flex justify-center items-center w-full h-full">
+        <LatexLoading />
+      </div>
+    )
+  }
+
   return (
     <div className="w-full h-full flex flex-col">
       <div className="flex justify-between items-center border-b shadow-sm p-2 gap-4">
@@ -172,7 +183,9 @@ function LatexRenderer() {
                 ))}
             </Document>
           </div>
-        ) : null}
+        ) : (
+          null
+        )}
       </ScrollArea>
     </div>
   )

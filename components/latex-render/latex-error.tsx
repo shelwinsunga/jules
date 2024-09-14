@@ -14,7 +14,6 @@ function parseLatexError(error: string): string {
 }
 
 export default function LatexError({ error }: { error: string }) {
-  console.log("LatexError", error)
   const parsedError = parseLatexError(error);
 
   return (
