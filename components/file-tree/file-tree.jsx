@@ -96,11 +96,11 @@ const FileTree = ({ projectId, query = '' }) => {
     [projectId, filesData]
   )
 
-  const handleRename = ({ id, name }) => {
+  const handleRename = useCallback(({ id, name }) => {
     const file = filesData.files.find((file) => file.id === id)
     const newPathname = file.pathname.replace(/[^/]+$/, name)
     db.transact([tx.files[id].update({ name: name, pathname: newPathname })])
-  }
+  }, [filesData])
 
   const handleMove = ({ dragIds, parentId, index }) => {
     const updates = dragIds.map((id) => {

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react'
 import { File, Folder, FolderOpen, ChevronRight, ChevronDown, Edit, Trash2, FilePlus2, FolderPlus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import Tex from '@/public/tex'
@@ -11,6 +11,7 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
   const [newName, setNewName] = useState(node.data.name)
   const inputRef = useRef(null)
   const [isNewItem, setIsNewItem] = useState(false)
+  const [inputValue, setInputValue] = useState(node.data.name)
 
   const onMouseOver = () => {
     if (node.data.hover && !node.data.isOpen) {
@@ -78,15 +79,16 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
   }, [node, node.tree.props.newItemType, node.tree.props.newItemParentId])
 
   const handleRenameSubmit = () => {
-    if (newName.trim() !== '') {
+    if (inputValue.trim() !== '') {
       if (isNewItem) {
-        node.tree.props.onRename({ id: node.children[node.children.length - 1].id, name: newName.trim() })
+        node.tree.props.onRename({ id: node.children[node.children.length - 1].id, name: inputValue.trim() })
         setIsNewItem(false)
       } else {
-        node.tree.props.onRename({ id: node.id, name: newName.trim() })
+        node.tree.props.onRename({ id: node.id, name: inputValue.trim() })
       }
     }
     setIsRenaming(false)
+    setInputValue(node.data.name) // Reset input value
   }
 
   const handleDelete = () => {
@@ -97,19 +99,26 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
     node.tree.props.onAddItem('file', node.id)
   }
 
+  const handleInputChange = useCallback((e) => {
+    setInputValue(e.target.value)
+  }, [])
+
   if (isRenaming) {
     return (
       <div className="px-4">
         <div onClick={(e) => e.stopPropagation()} style={style} className="flex items-center gap-2 p-1 rounded-md">
           <Input
             ref={inputRef}
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
+            value={inputValue}
+            onChange={handleInputChange}
             onBlur={handleRenameSubmit}
             onKeyDown={(e) => {
               e.stopPropagation()
               if (e.key === 'Enter') handleRenameSubmit()
-              if (e.key === 'Escape') setIsRenaming(false)
+              if (e.key === 'Escape') {
+                setIsRenaming(false)
+                setInputValue(node.data.name) // Reset input value
+              }
             }}
             className="h-6 py-0 px-1 text-sm"
           />
@@ -200,4 +209,4 @@ const FileTreeNode = ({ node, style, dragHandle }) => {
   )
 }
 
-export default FileTreeNode
+export default React.memo(FileTreeNode)
