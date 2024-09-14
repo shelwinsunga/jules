@@ -21,7 +21,7 @@ const EditorContainer = () => {
   const [localContent, setLocalContent] = useState('')
   const [openFile, setOpenFile] = useState<any>(null)
   const { currentlyOpen, isFilesLoading, isProjectLoading } = useProject();
-  const [setIsStreaming] = useState(false);
+  const [isStreaming,setIsStreaming] = useState(false);
   const isStreamingRef = useRef(false);
   const fileType = getFileExtension(currentlyOpen?.name || '');
 
