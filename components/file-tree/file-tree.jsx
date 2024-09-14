@@ -10,8 +10,10 @@ import FileTreeNode from './file-tree-node';
 import FileTreeSkeleton from './file-tree-loading';
 import { Upload } from 'lucide-react';
 import { getFileExtension } from '@/lib/utils/client-utils';
+import { useFrontend } from '@/contexts/FrontendContext';
 
 const FileTree = ({ projectId, query = '' }) => {
+  const { user } = useFrontend()
   const {
     data: filesData,
     error,
@@ -46,6 +48,7 @@ const FileTree = ({ projectId, query = '' }) => {
             ...(file.type === 'folder' && {
               children: buildTree(file.id, currentPath),
             }),
+            user_id: user.id,
           }
         })
     }
@@ -86,6 +89,7 @@ const FileTree = ({ projectId, query = '' }) => {
         content: '',
         created_at: new Date(),
         pathname: newItemPath,
+        user_id: user.id,
       }
 
       db.transact([tx.files[newItemId].update(newItem)])
@@ -197,6 +201,7 @@ const FileTree = ({ projectId, query = '' }) => {
               isExpanded: null,
               created_at: new Date(),
               pathname: file.name,
+              user_id: user.id,
             };
             db.transact([tx.files[newFileId].update(newFile)]);
           } else {
@@ -214,6 +219,7 @@ const FileTree = ({ projectId, query = '' }) => {
                 isExpanded: null,
                 created_at: new Date(),
                 pathname: file.name,
+                user_id: user.id,
               };
               db.transact([tx.files[newFileId].update(newFile)]);
             };
@@ -228,7 +234,6 @@ const FileTree = ({ projectId, query = '' }) => {
   };
 
   useEffect(() => {
-    console.log('Effect running')
 
     const resizeObserver = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect
@@ -249,7 +254,6 @@ const FileTree = ({ projectId, query = '' }) => {
     observeElement()
 
     return () => {
-      console.log('Cleanup: disconnecting ResizeObserver')
       resizeObserver.disconnect()
     }
   }, [])

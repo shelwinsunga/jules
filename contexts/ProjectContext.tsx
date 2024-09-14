@@ -19,6 +19,7 @@ export function ProjectProvider({ children, projectId }: { children: ReactNode; 
   const { user } = useFrontend();
   const { data: projectData, isLoading: isProjectLoading, error: projectError } = useProjectData(projectId, user.id)
   const { data: filesData, isLoading: isFilesLoading, error: filesError } = useProjectFiles(projectId, user.id)
+  const currentlyOpen = filesData?.files?.find((file) => file.isOpen === true)
 
   const router = useRouter();
   useEffect(() => {
@@ -26,8 +27,6 @@ export function ProjectProvider({ children, projectId }: { children: ReactNode; 
       router.push('/404');
     }
   }, [isProjectLoading, projectData, isFilesLoading, filesData, router]);
-
-  const currentlyOpen = filesData?.files?.find((file) => file.isOpen === true)
 
   const value = {
     projectId,

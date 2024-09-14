@@ -12,6 +12,7 @@ import { CheckIcon } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useRouter } from 'next/navigation'
 import { templateContent } from '@/lib/constants/templates'
+import { useFrontend } from '@/contexts/FrontendContext'
 
 const templates = [
   { id: 'blank', title: 'Blank', image: '/blank_preview.webp' },
@@ -25,7 +26,7 @@ const templates = [
 type TemplateKey = keyof typeof templateContent
 
 export default function NewDocument() {
-  const { user } = db.useAuth()
+  const { user } = useFrontend()
   const router = useRouter()
   const [title, setTitle] = useState('New Document')
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateKey>('blank')
@@ -50,6 +51,7 @@ export default function NewDocument() {
           content: templateContent[selectedTemplate],
           isExpanded: null,
           pathname: 'main.tex',
+          user_id: user.id,
         },
       ]
     }
