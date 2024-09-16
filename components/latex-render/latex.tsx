@@ -35,7 +35,6 @@ function LatexRenderer() {
   const [debouncedLatex] = useDebounce(latex, 1000)
   const [isAutoCompiling, setIsAutoCompiling] = useState(false)
 
-  // Memoize dependencies to stabilize handlePdf
   const handlePdf = useCallback(async (isAuto: boolean = false) => {
     if (isDataLoading || !user) return
     setIsLoading(true)
@@ -57,20 +56,16 @@ function LatexRenderer() {
       setIsLoading(false)
       if (isAuto) setIsAutoCompiling(false)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDataLoading, user, files, projectId])
 
-  // Handle manual PDF generation
   const handleManualPdf = useCallback(() => {
     handlePdf(false)
   }, [handlePdf])
 
-  // Handle auto compilation
   useEffect(() => {
     if (autoFetch && debouncedLatex && debouncedLatex.trim() !== '') {
       handlePdf(true)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedLatex, autoFetch])
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
