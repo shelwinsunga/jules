@@ -24,8 +24,8 @@ pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs'
 function LatexRenderer() {
   const { user } = useFrontend();
   const { project: data, isLoading: isDataLoading, projectId, currentlyOpen, files } = useProject();
-
   const latex = currentlyOpen?.content
+  const initialScaleFactor = 0.9;
 
   const [numPages, setNumPages] = useState<number>(0)
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
@@ -33,7 +33,7 @@ function LatexRenderer() {
   const [error, setError] = useState<string | null>(null)
   const [autoFetch, setAutoFetch] = useState(false)
   const [isDocumentReady, setIsDocumentReady] = useState(false)
-  const [scale, setScale] = useState(1)
+  const [scale, setScale] = useState(initialScaleFactor)
 
   useEffect(() => {
     if (!isDataLoading && data?.cachedPdfUrl) {
@@ -83,6 +83,9 @@ function LatexRenderer() {
     setIsDocumentReady(true)
   }
 
+  // Options for PDF.js rendering
+  // cMapUrl: URL for character map (cMap) files
+  // cMapPacked: Use packed character maps for better performance
   const options = useMemo(
     () => ({
       cMapUrl: 'cmaps/',
@@ -100,7 +103,7 @@ function LatexRenderer() {
   }
 
   const handleResetZoom = () => {
-    setScale(1)
+    setScale(initialScaleFactor)
   }
 
   const handleDownload = () => {

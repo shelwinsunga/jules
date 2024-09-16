@@ -1,4 +1,4 @@
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Document, Page, pdfjs } from 'react-pdf'
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -19,11 +19,10 @@ export default function LatexCanvas({
 }) {
   return (
     <ScrollArea className="flex-grow w-full h-full bg-foreground/5">
-    <div className="flex justify-center w-full">
       <Document
         file={pdfUrl}
         onLoadSuccess={onDocumentLoadSuccess}
-        className="flex flex-col items-center w-full max-w-4xl"
+        className="flex flex-col items-center w-full"
         loading={<Skeleton className="w-full h-full max-w-4xl" />}
         options={options}
       >
@@ -39,7 +38,8 @@ export default function LatexCanvas({
             />
           ))}
       </Document>
-    </div>
-  </ScrollArea>
+      <ScrollBar orientation="horizontal" />
+      <ScrollBar orientation="vertical" />
+    </ScrollArea>
   )
 }
