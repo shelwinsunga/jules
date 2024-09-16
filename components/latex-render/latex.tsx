@@ -132,7 +132,7 @@ function LatexRenderer() {
       <div className="flex justify-between items-center border-b shadow-sm p-2 gap-4">
         <div className="flex items-center gap-4">
           <Button variant="outline" onClick={handleManualPdf} disabled={isLoading}>
-            {isLoading && !isAutoCompiling ? (
+            {isLoading || isAutoCompiling ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Generating...
@@ -148,12 +148,6 @@ function LatexRenderer() {
             }
           />
           <Label htmlFor="auto-fetch">Auto Compile</Label>
-          {isAutoCompiling && (
-            <div className="flex items-center ml-2">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              <span className="ml-1 text-sm">Auto-compiling...</span>
-            </div>
-          )}
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={handleZoomIn}>
@@ -170,7 +164,7 @@ function LatexRenderer() {
           </Button>
         </div>
       </div>
-      {isLoading && isAutoCompiling ? (
+      {isLoading || isAutoCompiling ? (
         <div className="flex justify-center items-center w-full h-full">
           <LatexLoading  />
         </div>
