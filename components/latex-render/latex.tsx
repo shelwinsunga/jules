@@ -154,12 +154,14 @@ function LatexRenderer() {
           </Button>
         </div>
       </div>
-      <ScrollArea className="flex-grow w-full h-full bg-foreground/5">
-        {isLoading ? (
-          <LatexLoading />
-        ) : error ? (
+      {isLoading ? (
+        <LatexLoading />
+      ) : error ? (
+        <div className="flex justify-center items-start w-full h-full">
           <LatexError error={error} />
-        ) : pdfUrl ? (
+        </div>
+      ) : pdfUrl ? (
+        <ScrollArea className="flex-grow w-full h-full bg-foreground/5">
           <div className="flex justify-center w-full">
             <Document
               file={pdfUrl}
@@ -181,10 +183,10 @@ function LatexRenderer() {
                 ))}
             </Document>
           </div>
-        ) : (
-          null
-        )}
-      </ScrollArea>
+        </ScrollArea>
+      ) : (
+        null
+      )}
     </div>
   )
 }

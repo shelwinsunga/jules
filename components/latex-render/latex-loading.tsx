@@ -4,8 +4,7 @@ import { motion } from 'framer-motion'
 import { useMemo } from 'react'
 
 export default function LatexLoading() {
-  console.log('LatexLoading')
-  const pageCount = 5
+  const pageCount = 8
 
   const loadingElements = useMemo(() => {
     return [...Array(pageCount)].map((_, index) => (
@@ -16,7 +15,7 @@ export default function LatexLoading() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: index * 0.2 }}
       >
-        <div className="h-6 w-3/4 bg-gray-200 dark:bg-muted rounded mb-4" />
+        <div className="h-6 w-3/4 sm:w-2/3 md:w-1/2 lg:w-1/3 xl:w-1/4 bg-gray-200 dark:bg-muted rounded mb-4" />
         <div className="space-y-2">
           {[...Array(5)].map((_, lineIndex) => (
             <motion.div
@@ -33,16 +32,16 @@ export default function LatexLoading() {
   }, [pageCount]);
 
   return (
-    <div className="flex justify-center items-center w-full h-full">
-    <div className="w-full h-full p-2.5 bg-background">
+    <div className="flex justify-center items-start w-full h-full">
+    <div className="w-full max-w-4xl p-4 bg-background">
       <div className="mb-4 flex items-center justify-between">
         <motion.div
-          className="h-8 w-40 bg-gray-200 dark:bg-muted rounded"
+          className="h-8 w-40 sm:w-32 md:w-40 lg:w-48 xl:w-56 bg-gray-200 dark:bg-muted rounded"
           animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="h-8 w-20 bg-gray-200 dark:bg-muted rounded"
+          className="h-8 w-20 sm:w-24 md:w-20 lg:w-24 xl:w-28 bg-gray-200 dark:bg-muted rounded"
           animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
         />
