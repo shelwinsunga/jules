@@ -105,12 +105,20 @@ function LatexRenderer() {
 
   const handleDownload = () => {
     if (pdfUrl) {
-      const link = document.createElement('a')
-      link.href = pdfUrl
-      link.download = `${data?.title || 'document'}.pdf`
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
+      fetch(pdfUrl)
+        .then(response => response.blob())
+        .then(blob => {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `${data?.title || 'document'}.pdf`;
+          link.style.display = 'none';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        })
+        .catch(error => console.error('Error downloading PDF:', error));
     }
   }
 
