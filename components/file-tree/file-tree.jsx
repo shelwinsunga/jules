@@ -27,17 +27,15 @@ const FileTree = ({ projectId, query = '' }) => {
       },
     },
   })
-
   const transformedData = useMemo(() => {
     if (!filesData?.files) return []
 
     const buildTree = (parentId = null, parentPath = '') => {
       return filesData.files
         .filter((file) => file.parent_id === parentId)
-        .filter((file) => file.name.toLowerCase().includes(query.toLowerCase()))
         .map((file) => {
           const currentPath = parentPath ? `${parentPath}/${file.name}` : file.name
-          return {
+          const node = {
             id: file.id,
             name: file.name,
             type: file.type,
@@ -45,12 +43,22 @@ const FileTree = ({ projectId, query = '' }) => {
             isOpen: file.isOpen ?? false,
             isExpanded: file.isExpanded ?? false,
             pathname: currentPath,
-            ...(file.type === 'folder' && {
-              children: buildTree(file.id, currentPath),
-            }),
             user_id: user.id,
           }
+
+          if (file.type === 'folder') {
+            const children = buildTree(file.id, currentPath)
+            if (children.length > 0 || file.name.toLowerCase().includes(query.toLowerCase())) {
+              node.children = children
+              return node
+            }
+          } else if (file.name.toLowerCase().includes(query.toLowerCase())) {
+            return node
+          }
+
+          return null
         })
+        .filter(Boolean)
     }
 
     return buildTree()
