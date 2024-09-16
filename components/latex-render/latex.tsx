@@ -33,7 +33,7 @@ function LatexRenderer() {
   const [error, setError] = useState<string | null>(null)
   const [autoFetch, setAutoFetch] = useState(false)
   const [isDocumentReady, setIsDocumentReady] = useState(false)
-  const [scale, setScale] = useState(0.9)
+  const [scale, setScale] = useState(1)
 
   useEffect(() => {
     if (!isDataLoading && data?.cachedPdfUrl) {
@@ -100,7 +100,7 @@ function LatexRenderer() {
   }
 
   const handleResetZoom = () => {
-    setScale(0.9)
+    setScale(1)
   }
 
   const handleDownload = () => {
