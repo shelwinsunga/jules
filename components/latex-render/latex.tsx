@@ -18,7 +18,7 @@ import { useFrontend } from '@/contexts/FrontendContext'
 import { fetchPdf } from '@/lib/utils/pdf-utils'
 import { Loader2 } from 'lucide-react'
 import LatexLoading from './latex-loading'
-
+import LatexCanvas from './latex-canvas'
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs'
 
 function LatexRenderer() {
@@ -161,29 +161,14 @@ function LatexRenderer() {
           <LatexError error={error} />
         </div>
       ) : pdfUrl ? (
-        <ScrollArea className="flex-grow w-full h-full bg-foreground/5">
-          <div className="flex justify-center w-full">
-            <Document
-              file={pdfUrl}
-              onLoadSuccess={onDocumentLoadSuccess}
-              className="flex flex-col items-center w-full max-w-4xl"
-              loading={<Skeleton className="w-full h-full max-w-4xl" />}
-              options={options}
-            >
-              {isDocumentReady &&
-                Array.from(new Array(numPages), (el, index) => (
-                  <Page
-                    key={`page_${index + 1}`}
-                    pageNumber={index + 1}
-                    className="mb-4 shadow-lg"
-                    scale={scale}
-                    width={Math.min(window.innerWidth - 80, 800)}
-                    loading={<Skeleton className="w-full h-[calc(100vh-80px)] mb-4" />}
-                  />
-                ))}
-            </Document>
-          </div>
-        </ScrollArea>
+        <LatexCanvas
+          pdfUrl={pdfUrl}
+          onDocumentLoadSuccess={onDocumentLoadSuccess}
+          options={options}
+          isDocumentReady={isDocumentReady}
+          numPages={numPages}
+          scale={scale}
+        />
       ) : (
         null
       )}
