@@ -1,11 +1,9 @@
 'use client'
 import { useState, useEffect, useMemo } from 'react'
-import { Document, Page, pdfjs } from 'react-pdf'
+import { pdfjs } from 'react-pdf'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import 'react-pdf/dist/Page/TextLayer.css'
 import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Switch } from '@/components/ui/switch'
 import LatexError from './latex-error'
 import { Label } from '@/components/ui/label'
@@ -19,21 +17,22 @@ import { fetchPdf } from '@/lib/utils/pdf-utils'
 import { Loader2 } from 'lucide-react'
 import LatexLoading from './latex-loading'
 import LatexCanvas from './latex-canvas'
+import { updateProject } from '@/hooks/data'
+
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs'
 
 function LatexRenderer() {
   const { user } = useFrontend();
   const { project: data, isLoading: isDataLoading, projectId, currentlyOpen, files } = useProject();
+  const scale = data?.projectScale ?? 0.9;
+  const autoFetch = data?.isAutoFetching ?? false;
   const latex = currentlyOpen?.content
-  const initialScaleFactor = 0.9;
 
   const [numPages, setNumPages] = useState<number>(0)
   const [pdfUrl, setPdfUrl] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [autoFetch, setAutoFetch] = useState(false)
   const [isDocumentReady, setIsDocumentReady] = useState(false)
-  const [scale, setScale] = useState(initialScaleFactor)
 
   useEffect(() => {
     if (!isDataLoading && data?.cachedPdfUrl) {
@@ -95,15 +94,17 @@ function LatexRenderer() {
   )
 
   const handleZoomIn = () => {
-    setScale((prevScale) => Math.min(prevScale + 0.1, 2.0))
+    const newScale = Math.min(scale + 0.1, 2.0)
+    updateProject(projectId, { projectScale: newScale })
   }
 
   const handleZoomOut = () => {
-    setScale((prevScale) => Math.max(prevScale - 0.1, 0.5))
+    const newScale = Math.max(scale - 0.1, 0.5)
+    updateProject(projectId, { projectScale: newScale })
   }
 
   const handleResetZoom = () => {
-    setScale(initialScaleFactor)
+    updateProject(projectId, { projectScale: 0.9 })
   }
 
   const handleDownload = () => {
@@ -147,7 +148,7 @@ function LatexRenderer() {
               'Generate PDF'
             )}
           </Button>
-          <Switch checked={autoFetch} onCheckedChange={setAutoFetch} />
+          <Switch checked={autoFetch} onCheckedChange={(checked) => updateProject(projectId, { isAutoFetching: checked })} />
           <Label htmlFor="auto-fetch">Auto Compile</Label>
         </div>
         <div className="flex items-center gap-2">
