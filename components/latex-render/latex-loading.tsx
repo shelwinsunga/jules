@@ -33,6 +33,7 @@ export default function LatexLoading() {
   }, [pageCount]);
 
   return (
+    <div className="flex justify-center items-center w-full h-full">
     <div className="w-full h-full p-2.5 bg-background">
       <div className="mb-4 flex items-center justify-between">
         <motion.div
@@ -47,6 +48,7 @@ export default function LatexLoading() {
         />
       </div>
       {loadingElements}
+    </div>
     </div>
   )
 }

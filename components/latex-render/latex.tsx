@@ -156,9 +156,7 @@ function LatexRenderer() {
       </div>
       <ScrollArea className="flex-grow w-full h-full bg-foreground/5">
         {isLoading ? (
-          <div className="flex justify-center items-center w-full h-full">
-            <LatexLoading />
-          </div>
+          <LatexLoading />
         ) : error ? (
           <LatexError error={error} />
         ) : pdfUrl ? (
