@@ -14,6 +14,7 @@ import { useRouter } from 'next/navigation'
 import { db } from '@/lib/constants'
 import { useEffect } from 'react'
 import { tx } from '@instantdb/react'
+import { SignIn, useUser } from '@clerk/nextjs'
 
 const CLERK_CLIENT_NAME = 'clerk';
 
@@ -69,6 +70,7 @@ function ClerkSignedInComponent() {
       </div>
     );
   }
+
   return (
     <div>
       <button onClick={signInToInstantWithClerkToken}>
@@ -95,10 +97,11 @@ export default function Login() {
   //     router.push('/projects')
   //   }
   // }, [user, router]);
+
   return (
     <>
       <SignedOut>
-        <SignInButton />
+        <SignIn />
       </SignedOut>
       <SignedIn>
         <ClerkSignedInComponent />
