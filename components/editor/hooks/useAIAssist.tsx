@@ -72,9 +72,19 @@ export const useAIAssist = () => {
   }
 
   const handleCompletion = (editor: editor.IStandaloneCodeEditor, monacoInstance: typeof monaco, onChange: (value: string) => void) => {
-    editor.onDidChangeModelContent(() => {
+    const debounce = (func: (...args: any[]) => void, wait: number) => {
+      let timeout: NodeJS.Timeout;
+      return (...args: any[]) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(...args), wait);
+      };
+    };
+
+    const debouncedOnChange = debounce(() => {
       console.log("Hello");
-    });
+    }, 250);
+
+    editor.onDidChangeModelContent(debouncedOnChange);
   }
 
   return { handleAIAssist, handleCompletion }
