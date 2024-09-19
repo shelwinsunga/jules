@@ -5,6 +5,8 @@ import { openai } from '@ai-sdk/openai'
 import { createStreamableValue } from 'ai/rsc'
 import { anthropic } from '@ai-sdk/anthropic'
 import { generateText } from 'ai';
+import { generateObject } from 'ai';
+import { z } from 'zod';
 
 export async function generate(input: string) {
   const stream = createStreamableValue({ content: '', isComplete: false });
@@ -104,13 +106,16 @@ const completionSystemPrompt = `
 `
 
 export async function completion(input: string) {
-  const result = await generateText({
+  const result = await generateObject({
     model: openai('gpt-4o-mini'),
     system: completionSystemPrompt,
+    schema: z.object({
+      latex: z.string(),
+    }),
     prompt: input,
   });
 
-  return result.text;
+  return result.object.latex;
 }
 
 // 'use server';

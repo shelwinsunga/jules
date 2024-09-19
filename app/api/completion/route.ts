@@ -1,4 +1,4 @@
-import { streamText } from 'ai';
+import { generateObject  } from 'ai';
 import { openai } from '@ai-sdk/openai';
 
 // Allow streaming responses up to 30 seconds
