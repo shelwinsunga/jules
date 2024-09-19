@@ -8,8 +8,13 @@ import { promptModal } from '../utils/promptModal'
 import { applyEdit } from '../utils/applyEdit'
 import * as monaco from 'monaco-editor'
 import type { editor } from 'monaco-editor'
+import { useCompletion } from 'ai/react';
 
 export const useAIAssist = () => {
+  const { completion, input, handleInputChange, handleSubmit } = useCompletion({
+    api: '/api/completion',
+  });
+
   const handleAIAssist = (editor: editor.IStandaloneCodeEditor, monacoInstance: typeof monaco, setIsStreaming: (isStreaming: boolean) => void) => {
     editor.addCommand(monacoInstance.KeyMod.CtrlCmd | monacoInstance.KeyCode.KeyK, async () => {
       const selection = editor.getSelection()
@@ -72,6 +77,7 @@ export const useAIAssist = () => {
   }
 
   const handleCompletion = (editor: editor.IStandaloneCodeEditor, monacoInstance: typeof monaco, onChange: (value: string) => void) => {
+
     const debounce = (func: (...args: any[]) => void, wait: number) => {
       let timeout: NodeJS.Timeout;
       return (...args: any[]) => {
@@ -81,7 +87,19 @@ export const useAIAssist = () => {
     };
 
     const debouncedOnChange = debounce(() => {
-      console.log("Hello");
+      const model = editor.getModel();
+      const position = editor.getPosition();
+      if (!model || !position) return;
+      const initialEditorText = model.getValue();
+      const currentLineNumber = position.lineNumber;
+      const k = 5;
+      const localContext = model.getLinesContent().slice(Math.max(0, currentLineNumber - k - 1), currentLineNumber + k).join('\n');
+      console.log(localContext)
+      
+
+
+
+
     }, 250);
 
     editor.onDidChangeModelContent(debouncedOnChange);
