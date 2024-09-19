@@ -13,6 +13,9 @@ export function useEditorSetup(onChange: (value: string) => void, value: string)
 
   const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor, monacoInstance: typeof monaco) => {
     editorRef.current = editor
+    editor.onDidChangeModelContent(() => {
+      onChange(editor.getValue())
+    })
     editor.getModel()?.updateOptions({ tabSize: 4, insertSpaces: true })
     monacoInstance.editor.setModelLanguage(editor.getModel()!, 'latex')
     editor.setScrollTop(1)

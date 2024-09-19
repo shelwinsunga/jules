@@ -1,6 +1,6 @@
 'use client'
 import { useState } from 'react'
-import { generate } from '@/app/actions'
+import { generate, completion } from '@/app/actions'
 import { readStreamableValue } from 'ai/rsc'
 import { calculateDiff } from '../utils/calculateDiff'
 import { createContentWidget } from '../utils/WidgetCreator'
@@ -11,9 +11,6 @@ import type { editor } from 'monaco-editor'
 import { useCompletion } from 'ai/react';
 
 export const useAIAssist = () => {
-  const { completion, input, handleInputChange, handleSubmit } = useCompletion({
-    api: '/api/completion',
-  });
 
   const handleAIAssist = (editor: editor.IStandaloneCodeEditor, monacoInstance: typeof monaco, setIsStreaming: (isStreaming: boolean) => void) => {
     editor.addCommand(monacoInstance.KeyMod.CtrlCmd | monacoInstance.KeyCode.KeyK, async () => {
@@ -86,21 +83,19 @@ export const useAIAssist = () => {
       };
     };
 
-    const debouncedOnChange = debounce(() => {
+    const debouncedOnChange = debounce(async () => {
       const model = editor.getModel();
       const position = editor.getPosition();
       if (!model || !position) return;
-      const initialEditorText = model.getValue();
+      // const initialEditorText = model.getValue();
       const currentLineNumber = position.lineNumber;
       const k = 5;
       const localContext = model.getLinesContent().slice(Math.max(0, currentLineNumber - k - 1), currentLineNumber + k).join('\n');
-      console.log(localContext)
-      
+      const predictedCompletion = await completion(localContext);
+      console.log(predictedCompletion)
 
 
-
-
-    }, 250);
+    }, 500);
 
     editor.onDidChangeModelContent(debouncedOnChange);
   }

@@ -4,10 +4,12 @@ import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { createStreamableValue } from 'ai/rsc'
 import { anthropic } from '@ai-sdk/anthropic'
-export async function generate(input: string) {
-  const stream = createStreamableValue({ content: '', isComplete: false })
+import { generateText } from 'ai';
 
-  ;(async () => {
+export async function generate(input: string) {
+  const stream = createStreamableValue({ content: '', isComplete: false });
+  
+  (async () => {
     const { textStream } = await streamText({
       model: anthropic('claude-3-5-sonnet-20240620'),
       system:
@@ -25,6 +27,17 @@ export async function generate(input: string) {
   })()
 
   return { output: stream.value }
+}
+
+export async function completion(input: string) {
+  const result = await generateText({
+    model: openai('gpt-4o-mini'),
+    system:
+      'You are an AI code assistant that provides accurate and context-aware code completions to help users write code. Given the current code the user is working on, predict the next code they might write, considering syntax, context, and best coding practices. Ensure that the completion is syntactically correct and handles any potential edge cases. The result should be ONLY code that continues from the user\'s input and matches their intent, without any additional explanations or text.',
+    prompt: input,
+  });
+
+  return result.text;
 }
 
 // 'use server';
