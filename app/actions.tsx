@@ -29,11 +29,84 @@ export async function generate(input: string) {
   return { output: stream.value }
 }
 
+
+const completionSystemPrompt = `
+    You are an intelligent LaTeX completion assistant. Your task is to suggest
+    the next line or block of LaTeX code based on the context provided. Focus on
+    completing environments, commands, or document structures. Provide concise,
+    syntactically correct, and idiomatic LaTeX code. When given a chunk of code,
+    rewrite it with your suggestion to facilitate easy comparison and diffing.
+
+    Examples:
+    1. Input: \\begin{theorem}
+               Let $f$ be a continuous function on [a,b]. Then
+       Output: \\begin{theorem}
+               Let $f$ be a continuous function on [a,b]. Then
+               $f$ attains its maximum and minimum values on [a,b].
+               \\end{theorem}
+
+    2. Input: \\begin{itemize}
+               \\item First point
+               \\item Second point
+               \\item Third point
+               \\end{itemize}
+       Output: \\begin{itemize}
+               \\item First point
+               \\item Second point
+               \\item Third point
+               \\end{itemize}
+
+    3. Input: Let x be a real number such that x^2 + 2x + 1 = 0.
+       Output: Let $x$ be a real number such that $x^2 + 2x + 1 = 0$.
+
+    4. Input: \\begin{figure}[htbp]
+               \\centering
+               \\includegraphics[width=0.8\\textwidth]{example_image}
+       Output: \\begin{figure}[htbp]
+               \\centering
+               \\includegraphics[width=0.8\\textwidth]{example_image}
+               \\caption{A descriptive caption for the example image.}
+               \\label{fig:example}
+               \\end{figure}
+
+    5. Input: \\begin{tabular}{|c|c|}
+               \\hline
+               Variable & Value \\\\
+               \\hline
+       Output: \\begin{tabular}{|c|c|}
+               \\hline
+               Variable & Value \\\\
+               \\hline
+               x & 10 \\\\
+               y & 20 \\\\
+               z & 30 \\\\
+               \\hline
+               \\end{tabular}
+
+    6. Input: \\begin{algorithm}
+               \\caption{Bubble Sort}
+               \\begin{algorithmic}[1]
+               \\Procedure{BubbleSort}{$A$}
+       Output: \\begin{algorithm}
+               \\caption{Bubble Sort}
+               \\begin{algorithmic}[1]
+               \\Procedure{BubbleSort}{$A$}
+                   \\For{$i \\gets 1$ to $n$}
+                       \\For{$j \\gets 1$ to $n-i$}
+                           \\If{$A[j] > A[j+1]$}
+                               \\State Swap $A[j]$ and $A[j+1]$
+                           \\EndIf
+                       \\EndFor
+                   \\EndFor
+               \\EndProcedure
+               \\end{algorithmic}
+               \\end{algorithm}
+`
+
 export async function completion(input: string) {
   const result = await generateText({
     model: openai('gpt-4o-mini'),
-    system:
-      'You are an AI code assistant that provides accurate and context-aware code completions to help users write code. Given the current code the user is working on, predict the next code they might write, considering syntax, context, and best coding practices. Ensure that the completion is syntactically correct and handles any potential edge cases. The result should be ONLY code that continues from the user\'s input and matches their intent, without any additional explanations or text.',
+    system: completionSystemPrompt,
     prompt: input,
   });
 
