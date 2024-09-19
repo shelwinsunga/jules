@@ -71,5 +71,11 @@ export const useAIAssist = () => {
     })
   }
 
-  return { handleAIAssist }
+  const handleCompletion = (editor: editor.IStandaloneCodeEditor, monacoInstance: typeof monaco, onChange: (value: string) => void) => {
+    editor.onDidChangeModelContent(() => {
+      console.log("Hello");
+    });
+  }
+
+  return { handleAIAssist, handleCompletion }
 }

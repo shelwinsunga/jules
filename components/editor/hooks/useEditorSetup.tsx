@@ -13,9 +13,6 @@ export function useEditorSetup(onChange: (value: string) => void, value: string)
 
   const handleEditorDidMount = (editor: editor.IStandaloneCodeEditor, monacoInstance: typeof monaco) => {
     editorRef.current = editor
-    editor.onDidChangeModelContent(() => {
-      onChange(editor.getValue())
-    })
     editor.getModel()?.updateOptions({ tabSize: 4, insertSpaces: true })
     monacoInstance.editor.setModelLanguage(editor.getModel()!, 'latex')
     editor.setScrollTop(1)
@@ -28,8 +25,6 @@ export function useEditorSetup(onChange: (value: string) => void, value: string)
 
     languages.register({ id: 'latex' });
     languages.setMonarchTokensProvider('latex', latex);
-    
-
     monacoInstance.editor.setModelLanguage(editor.getModel()!, 'latex');
 
     editor.setValue(value)

@@ -15,7 +15,7 @@ const EditorLoading = () => null
 
 export const CodeEditor = ({ onChange, value, setIsStreaming }: CodeEditorProps) => {
   const { editorRef, handleEditorDidMount } = useEditorSetup(onChange, value)
-  const { handleAIAssist } = useAIAssist()
+  const { handleAIAssist, handleCompletion } = useAIAssist();
 
   return (
     <Editor
@@ -28,6 +28,7 @@ export const CodeEditor = ({ onChange, value, setIsStreaming }: CodeEditorProps)
       onMount={(editor, monaco) => {
         handleEditorDidMount(editor, monaco)
         handleAIAssist(editor, monaco, setIsStreaming)
+        handleCompletion(editor, monaco, onChange)
       }}
       options={editorDefaultOptions}
       loading={<EditorLoading />}
