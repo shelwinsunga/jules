@@ -24,7 +24,7 @@ export default function Home() {
               AI-Powered LaTeX Editing
             </h1>
             <p className="max-w-[600px] text-muted-foreground md:text-xl mb-8 animate-fade-in animation-delay-200">
-              Jules is inspired by Cursor and Overleaf. It is a LaTeX editor that gives you the power of autocomplete.
+              Jules is inspired by Cursor and Overleaf. This is a proof of concept.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 animate-fade-in animation-delay-300">
               <Button asChild>
