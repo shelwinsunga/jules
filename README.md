@@ -9,9 +9,37 @@ It has basic LaTeX project management features, like adding/deleting files and f
 
 Note this is a `proof-of-concept` and not a "production" application. There will be bugs, important missing features, and UX issues that make it not quite ready yet for daily usage.
 
+## Local Setup
+
+To get Jules working locally, you need:
+- An Anthropic Key
+- An App ID from [InstantDB](https://www.instantdb.com/)
+- A deployed instance of the API on railway (`railway-api`).
+
+Set those in a `.env.local` file.
+
+You can then:
+
+```
+git clone git@github.com:shelwinsunga/jules.git
+cd jules
+npm install i
+npm run dev
+```
+
+You can run the flask endpoint locally by running:
+
+```
+cd railway-api
+hypercorn main:app --reload
+```
+
+You need pdflatex installed as well as the stuff in requirements.txt
+
+
 ## Acknowledgments
 
-Created by [Shelwin Sunga](https://x.com/shelwin_). Licensed under the [MIT License](url)
+Created by [Shelwin Sunga](https://x.com/shelwin_). Licensed under the [MIT License](https://github.com/shelwinsunga/jules/blob/main/LICENSE)
 
 - Inspired by Cursor and Overleaf
 
