@@ -11,5 +11,7 @@ Note this is a `proof-of-concept` and not a "production" application. There will
 
 ## Acknowledgments
 
+Created by [Shelwin Sunga](https://x.com/shelwin_). Licensed under the [MIT License](url)
+
 - Inspired by Cursor and Overleaf
 
