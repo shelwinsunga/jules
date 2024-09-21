@@ -9,11 +9,6 @@ It has basic LaTeX project management features, like adding/deleting files and f
 
 Note this is a `proof-of-concept` and not a "production" application. There will be bugs, important missing features, and UX issues that make it not quite ready yet for daily usage.
 
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 ## Acknowledgments
 
 - Inspired by Cursor and Overleaf
