@@ -4,6 +4,8 @@ import Link from 'next/link'
 import AuthButtons from '@/components/projects/auth-buttons';
 import Spline from '@splinetool/react-spline/next';
 import GridTexture from '@/components/page-utils/grid-texture';
+import { Github } from 'lucide-react';
+import { Star } from 'lucide-react';
 
 export default function Home() {
   return (
@@ -13,7 +15,13 @@ export default function Home() {
         <Link className="text-lg font-bold" href="#">
           Jules
         </Link>
-        <nav className="flex items-center">
+        <nav className="flex items-center gap-4">
+          <Button asChild className="bg-black dark:bg-white text-white dark:text-black dark:hover:bg-white/90 hover:bg-black/80">
+            <Link href="https://github.com/shelwinsunga/jules" target="_blank">
+            <Star className="h-4 w-4 fill-current" />
+            <span className="ml-2">Star on GitHub</span>
+            </Link>
+          </Button>
           <AuthButtons />
         </nav>
       </header>
