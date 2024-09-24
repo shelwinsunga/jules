@@ -4,6 +4,7 @@ import './globals.css'
 import { FrontendProvider } from '@/contexts/FrontendContext'
 import { ThemeProvider } from '@/components/theme-provider'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { Analytics } from "@vercel/analytics/react"
 
 const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
@@ -24,7 +25,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange>
           <TooltipProvider>
-            <FrontendProvider>{children}</FrontendProvider>
+            <FrontendProvider>{children}
+            <Analytics />
+            </FrontendProvider>
           </TooltipProvider>
         </ThemeProvider>
       </body>

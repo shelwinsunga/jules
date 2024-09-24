@@ -29,6 +29,7 @@
     "@radix-ui/react-tooltip": "^1.1.2",
     "@splinetool/react-spline": "^4.0.0",
     "@ungap/with-resolvers": "^0.1.0",
+    "@vercel/analytics": "^1.3.1",
     "ai": "^3.3.11",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
