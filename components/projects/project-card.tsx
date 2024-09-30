@@ -34,17 +34,25 @@ export default function ProjectCard({ project, detailed = false }: { project: an
     if (email && userId) {
       const pathname = createPathname(userId, project.id)
       if (project.cachedPdfExpiresAt < Date.now() || project.cachedPreviewExpiresAt < Date.now()) {
-        const expiresAt = Date.now() + 30 * 60 * 1000; // 30 minutes
-        
+        const expiresAt = Date.now() + 30 * 60 * 1000;
         db.storage.getDownloadUrl(pathname + 'main.pdf').then((url) => {
-          db.transact(tx.projects[project.id].update({ cachedPdfUrl: url, cachedPdfExpiresAt: expiresAt }))
+          db.transact(tx.projects[project.id].update({ cachedPdfUrl: url, cachedPdfExpiresAt: expiresAt })).then(() => {
+            db.storage.getDownloadUrl(pathname + 'main.pdf').then((validatedUrl) => {
+              setDownloadURL(validatedUrl)
+            })
+          })
         })
         db.storage.getDownloadUrl(pathname + 'preview.webp').then((url) => {
-          db.transact(tx.projects[project.id].update({ cachedPreviewUrl: url, cachedPreviewExpiresAt: expiresAt }))
+          db.transact(tx.projects[project.id].update({ cachedPreviewUrl: url, cachedPreviewExpiresAt: expiresAt })).then(() => {
+            db.storage.getDownloadUrl(pathname + 'preview.webp').then((validatedUrl) => {
+              setImageURL(validatedUrl)
+            })
+          })
         })
+      } else {
+        setImageURL(project.cachedPreviewUrl)
+        setDownloadURL(project.cachedPdfUrl)
       }
-      setImageURL(project.cachedPreviewUrl)
-      setDownloadURL(project.cachedPdfUrl)
     }
   }, [project.id, project.title, email, userId])
 
