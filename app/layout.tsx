@@ -25,8 +25,11 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" disableTransitionOnChange>
           <TooltipProvider>
-            <FrontendProvider>{children}
-            <Analytics />
+            <FrontendProvider>
+              <div className="hidden md:block">
+                {children}
+                <Analytics />
+              </div>
             </FrontendProvider>
           </TooltipProvider>
         </ThemeProvider>
