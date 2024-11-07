@@ -41,7 +41,6 @@ export const promptModal = async (
           event.preventDefault()
           handleSubmit()
         } else if (event.key === 'k' && (event.ctrlKey || event.metaKey)) {
-          console.log('Ctrl+K or Cmd+K pressed')
           event.preventDefault()
           handleClose()
         }

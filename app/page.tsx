@@ -72,10 +72,14 @@ async function getGitHubStars() {
     next: { revalidate: 3600 }, // Cache for 1 hour
   });
 
+  console.log(response);
+
   if (!response.ok) {
     return null;
   }
 
   const data = await response.json();
+  console.log("data");
+  console.log(data);
   return data.stargazers_count;
 } 
