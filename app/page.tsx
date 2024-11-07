@@ -64,7 +64,7 @@ export default async function Home() {
   )
 }
 
-export async function getGitHubStars() {
+async function getGitHubStars() {
   const response = await fetch('https://api.github.com/repos/shelwinsunga/jules', {
     headers: {
       Authorization: `Bearer ${process.env.GITHUB_API_KEY}`,
