@@ -32,7 +32,7 @@ export default function Projects() {
             <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
               className="pl-10 py-5 text-sm w-full"
-              placeholder="Search LaTeX projects..."
+              placeholder="Search Jules Projects..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
