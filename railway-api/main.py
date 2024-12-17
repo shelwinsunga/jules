@@ -3,27 +3,29 @@ import os
 import subprocess
 import tempfile
 import time  # Added for cleanup function
+import re  # Added for regex pattern matching
 from flask_cors import CORS
 
 def needs_second_pass(tex_content):
     patterns = [
         r'\\ref{',
         r'\\cite{',
-        r'\\bibliography{',
         r'\\tableofcontents',
         r'\\listoffigures',
-        r'\\listoftables'
+        r'\\listoffigures',
+        r'\\bibliography{',
+        r'\\index{'
     ]
-    return any(pattern in tex_content for pattern in patterns)
+    return any(re.search(pattern, tex_content) for pattern in patterns)
 
 def needs_shell_escape(tex_content):
-    shell_escape_packages = [
-        'minted',
-        'epstopdf',
-        'svg',
-        'animate'
+    patterns = [
+        r'\\write18{',
+        r'\\immediate\\write18{',
+        r'\\includegraphics',
+        r'\\usepackage{minted}'
     ]
-    return any(f'\\usepackage{{{pkg}}}' in tex_content for pkg in shell_escape_packages)
+    return any(re.search(pattern, tex_content) for pattern in patterns)
 
 def cleanup_old_files(temp_dir, max_age_hours=24):
     current_time = time.time()
@@ -53,63 +55,81 @@ def latex_to_pdf():
             "message": "Please upload a main.tex file."
         }, 400
 
-    # Use persistent temp directory instead of temporary one
+    # Use persistent temp directory
     temp_dir = os.path.join(os.path.dirname(__file__), 'latex_temp')
     os.makedirs(temp_dir, exist_ok=True)
-    cleanup_old_files(temp_dir)  # Clean up old files before processing new ones
+    cleanup_old_files(temp_dir)
     print(f"Using persistent directory at {temp_dir}")
-    generated_files = []
+
+    def cleanup_files():
+        """Clean up generated files in temp directory"""
+        for ext in ['.aux', '.log', '.pdf']:
+            filepath = os.path.join(temp_dir, f'main{ext}')
+            try:
+                if os.path.isfile(filepath):
+                    os.unlink(filepath)
+                    print(f"Removed generated file {filepath}")
+            except Exception as e:
+                print(f"Failed to remove file {filepath}: {e}")
+
+    def handle_error(output):
+        """Format error message from LaTeX output"""
+        error_details = output.split('\n')
+        error_line = next((line for line in error_details if '!' in line), "Unknown LaTeX error")
+        return {
+            "error": "LaTeX compilation error",
+            "message": error_line,
+            "details": output
+        }, 500
+
     try:
-        for filename, file in files.items():
-            file_path = os.path.join(temp_dir, filename)
-            os.makedirs(os.path.dirname(file_path), exist_ok=True)
-            file.save(file_path)
-            generated_files.append(file_path)
-            print(f"Saved file {filename} to {file_path}")
-
+        # Save and read input file
         input_file = os.path.join(temp_dir, 'main.tex')
-        print(f"Input file path set to {input_file}")
-
-        # Read tex content once for analysis
+        files['main.tex'].save(input_file)
         with open(input_file, 'r') as f:
             tex_content = f.read()
 
-        # Build pdflatex command based on document requirements
-        cmd = ['timeout', '30', 'pdflatex', '-interaction=nonstopmode', '-output-directory', temp_dir, input_file]
+        # Base command
+        cmd = ['pdflatex', '-interaction=nonstopmode', '-output-directory', temp_dir, input_file]
+
+        # Add shell-escape if needed
         if needs_shell_escape(tex_content):
             print("Document requires shell-escape, adding flag")
-            cmd.insert(3, '-shell-escape')
+            cmd.insert(1, '-shell-escape')
 
-        # First compilation - always required
+        # First pass - always required
         print("Running pdflatex for the first time")
         try:
             result = subprocess.run(cmd,
-                                check=True,
-                                stdout=subprocess.PIPE,
-                                stderr=subprocess.PIPE,
-                                env=dict(os.environ, PATH=f"{os.environ['PATH']}:/usr/bin:/usr/local/bin"),
-                                text=True,
-                                timeout=30)
-            print(f"First pass output: {result.stdout}")
+                                  capture_output=True,
+                                  text=True,
+                                  env=dict(os.environ, PATH=f"{os.environ['PATH']}:/usr/bin:/usr/local/bin"),
+                                  timeout=30)
+            if result.returncode != 0:
+                cleanup_files()
+                return handle_error(result.stdout)
         except subprocess.TimeoutExpired:
+            cleanup_files()
             return {
                 "error": "Compilation timeout",
                 "message": "LaTeX compilation took too long. Check for infinite loops or complex macros.",
                 "details": "Process killed after 30 seconds"
             }, 500
 
+        # Second pass only if needed
         if needs_second_pass(tex_content):
             print("Document requires second pass, running pdflatex again")
             try:
                 result = subprocess.run(cmd,
-                                    check=True,
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE,
-                                    env=dict(os.environ, PATH=f"{os.environ['PATH']}:/usr/bin:/usr/local/bin"),
-                                    text=True,
-                                    timeout=30)
-                print(f"Second pass output: {result.stdout}")
+                                      capture_output=True,
+                                      text=True,
+                                      env=dict(os.environ, PATH=f"{os.environ['PATH']}:/usr/bin:/usr/local/bin"),
+                                      timeout=30)
+                if result.returncode != 0:
+                    cleanup_files()
+                    return handle_error(result.stdout)
             except subprocess.TimeoutExpired:
+                cleanup_files()
                 return {
                     "error": "Compilation timeout",
                     "message": "LaTeX compilation took too long on second pass.",
@@ -118,12 +138,10 @@ def latex_to_pdf():
         else:
             print("Document does not require second pass, skipping")
 
-        # Track generated files
-        for ext in ['.aux', '.log', '.pdf']:
-            generated_files.append(os.path.join(temp_dir, f'main{ext}'))
-
+        # Check if PDF was generated
         pdf_path = os.path.join(temp_dir, 'main.pdf')
         if not os.path.exists(pdf_path):
+            cleanup_files()
             return {
                 "error": "PDF generation failed",
                 "message": "No PDF file was generated. Check the LaTeX logs for errors.",
@@ -132,35 +150,17 @@ def latex_to_pdf():
 
         print(f"PDF generated successfully at {pdf_path}")
         return send_file(pdf_path,
-                         mimetype='application/pdf',
-                         as_attachment=True,
-                         download_name='output.pdf')
+                        mimetype='application/pdf',
+                        as_attachment=True,
+                        download_name='output.pdf')
 
-    except subprocess.CalledProcessError as e:
-        output = e.stdout + e.stderr
-        error_details = output.split('\n')
-        error_line = next((line for line in error_details if '!' in line), "Unknown LaTeX error")
-        return {
-            "error": "LaTeX compilation error",
-            "message": error_line,
-            "details": output
-        }, 500
     except Exception as e:
+        cleanup_files()
         return {
             "error": "Unexpected error",
             "message": str(e),
             "details": "An unexpected error occurred during PDF generation"
         }, 500
-    finally:
-        for file_path in generated_files:
-            try:
-                if os.path.isfile(file_path) or os.path.islink(file_path):
-                    os.unlink(file_path)
-                    print(f"Removed generated file {file_path}")
-            except Exception as e:
-                print(f"Failed to remove generated file {file_path}. Reason: {e}")
-            except Exception as e:
-                print(f"Failed to remove generated file {file_path}. Reason: {e}")
 
 if __name__ == '__main__':
     print("Starting Flask app")
