@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { pdfjs } from 'react-pdf'
 import 'react-pdf/dist/Page/AnnotationLayer.css'
 import 'react-pdf/dist/Page/TextLayer.css'
@@ -18,6 +18,7 @@ import { Loader2 } from 'lucide-react'
 import LatexLoading from './latex-loading'
 import LatexCanvas from './latex-canvas'
 import { updateProject } from '@/hooks/data'
+import { usePdfViewer } from './pdf-viewer-reducer'
 
 pdfjs.GlobalWorkerOptions.workerSrc = '/pdf.worker.mjs'
 
@@ -28,35 +29,41 @@ function LatexRenderer() {
   const autoFetch = data?.isAutoFetching ?? false;
   const latex = currentlyOpen?.content
 
-  const [numPages, setNumPages] = useState<number>(0)
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [isDocumentReady, setIsDocumentReady] = useState(false)
+  const [state, dispatch] = usePdfViewer();
+  const { isLoading, error, isDocumentReady, pdfUrl, numPages } = state;
+
+  // Add cleanup effect for PDF URLs
+  useEffect(() => {
+    return () => {
+      if (state.pdfUrl) {
+        URL.revokeObjectURL(state.pdfUrl)
+        dispatch({ type: 'CLEANUP_URL', url: state.pdfUrl })
+      }
+    }
+  }, [state.pdfUrl])
 
   useEffect(() => {
     if (!isDataLoading && data?.cachedPdfUrl) {
-      setPdfUrl(data.cachedPdfUrl)
+      dispatch({ type: 'SET_PDF_URL', url: data.cachedPdfUrl })
     }
   }, [isDataLoading, data])
 
   const handlePdf = async () => {
     if (isDataLoading || !user) return
-    setIsLoading(true)
-    setError(null)
-    setIsDocumentReady(false)
+    dispatch({ type: 'START_LOADING' })
     try {
       const blob = await fetchPdf(files);
       const pathname = createPathname(user.id, projectId)
       await savePdfToStorage(blob, pathname + 'main.pdf', projectId)
       await savePreviewToStorage(blob, pathname + 'preview.webp', projectId)
       const url = URL.createObjectURL(blob)
-      setPdfUrl(url)
+      dispatch({ type: 'SET_PDF_URL', url })
     } catch (error) {
       console.error('Error fetching PDF:', error)
-      setError(error instanceof Error ? error.message : String(error))
-    } finally {
-      setIsLoading(false)
+      dispatch({
+        type: 'SET_ERROR',
+        error: error instanceof Error ? error.message : String(error)
+      })
     }
   }
 
@@ -78,8 +85,7 @@ function LatexRenderer() {
   }, [latex, autoFetch, isDataLoading, user])
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
-    setNumPages(numPages)
-    setIsDocumentReady(true)
+    dispatch({ type: 'SET_DOCUMENT_READY', numPages })
   }
 
   // Options for PDF.js rendering
@@ -166,24 +172,22 @@ function LatexRenderer() {
           </Button>
         </div>
       </div>
-      {isLoading ? (
+      {state.isLoading ? (
         <LatexLoading />
-      ) : error ? (
+      ) : state.error ? (
         <div className="flex justify-center items-start w-full h-full">
-          <LatexError error={error} />
+          <LatexError error={state.error} />
         </div>
-      ) : pdfUrl ? (
+      ) : state.pdfUrl ? (
         <LatexCanvas
-          pdfUrl={pdfUrl}
+          pdfUrl={state.pdfUrl}
           onDocumentLoadSuccess={onDocumentLoadSuccess}
           options={options}
-          isDocumentReady={isDocumentReady}
-          numPages={numPages}
+          isDocumentReady={state.isDocumentReady}
+          numPages={state.numPages}
           scale={scale}
         />
-      ) : (
-        null
-      )}
+      ) : null}
     </div>
   )
 }
